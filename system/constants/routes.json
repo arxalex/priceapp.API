@@ -1,0 +1,42 @@
+[
+    {
+        "routeName": "",
+        "routeType": "default",
+        "className": "main\\Main",
+        "contants": [
+            {
+                "routeName": "admin",
+                "routeType": "default",
+                "className": "admin\\Admin",
+                "contants": [
+                    {
+                        "routeName": "items",
+                        "routeType": "default",
+                        "className": "admin\\Items",
+                        "contants": []
+                    }
+                ]
+            },
+            {
+                "routeName": "be",
+                "routeType": "default",
+                "className": "",
+                "contants": [
+                    {
+                        "routeName": "items",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_item",
+                                "routeType": "default",
+                                "className": "items\\GetItem",
+                                "contants": []
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]
