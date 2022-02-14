@@ -2,7 +2,9 @@
 
 namespace framework\entities\categories;
 
-class Category
+use framework\entities\default_entities\DefaultEntity;
+
+class Category extends DefaultEntity
 {
     public ?int $id;
     public ?string $label;

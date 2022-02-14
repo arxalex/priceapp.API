@@ -2,22 +2,123 @@
 
 namespace framework\entities\categories;
 
-use framework\database\Request;
+use framework\database\StringHelper;
+use framework\entities\default_entities\DefaultEntitiesService;
 use framework\entities\categories\Category;
-use framework\database\SqlHelper;
 
-class CategoriesService
+class CategoriesService extends DefaultEntitiesService
 {
     public function __construct()
     {
+        $this->className = self::ENTITIES_NAMESPACE . "categories\\Category";
+        $this->tableName = "pa_categories";
     }
-    public function getCategoryFromDB(int $id) {
-        $query = "select top 1 * from pa_categories where id = $id";
-        $response = (new Request($query))->fetchObject("Category");
+
+    public function containsCategory(string $str, ?Category $base = null) : Category
+    {
+        $str = mb_strtolower($str, 'UTF-8');
+        $categories = $this->getItemsFromDB();
+        if ($base !== null) {
+            $categories = $this->filterCategories($categories, $base);
+        }
+        $result = array();
+        foreach ($categories as $category) {
+            $label = mb_strtolower($category->label);
+            if (StringHelper::stringContains($str, substr($label, 0, -1)) === true) {
+                $result[] = new Category(
+                    $category->id,
+                    $label,
+                    $category->parent,
+                    $category->isFilter
+                );
+            }
+        }
+
+        if (count($result) >= 1) {
+            $chains = array();
+            $parents = array();
+            foreach ($result as $category) {
+                $parents[] = $category->parent;
+            }
+            foreach ($result as $category) {
+                if (!in_array($category->id, $parents)) {
+                    $chainTemp = array();
+                    $chainTemp[] = $category->id;
+                    while ($chainTemp[count($chainTemp) - 1] != $base->id) {
+                        $found = false;
+                        foreach ($categories as $v2) {
+                            if ($v2->id == $chainTemp[count($chainTemp) - 1]) {
+                                $chainTemp[] = $v2->parent != NULL ? $v2->parent : $base->id;
+                                $found = true;
+                                break;
+                            }
+                        }
+                        if (!$found) {
+                            $chainTemp[] = $base->id;
+                        }
+                    }
+                    $chains[] = $chainTemp;
+                }
+            }
+
+            if (count($chains) == 1) {
+                return $this->getItemFromDB($chains[0][0]);
+            }
+            $resultReturn = 0;
+            $max = 0;
+            foreach ($chains as $chain) {
+                if (count($chain) > $max) {
+                    $resultReturn = $chain[0];
+                    $max = count($chain);
+                }
+            }
+            $category = $this->getItemFromDB($resultReturn);
+            foreach ($chains as $chain) {
+                if (count($chain) == $max) {
+                    $categoryTemp = $this->getItemFromDB($chain[0]);
+                    if (strlen($categoryTemp->label) > strlen($category->label)) {
+                        $category = $categoryTemp;
+                        $resultReturn = $chain[0];
+                    }
+                }
+            }
+            return $this->getItemFromDB($resultReturn);
+        } else {
+            return $base == null ? $this->getItemFromDB(0) : $base;
+        }
     }
-    public function insertCategoryToDB(Category $category){
-        $query = "insert into pa_categories
-        values " . SqlHelper::insertObjects([$category]);
-        $response = (new Request($query))->execute();
+
+    public function filterCategories(array $categories, Category $parent) : array
+    {
+        $result = array();
+        foreach ($categories as $category) {
+            if ($category->id == $parent->id) {
+                $result[] = $category;
+            } elseif ($category->parent == $parent->id) {
+                $result[] = $category;
+            } else {
+                $chainTemp = array();
+                $chainTemp[] = $category->id;
+                $chainTemp[] = $category->parent;
+                while ($chainTemp[count($chainTemp) - 1] != -1) {
+                    $found = false;
+                    foreach ($categories as $v2) {
+                        if ($v2->id == $chainTemp[count($chainTemp) - 1]) {
+                            $chainTemp[] = $v2->parent != NULL ? $v2->parent : -1;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $chainTemp[] = -1;
+                    }
+                    if ($chainTemp[count($chainTemp) - 1] == $parent->id) {
+                        $result[] = $category;
+                        break;
+                    }
+                }
+            }
+        }
+        return $result;
     }
 }

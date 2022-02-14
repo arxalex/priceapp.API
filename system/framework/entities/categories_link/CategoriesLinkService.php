@@ -2,22 +2,13 @@
 
 namespace framework\entities\categories_link;
 
-use framework\database\Request;
-use framework\entities\categories_link\CategoryLink;
-use framework\database\SqlHelper;
+use framework\entities\default_entities\DefaultEntitiesService;
 
-class CategoriesLinkService
+class CategoriesLinkService extends DefaultEntitiesService
 {
     public function __construct()
     {
-    }
-    public function getCategoryLinkFromDB(int $id) {
-        $query = "select top 1 * from pa_categories_link where id = $id";
-        $response = (new Request($query))->fetchObject("CategoryLink");
-    }
-    public function insertCategoryLinkToDB(CategoryLink $categoryLink){
-        $query = "insert into pa_categories_link
-        values " . SqlHelper::insertObjects([$categoryLink]);
-        $response = (new Request($query))->execute();
+        $this->className = self::ENTITIES_NAMESPACE . "categories_link\\CategoryLink";
+        $this->tableName = "pa_categories_link";
     }
 }

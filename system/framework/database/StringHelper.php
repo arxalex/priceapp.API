@@ -72,4 +72,7 @@ class StringHelper
         }
         return $rates;
     }
+    public static function stringContains($haystack, $needle){
+        return strpos($haystack, $needle) === false ? false : true;
+    }
 }

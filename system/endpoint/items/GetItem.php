@@ -34,7 +34,7 @@ class GetItem extends BaseEndpointBuilder
                 $label = $this->getParam('name');
                 $nameArr = StringHelper::nameToKeywords($this->getParam('name'));
                 $result = $this->_itemsService->getItemsFromDB([
-                    'label' => $nameArr,
+                    'label_like' => $nameArr,
                     'category' => [],
                 ]);
                 $rate = StringHelper::rateItemsByKeywords($label, array_column($result, 'label'));

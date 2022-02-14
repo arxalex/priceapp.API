@@ -2,7 +2,9 @@
 
 namespace framework\entities\categories_link;
 
-class CategoryLink
+use framework\entities\default_entities\DefaultEntity;
+
+class CategoryLink extends DefaultEntity
 {
     public ?int $id;
     public ?int $categoryid;
