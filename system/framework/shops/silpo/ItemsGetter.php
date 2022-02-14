@@ -9,7 +9,7 @@ use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\categories\Category;
 use framework\entities\categories_link\CategoryLink;
 use PDO;
-use framework\shops\silpo\ItemViewModel;
+use framework\shops\silpo\ItemModel;
 
 class ItemsGetter
 {
@@ -23,7 +23,6 @@ class ItemsGetter
     }
     public function get(int $categotyId, int $fillialId = 2043): array
     {
-        $shopid = 1;
         $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
         $data = json_encode([
             'data' => [
@@ -44,23 +43,24 @@ class ItemsGetter
         $context  = stream_context_create($options);
         $result = json_decode(file_get_contents($url, false, $context));
         $items = [];
-        $categories = $this->_categoriesService->getItemsFromDB();
-        foreach ($result->items as $key => $value) {
-            $categoryLink = ($this->_categoriesLinkService->getItemsFromDB(
-                [
-                    'categoryshopid' => [(($value->categories)[count($value->categories) - 1])->id],
-                    'shopid' => $shopid
-                ]
-            ))[0];
-            $category = $this->_categoriesService->getItemFromDB($categoryLink->categoryid);
-            $itemTemp = new ItemViewModel(
-                null,
-                SqlHelper::mysql_escape_mimic($value->name),
-                SqlHelper::mysql_escape_mimic($value->mainImage),
-                $this->_categoriesService->containsCategory($value->name, $category),
-                $this->getShopItemParam($value, 'trademark')
+        foreach ($result->items as $value) {
+            $items[] = new ItemModel(
+                $value->id,
+                $value->name,
+                $value->mainImage,
+                (($value->categories)[count($value->categories) - 1])->id,
+                $this->getShopItemParam($value, 'trademark'),
+                $this->getShopItemParam($value, 'packageType'),
+                str_replace(",", ".", $this->getShopItemParam($value, 'alcoholContent')),
+                str_replace(",", ".", $this->getShopItemParam($value, 'numberOfUnits')),
+                str_replace(",", ".", $this->getShopItemParam($value, 'calorie')),
+                str_replace(",", ".", $this->getShopItemParam($value, 'carbohydrates')),
+                str_replace(",", ".", $this->getShopItemParam($value, 'fats')),
+                str_replace(",", ".", $this->getShopItemParam($value, 'proteins')),
+                $this->getShopItemParam($value, 'country')
             );
         }
+        return $items;
     }
     private function getShopItemParam($item, string $param, bool $falseOrNull = false)
     {
