@@ -26,6 +26,6 @@ class PackagesService extends DefaultEntitiesService
             'label_like' => $strArr
         ]);
         $rate = StringHelper::rateItemsByKeywords($str, array_column($packages, 'label'));
-        return ($this->orderItemsByRate($packages, $rate, 1))[0];
+        return count($this->orderItemsByRate($packages, $rate, 1)) > 0 ? ($this->orderItemsByRate($packages, $rate, 1))[0] : $this->getItemFromDB(0);
     }
 }
