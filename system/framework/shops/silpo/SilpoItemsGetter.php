@@ -66,7 +66,7 @@ class SilpoItemsGetter
         }
         return $items;
     }
-    private function getShopItemParam($item, string $param, bool $falseOrNull = false)
+    private function getShopItemParam($item, string $param, bool $nullOrFalse = true)
     {
         $isok = false;
         if ($item->parameters) {
@@ -80,7 +80,7 @@ class SilpoItemsGetter
         if ($isok) {
             return $tmp;
         } else {
-            if ($falseOrNull) {
+            if ($nullOrFalse) {
                 return null;
             } else {
                 return false;
