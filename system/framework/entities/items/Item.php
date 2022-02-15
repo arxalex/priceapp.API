@@ -12,8 +12,8 @@ class Item extends DefaultEntity
     public ?int $category;
     public ?int $brand;
     public ?int $packege;
-    public ?int $units;
-    public ?int $term;
+    public ?float $units;
+    public ?float $term;
     public ?array $barcodes;
     public ?array $consist;
     public ?float $calorie;
@@ -29,8 +29,8 @@ class Item extends DefaultEntity
         ?int $category = null,
         ?int $brand = null,
         ?int $packege = null,
-        ?int $units = null,
-        ?int $term = null,
+        ?float $units = null,
+        ?float $term = null,
         ?string $barcodes = null,
         ?string $consist = null,
         ?float $calorie = null,
