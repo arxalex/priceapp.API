@@ -2,22 +2,13 @@
 
 namespace framework\entities\prices;
 
-use framework\database\Request;
-use framework\entities\prices\Price;
-use framework\database\SqlHelper;
+use framework\entities\default_entities\DefaultEntitiesService;
 
-class PricesService
+class PricesService extends DefaultEntitiesService
 {
     public function __construct()
     {
-    }
-    public function getPriceFromDB(int $id) {
-        $query = "select top 1 * from pa_prices where id = $id";
-        $response = (new Request($query))->fetchObject("Price");
-    }
-    public function insertPriceToDB(Price $price){
-        $query = "insert into pa_prices
-        values " . SqlHelper::insertObjects([$price]);
-        $response = (new Request($query))->execute();
+        $this->className = self::ENTITIES_NAMESPACE . "prices\\Price";
+        $this->tableName = "pa_prices";
     }
 }

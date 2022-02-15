@@ -2,7 +2,9 @@
 
 namespace framework\entities\countries;
 
-class Country
+use framework\entities\default_entities\DefaultEntity;
+
+class Country extends DefaultEntity
 {
     public ?int $id;
     public ?string $label;

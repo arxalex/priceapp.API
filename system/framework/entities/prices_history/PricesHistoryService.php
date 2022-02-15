@@ -2,22 +2,13 @@
 
 namespace framework\entities\prices_history;
 
-use framework\database\Request;
-use framework\entities\prices_history\PriceHistory;
-use framework\database\SqlHelper;
+use framework\entities\default_entities\DefaultEntitiesService;
 
-class PricesHistoryService
+class PricesHistoryService extends DefaultEntitiesService
 {
     public function __construct()
     {
-    }
-    public function getPriceHistoryFromDB(int $id) {
-        $query = "select top 1 * from pa_prices_history where id = $id";
-        $response = (new Request($query))->fetchObject("PriceHistory");
-    }
-    public function insertPriceHistoryToDB(PriceHistory $priceHistory){
-        $query = "insert into pa_prices_history
-        values " . SqlHelper::insertObjects([$priceHistory]);
-        $response = (new Request($query))->execute();
+        $this->className = self::ENTITIES_NAMESPACE . "prices_history\\PricesHistory";
+        $this->tableName = "pa_prices_history";
     }
 }

@@ -5,14 +5,18 @@ namespace endpoint\items;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
+use framework\shops\silpo\SilpoItemModel;
+use framework\shops\silpo\SilpoItemsGetter;
 
 class GetItem extends BaseEndpointBuilder
 {
-    private ItemsService $_itemsService;
+    private readonly ItemsService $_itemsService;
+    private readonly SilpoItemsGetter $_silpoItemsGetter;
     public function __construct()
     {
         parent::__construct();
         $this->_itemsService = new ItemsService();
+        $this->_silpoItemsGetter = new SilpoItemsGetter();
     }
     public function defaultParams()
     {
@@ -21,8 +25,7 @@ class GetItem extends BaseEndpointBuilder
             'method' => 'byId',
             'source' => 0,
             'name' => null,
-            'category' => null,
-            'name' => null
+            'category' => null
         ];
     }
     public function build()
@@ -41,7 +44,12 @@ class GetItem extends BaseEndpointBuilder
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             }
         } elseif($this->getParam('source') === 1){
-            
+            $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'));
+            $items = [];
+            foreach($silpoItemsModels as $silpoItemModel){
+                $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);
+            }
+            return $items;
         }
     }
 }

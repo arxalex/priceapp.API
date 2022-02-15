@@ -11,7 +11,4 @@ class ShopsService extends DefaultEntitiesService
         $this->className = self::ENTITIES_NAMESPACE . "shops\\Shop";
         $this->tableName = "pa_shops";
     }
-    public function getItemFromShop(int $shopId){
-        
-    }
 }

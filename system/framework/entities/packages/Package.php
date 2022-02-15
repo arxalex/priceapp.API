@@ -2,7 +2,9 @@
 
 namespace framework\entities\packages;
 
-class Package
+use framework\entities\default_entities\DefaultEntity;
+
+class Package extends DefaultEntity
 {
     public ?int $id;
     public ?string $label;

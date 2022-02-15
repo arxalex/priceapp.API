@@ -5,19 +5,23 @@ namespace framework\entities\packages;
 use framework\database\Request;
 use framework\entities\packages\Package;
 use framework\database\SqlHelper;
+use framework\entities\default_entities\DefaultEntitiesService;
+use framework\database\StringHelper;
 
-class PackagesService
+class PackagesService extends DefaultEntitiesService
 {
     public function __construct()
+    {        
+        $this->className = self::ENTITIES_NAMESPACE . "packages\\Package";
+        $this->tableName = "pa_package";
+    }
+    public function getPackage(string $str) : Package
     {
-    }
-    public function getPackageFromDB(int $id) {
-        $query = "select top 1 * from pa_package where id = $id";
-        $response = (new Request($query))->fetchObject("Package");
-    }
-    public function insertPackageToDB(Package $package){
-        $query = "insert into pa_package
-        values " . SqlHelper::insertObjects([$package]);
-        $response = (new Request($query))->execute();
+        $strArr = StringHelper::nameToKeywords($str);
+        $packages = $this->getItemsFromDB([
+            'label_like' => $strArr
+        ]);
+        $rate = StringHelper::rateItemsByKeywords($str, array_column($packages, 'label'));
+        return ($this->orderItemsByRate($packages, $rate, 1))[0];
     }
 }

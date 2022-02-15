@@ -2,7 +2,7 @@
 
 namespace framework\shops\silpo;
 
-class ItemModel{
+class SilpoItemModel{
     public ?int $inshopid;
     public ?string $label;
     public ?string $image;

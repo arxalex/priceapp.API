@@ -33,6 +33,7 @@ $namespaces = [
     //'framework\shops',
     'framework\shops\atb',
     'framework\shops\silpo',
+    'framework\shops\common',
     //'render',
     'render\admin',
     'render\defaultBuild',

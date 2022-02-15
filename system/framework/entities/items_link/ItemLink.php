@@ -2,7 +2,9 @@
 
 namespace framework\entities\items_link;
 
-class ItemLink
+use framework\entities\default_entities\DefaultEntity;
+
+class ItemLink extends DefaultEntity
 {
     public ?int $id;
     public ?int $itemid;

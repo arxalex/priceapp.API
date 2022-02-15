@@ -14,7 +14,7 @@ class CategoriesService extends DefaultEntitiesService
         $this->tableName = "pa_categories";
     }
 
-    public function containsCategory(string $str, ?Category $base = null) : Category
+    public function getCategoryByName(string $str, ?Category $base = null) : Category
     {
         $str = mb_strtolower($str, 'UTF-8');
         $categories = $this->getItemsFromDB();
@@ -25,12 +25,7 @@ class CategoriesService extends DefaultEntitiesService
         foreach ($categories as $category) {
             $label = mb_strtolower($category->label);
             if (StringHelper::stringContains($str, substr($label, 0, -1)) === true) {
-                $result[] = new Category(
-                    $category->id,
-                    $label,
-                    $category->parent,
-                    $category->isFilter
-                );
+                $result[] = $category;
             }
         }
 

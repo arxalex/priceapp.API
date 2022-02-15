@@ -2,7 +2,9 @@
 
 namespace framework\entities\brands;
 
-class Brand
+use framework\entities\default_entities\DefaultEntity;
+
+class Brand extends DefaultEntity
 {
     public ?int $id;
     public ?string $label;

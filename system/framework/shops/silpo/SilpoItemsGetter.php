@@ -3,23 +3,29 @@
 namespace framework\shops\silpo;
 
 use framework\database\SqlHelper;
+use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
 use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\categories\Category;
 use framework\entities\categories_link\CategoryLink;
+use framework\entities\packages\PackagesService;
 use PDO;
-use framework\shops\silpo\ItemModel;
+use framework\shops\silpo\SilpoItemModel;
 
-class ItemsGetter
+class SilpoItemsGetter
 {
-    private CategoriesLinkService $_categoriesLinkService;
-    private CategoriesService $_categoriesService;
+    private readonly CategoriesLinkService $_categoriesLinkService;
+    private readonly CategoriesService $_categoriesService;
+    private readonly PackagesService $_packageService;
+    private readonly BrandsService $_brandService;
 
     public function __construct()
     {
         $this->_categoriesLinkService = new CategoriesLinkService();
         $this->_categoriesService = new CategoriesService();
+        $this->_packageService = new PackagesService();
+        $this->_brandService = new BrandsService();
     }
     public function get(int $categotyId, int $fillialId = 2043): array
     {
@@ -44,7 +50,7 @@ class ItemsGetter
         $result = json_decode(file_get_contents($url, false, $context));
         $items = [];
         foreach ($result->items as $value) {
-            $items[] = new ItemModel(
+            $items[] = new SilpoItemModel(
                 $value->id,
                 $value->name,
                 $value->mainImage,
@@ -100,5 +106,33 @@ class ItemsGetter
             }
         }
         return $tm;
+    }
+    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem) : Item
+    {
+        $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $silpoItem->shopcategoryid);
+        $brand = $this->_brandService->getBrand($silpoItem->brand);
+        $package = $this->_packageService->getPackage($silpoItem->label);
+        $commonItem = new Item(
+            null,
+            $silpoItem->label,
+            $silpoItem->image,
+            $category->id,
+            $brand->id,
+            $package->id,
+            $silpoItem->units,
+            null,
+            null,
+            null,
+            $silpoItem->calorie,
+            $silpoItem->carbohydrates,
+            $silpoItem->fat,
+            $silpoItem->proteins,
+            [
+                'country' => $silpoItem->country,
+                'alcohol' => $silpoItem->alcohol
+            ]
+        );
+        
+        return $commonItem;
     }
 }
