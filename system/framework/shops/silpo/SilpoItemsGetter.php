@@ -26,7 +26,7 @@ class SilpoItemsGetter
     public function get(int $categotyId, int $fillialId = 2043): array
     {
         $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
-        $data = json_encode([
+        $data = [
             'data' => [
                 'From' => 0,
                 'To' => 10000,
@@ -34,14 +34,14 @@ class SilpoItemsGetter
                 'filialId' => $fillialId,
             ],
             'method' => 'GetSimpleCatalogItems'
-        ]);
+        ];
 
-        $options = array(
-            'http' => array(
+        $options = [
+            'http' => [
                 'method'  => 'POST',
-                'content' => $data
-            )
-        );
+                'content' => http_build_query($data)
+            ]
+        ];
         $context  = stream_context_create($options);
         $result = json_decode(file_get_contents($url, false, $context));
 
