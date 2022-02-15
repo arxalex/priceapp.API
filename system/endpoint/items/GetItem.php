@@ -5,7 +5,6 @@ namespace endpoint\items;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
-use framework\shops\silpo\SilpoItemModel;
 use framework\shops\silpo\SilpoItemsGetter;
 
 class GetItem extends BaseEndpointBuilder

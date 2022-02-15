@@ -1,0 +1,1 @@
+[15-Feb-2022 20:23:15 UTC] PHP Parse error:  syntax error, unexpected 'ItemsService' (T_STRING), expecting variable (T_VARIABLE) in /home2/arxalexc/priceapp.arxalex.co/system/endpoint/items/GetItem.php on line 13
