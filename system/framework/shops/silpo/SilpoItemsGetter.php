@@ -55,10 +55,10 @@ class SilpoItemsGetter
             if ($this->getShopItemParam($value, 'isWeighted') == "") {
                 $package = "на вагу";
             }
-            if (substr($value->units, -2) == "кг") {
-                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2));
-            } elseif (substr($value->units, -1) == "г") {
-                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -1)) / 1000;
+            if (substr($value->unit, -2) == "кг") {
+                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2), true);
+            } elseif (substr($value->unit, -1) == "г") {
+                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -1), true) / 1000;
             } elseif (substr($value->unit, -5) == "шт/уп") {
                 $package = "упаковка";
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -5), true);
