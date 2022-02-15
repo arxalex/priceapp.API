@@ -2,23 +2,19 @@
 
 namespace framework\shops\silpo;
 
-use framework\database\SqlHelper;
 use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
 use framework\entities\categories_link\CategoriesLinkService;
-use framework\entities\categories\Category;
-use framework\entities\categories_link\CategoryLink;
 use framework\entities\packages\PackagesService;
 use PDO;
 use framework\shops\silpo\SilpoItemModel;
 
 class SilpoItemsGetter
 {
-    private readonly CategoriesLinkService $_categoriesLinkService;
-    private readonly CategoriesService $_categoriesService;
-    private readonly PackagesService $_packageService;
-    private readonly BrandsService $_brandService;
+    private CategoriesService $_categoriesService;
+    private PackagesService $_packageService;
+    private BrandsService $_brandService;
 
     public function __construct()
     {
