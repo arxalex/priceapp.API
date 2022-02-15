@@ -43,8 +43,12 @@ class GetItem extends BaseEndpointBuilder
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             }
         } elseif($this->getParam('source') === 1){
-            return $this->_silpoItemsGetter->get($this->getParam('category'));
-            
+            $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'));
+            $items = [];
+            foreach($silpoItemsModels as $silpoItemModel){
+                $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);
+            }
+            return $items;
         }
     }
 }
