@@ -55,6 +55,7 @@ class SilpoItemsGetter
             if ($this->getShopItemParam($value, 'isWeighted') == "") {
                 $package = "на вагу";
             }
+            error_log($value->unit);
             if (substr($value->unit, -2) == "кг") {
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2), true);
             } elseif (substr($value->unit, -1) == "г") {
