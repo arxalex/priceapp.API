@@ -2,6 +2,7 @@
 
 namespace framework\shops\silpo;
 
+use framework\database\NumericHelper;
 use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
@@ -47,21 +48,33 @@ class SilpoItemsGetter
         $result = json_decode(file_get_contents($url, false, $context));
 
         $items = [];
-        error_log(str_replace(",", ".", $this->getShopItemParam(($result->items)[0], 'alcoholContent')));
         foreach ($result->items as $value) {
+            $package = $this->getShopItemParam($value, 'packageType');
+            $units = NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'numberOfUnits'), true);
+            if ($this->getShopItemParam($value, 'isWeighted') == "") {
+                $package = "на вагу";
+            }
+            if (substr($value->units, -2) == "кг") {
+                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2));
+            } elseif (substr($value->units, -1) == "г") {
+                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -1)) / 1000;
+            } elseif (substr($value->unit, -5) == "шт/уп") {
+                $package = "упаковка";
+                $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -5), true);
+            }
             $items[] = new SilpoItemModel(
                 $value->id,
                 $value->name,
                 $value->mainImage,
                 (($value->categories)[count($value->categories) - 1])->id,
                 $this->getShopItemParam($value, 'trademark'),
-                $this->getShopItemParam($value, 'packageType'),
-                str_replace(",", ".", $this->getShopItemParam($value, 'alcoholContent')),
-                str_replace(",", ".", $this->getShopItemParam($value, 'numberOfUnits')),
-                str_replace(",", ".", $this->getShopItemParam($value, 'calorie')),
-                str_replace(",", ".", $this->getShopItemParam($value, 'carbohydrates')),
-                str_replace(",", ".", $this->getShopItemParam($value, 'fats')),
-                str_replace(",", ".", $this->getShopItemParam($value, 'proteins')),
+                $package,
+                NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'alcoholContent'), true),
+                $units,
+                NumericHelper::toFloatOrNull($this->calorieConverter($this->getShopItemParam($value, 'calorie')), true),
+                NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'carbohydrates'), true),
+                NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'fats'), true),
+                NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'proteins'), true),
                 $this->getShopItemParam($value, 'country')
             );
         }
@@ -106,7 +119,7 @@ class SilpoItemsGetter
         }
         return $tm;
     }
-    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem) : Item
+    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem): Item
     {
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $silpoItem->shopcategoryid);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
@@ -131,7 +144,11 @@ class SilpoItemsGetter
                 'alcohol' => $silpoItem->alcohol
             ]
         );
-        
+
         return $commonItem;
+    }
+    private function calorieConverter(string $cal)
+    {
+        return str_replace(",", ".", explode("/", $cal, 2)[0]);;
     }
 }
