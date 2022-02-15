@@ -44,6 +44,9 @@ class SilpoItemsGetter
         );
         $context  = stream_context_create($options);
         $result = json_decode(file_get_contents($url, false, $context));
+
+        return $result;
+        /*
         $items = [];
         foreach ($result->items as $value) {
             $items[] = new SilpoItemModel(
@@ -62,7 +65,7 @@ class SilpoItemsGetter
                 $this->getShopItemParam($value, 'country')
             );
         }
-        return $items;
+        return $items;*/
     }
     private function getShopItemParam($item, string $param, bool $falseOrNull = false)
     {
