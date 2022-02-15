@@ -124,7 +124,7 @@ class SilpoItemsGetter
     {
         $baseCategory = $this->_categoriesService->getItemFromDB($this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
-        ])[0]);
+        ])[0]->categoryid);
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
         $package = $this->_packageService->getPackage($silpoItem->label);
