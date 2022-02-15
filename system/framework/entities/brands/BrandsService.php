@@ -12,8 +12,12 @@ class BrandsService extends DefaultEntitiesService
         $this->className = self::ENTITIES_NAMESPACE . "brands\\Brand";
         $this->tableName = "pa_brand";
     }
-    public function getBrand(string $label) : Brand
+    public function getBrand(?string $label) : Brand
     {
+        if($label == null)
+        {
+            return $this->getItemFromDB(0);
+        }
         $labelArr = StringHelper::nameToKeywords($label);
         $brands = $this->getItemsFromDB([
             'label_like' => $labelArr

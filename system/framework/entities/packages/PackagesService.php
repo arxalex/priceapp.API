@@ -15,8 +15,12 @@ class PackagesService extends DefaultEntitiesService
         $this->className = self::ENTITIES_NAMESPACE . "packages\\Package";
         $this->tableName = "pa_package";
     }
-    public function getPackage(string $str) : Package
+    public function getPackage(?string $str) : Package
     {
+        if($str == null)
+        {
+            return $this->getItemFromDB(0);
+        }
         $strArr = StringHelper::nameToKeywords($str);
         $packages = $this->getItemsFromDB([
             'label_like' => $strArr
