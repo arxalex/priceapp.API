@@ -53,7 +53,7 @@ class Item extends DefaultEntity
         $this->carbohydrates = $carbohydrates;
         $this->fat = $fat;
         $this->proteins = $proteins;
-        $this->additional = json_decode($additional);
+        $this->additional = is_string($additional) ? json_decode($additional) : (is_array($additional) ? $additional : null);
     }
     
 }
