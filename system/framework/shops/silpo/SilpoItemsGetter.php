@@ -122,10 +122,10 @@ class SilpoItemsGetter
     }
     public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem): Item
     {
-        $baseCategory = $this->_categoriesLinkService->getItemsFromDB([
+        $baseCategory = $this->_categoriesService->getItemFromDB($this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
-        ]);
-        $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory[0]);
+        ])[0]);
+        $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
         $package = $this->_packageService->getPackage($silpoItem->label);
         $commonItem = new Item(
