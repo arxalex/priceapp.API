@@ -5,13 +5,12 @@ namespace endpoint\items;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
-use framework\shops\silpo\SilpoItemModel;
 use framework\shops\silpo\SilpoItemsGetter;
 
 class GetItem extends BaseEndpointBuilder
 {
-    private readonly ItemsService $_itemsService;
-    private readonly SilpoItemsGetter $_silpoItemsGetter;
+    private ItemsService $_itemsService;
+    private SilpoItemsGetter $_silpoItemsGetter;
     public function __construct()
     {
         parent::__construct();
