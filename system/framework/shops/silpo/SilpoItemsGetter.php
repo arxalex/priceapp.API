@@ -56,6 +56,14 @@ class SilpoItemsGetter
                 $package = "на вагу";
             }
             error_log($value->unit);
+            error_log(substr($value->unit, -2));
+            error_log(substr($value->unit, -1));
+            error_log(substr($value->unit, -5));
+            error_log(substr($value->unit, -2) == "кг");
+            error_log(substr($value->unit, -1) == "г");
+            error_log(substr($value->unit, -5) == "шт/уп");
+            
+            
             if (substr($value->unit, -2) == "кг") {
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2), true);
                 error_log($units + " kgram");
