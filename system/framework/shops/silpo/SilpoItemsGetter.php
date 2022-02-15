@@ -147,8 +147,8 @@ class SilpoItemsGetter
 
         return $commonItem;
     }
-    private function calorieConverter(string $cal)
+    private function calorieConverter(?string $cal)
     {
-        return str_replace(",", ".", explode("/", $cal, 2)[0]);;
+        return $cal != null ? str_replace(",", ".", explode("/", $cal, 2)[0]) : null;
     }
 }
