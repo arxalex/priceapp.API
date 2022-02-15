@@ -23,6 +23,6 @@ class BrandsService extends DefaultEntitiesService
             'label_like' => $labelArr
         ]);
         $rates = StringHelper::rateItemsByKeywords($label, array_column($brands, 'label'));
-        return ($this->orderItemsByRate($brands, $rates, 1))[0];
+        return count($this->orderItemsByRate($brands, $rates, 1)) > 0 ? ($this->orderItemsByRate($brands, $rates, 1))[0] : $this->getItemFromDB(0);
     }
 }
