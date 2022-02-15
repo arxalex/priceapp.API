@@ -47,6 +47,7 @@ class SilpoItemsGetter
         $result = json_decode(file_get_contents($url, false, $context));
 
         $items = [];
+        error_log(str_replace(",", ".", $this->getShopItemParam(($result->items)[0], 'alcoholContent')));
         foreach ($result->items as $value) {
             $items[] = new SilpoItemModel(
                 $value->id,
