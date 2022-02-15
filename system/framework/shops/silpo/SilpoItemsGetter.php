@@ -54,25 +54,14 @@ class SilpoItemsGetter
             $units = NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'numberOfUnits'), true);
             if ($this->getShopItemParam($value, 'isWeighted') == "") {
                 $package = "на вагу";
-            }
-            error_log($value->unit);
-
-            error_log(substr($value->unit, -9));
-            error_log((string) (substr($value->unit, -4) == "кг"));
-            error_log((string) (substr($value->unit, -2) == "г"));
-            error_log((string) (substr($value->unit, -9) == "шт/уп"));
-            
-            
+            }            
             if (substr($value->unit, -4) == "кг") {
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -4), true);
-                error_log($units + " kgram");
             } elseif (substr($value->unit, -2) == "г") {
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2), true) / 1000;
-                error_log($units + " gram");
             } elseif (substr($value->unit, -9) == "шт/уп") {
                 $package = "упаковка";
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -9), true);
-                error_log($units + " sht");
             }
             $items[] = new SilpoItemModel(
                 $value->id,
