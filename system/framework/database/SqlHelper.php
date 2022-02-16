@@ -94,16 +94,16 @@ class SqlHelper
     public static function whereCreate(array $where){
         $query = "";
         foreach($where as $key => $value){
-            echo $key;
+            echo mb_substr($key, -5, 0, "UTF-8");
             if(is_numeric($value[0])){
                 $query .= "$key in ";
                 $query .= self::arrayInNumeric($value);
                 $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5, 0) == "_like"){
-                $key = substr($key, 0, -5);
+            } elseif (is_string($value[0]) && mb_substr($key, -5, 0, "UTF-8") == "_like"){
+                $key = mb_substr($key, 0, -5, "UTF-8");
                 $query .= self::arrayLikeString($key, $value);
                 $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5, 0) != "_like"){
+            } elseif (is_string($value[0]) && mb_substr($key, -5, 0, "UTF-8") != "_like"){
                 $query .= "$key in ";
                 $query .= self::arrayInString($value);
                 $query .= " AND ";
