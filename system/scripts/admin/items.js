@@ -78,6 +78,7 @@ Vue.component('Items', {
             var shop = this.selectedShopId;
             var url = "";
             var data = {};
+            console.log(shop);
             switch (shop) {
                 case 1:
                     url = "be/items/get_item";
