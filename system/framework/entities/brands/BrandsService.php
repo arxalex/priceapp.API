@@ -22,6 +22,7 @@ class BrandsService extends DefaultEntitiesService
         $brands = $this->getItemsFromDB([
             'label_like' => $labelArr
         ]);
+        echo json_encode($brands);
         $rates = StringHelper::rateItemsByKeywords($label, array_column($brands, 'label'));
         return count($this->orderItemsByRate($brands, $rates, 1)) > 0 ? ($this->orderItemsByRate($brands, $rates, 1))[0] : $this->getItemFromDB(0);
     }
