@@ -94,6 +94,7 @@ class SqlHelper
     public static function whereCreate(array $where){
         $query = "";
         foreach($where as $key => $value){
+            echo substr($key, -5, 0);
             if(is_numeric($value[0])){
                 $query .= "$key in ";
                 $query .= self::arrayInNumeric($value);
