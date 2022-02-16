@@ -127,7 +127,9 @@ class SilpoItemsGetter
         ])[0]->categoryid);
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
-        $package = $this->_packageService->getPackage($silpoItem->label);
+        $package = $this->_packageService->getPackage($silpoItem->package);
+        echo json_encode($this->_brandService->getItemsFromDB());
+        echo json_encode($this->_packageService->getItemsFromDB());
         $commonItem = new Item(
             null,
             $silpoItem->label,

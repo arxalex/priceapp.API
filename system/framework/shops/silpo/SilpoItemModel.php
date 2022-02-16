@@ -8,7 +8,7 @@ class SilpoItemModel{
     public ?string $image;
     public ?int $shopcategoryid;
     public ?string $brand;
-    public ?string $packege;
+    public ?string $package;
     public ?float $alcohol;
     public ?float $units;
     public ?float $calorie;
@@ -23,7 +23,7 @@ class SilpoItemModel{
         ?string $image = null,
         ?int $shopcategoryid = null,
         ?string $brand = null,
-        ?string $packege = null,
+        ?string $package = null,
         ?float $alcohol = null,
         ?float $units = null,
         ?float $calorie = null,
@@ -37,7 +37,7 @@ class SilpoItemModel{
         $this->image = $image;
         $this->shopcategoryid = $shopcategoryid;
         $this->brand = $brand;
-        $this->packege = $packege;
+        $this->package = $package;
         $this->alcohol = $alcohol;
         $this->units = $units;
         $this->calorie = $calorie;
