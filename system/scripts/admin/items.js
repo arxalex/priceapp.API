@@ -80,9 +80,10 @@ Vue.component('Items', {
             var data = {};
             switch (shop) {
                 case 1:
-                    url = "../get_items.php";
+                    url = "be/items/get_item";
                     data = {
-                        shop: 1,
+                        source: 1,
+                        category: 425
                     };
                     break;
                 case 2:
