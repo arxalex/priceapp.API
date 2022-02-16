@@ -18,6 +18,7 @@ class BrandsService extends DefaultEntitiesService
         {
             return $this->getItemFromDB(0);
         }
+        echo json_encode($label);
         $labelArr = StringHelper::nameToKeywords($label);
         $brands = $this->getItemsFromDB([
             'label_like' => $labelArr
