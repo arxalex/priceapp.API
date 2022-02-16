@@ -33,8 +33,6 @@ class DefaultEntitiesService
         } else {
             $query = "select * from `$table`";
         }
-        if($table == "pa_brand")
-        echo $query;
         $connection = new Request($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
