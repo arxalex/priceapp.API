@@ -96,6 +96,7 @@ class BaseEndpointBuilder
         $this->addParams($customParams);
         $this->addParams($externalParamsToAdd);
         
+        header('Content-Type: application/json');
         echo json_encode($this->build());
     }
 }
