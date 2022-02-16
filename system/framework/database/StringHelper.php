@@ -35,8 +35,8 @@ class StringHelper
             $itemStrArr = self::nameToKeywords(self::stringCleaner($item));
             $tempRate = 0;
             $tempRate += $item == $label ? count($labelArr) * 8 : 0;
-            $tempRate += str_contains($item, $label) ? count($labelArr) * 4 : 0;
-            $tempRate += str_contains($label, $item) ? count($itemStrArr) * 4 : 0;
+            $tempRate += self::stringContains($item, $label) ? count($labelArr) * 4 : 0;
+            $tempRate += self::stringContains($label, $item) ? count($itemStrArr) * 4 : 0;
             $i = 0;
             $maxI = count($labelArr);
             foreach ($itemStrArr as $itemStr) {
