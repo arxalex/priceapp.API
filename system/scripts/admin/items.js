@@ -78,22 +78,21 @@ Vue.component('Items', {
             var shop = this.selectedShopId;
             var url = "";
             var data = {};
-            console.log(shop);
             switch (shop) {
-                case 1:
+                case "1":
                     url = "be/items/get_item";
                     data = {
                         source: 1,
                         category: 425
                     };
                     break;
-                case 2:
+                case "2":
                     url = "../get_items.php";
                     data = {
                         shop: 2,
                     };
                     break;
-                case 3:
+                case "3":
                     url = "../get_items.php";
                     data = {
                         shop: 3,
