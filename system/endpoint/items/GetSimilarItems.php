@@ -23,7 +23,7 @@ class GetSimilarItems extends BaseEndpointBuilder
     }
     public function build()
     {
-        $labels = $this->getParam('labels');
+        $labels = $this->getParam('itemLabels');
         
         if(count($labels) < 1){
             return [];
