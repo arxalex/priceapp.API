@@ -73,7 +73,7 @@ Vue.component('Items', {
             var category = this.selectedCategoryId;
 
             var data = {
-                source: shop.id,
+                source: shop,
                 category: category
             };
 
