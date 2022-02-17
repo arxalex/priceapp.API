@@ -88,7 +88,8 @@ Vue.component('Items', {
                     categoryId: element.category,
                     brandId: element.brand,
                     packageId: element.package,
-                    consistIds: element.consist
+                    consistIds: element.consist,
+                    countryId: element.additional.country
                 });
             });
             var labels = await this.getItemsFromDb(labelsUrl, {
@@ -104,7 +105,8 @@ Vue.component('Items', {
                         categoryId: element.category,
                         brandId: element.brand,
                         packageId: element.package,
-                        consistIds: element.consist
+                        consistIds: element.consist,
+                        countryId: element.additional.country
                     });
                 });
                 var similarLabel = await this.getItemsFromDb(labelsUrl, {

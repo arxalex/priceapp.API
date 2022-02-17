@@ -13,7 +13,7 @@ Vue.component('item', {
                     Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
                     Consist: <span v-for="consistId in item.consist">{{ consistId }}, </span> - <span v-for="consistLabel in labels.consistLabels">{{ consistLabel }}, </span><br>
                     Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
-                    Country: {{ item.additional.country }} <br>
+                    Country: {{ item.additional.country }} - {{ labels.countryLabel }} <br>
                 </div>
             </div>
             <div class="col-sm-6 row">
@@ -28,7 +28,7 @@ Vue.component('item', {
                     Barcodes: <span v-for="barcode in currentSimilarItem.barcodes">{{ barcode }}, </span><br>
                     Consist: <span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span> - <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span><br>
                     Calorie: {{ currentSimilarItem.calorie }}, carbohydrates: {{ currentSimilarItem.carbohydrates }}, fat: {{ currentSimilarItem.fat }}, proteins: {{ currentSimilarItem.proteins }}<br>
-                    Country: {{ currentSimilarItem.additional.country }} <br>
+                    Country: {{ currentSimilarItem.additional.country }} - {{ currentSimilarLabels.countryLabel }}<br>
                 </div>
                 <div class="">
                     <select v-model="currentSimilarId">
@@ -65,7 +65,8 @@ Vue.component('item', {
                 categoryLabel: "",
                 brandLabel: "",
                 packageLabel: "",
-                consistLabels: []
+                consistLabels: [],
+                countryLabel: ""
             },
             currentSimilarId: 0,
             similarOptions: []

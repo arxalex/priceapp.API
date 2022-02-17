@@ -130,7 +130,7 @@ class SilpoItemsGetter
             $silpoItem->fat,
             $silpoItem->proteins,
             [
-                'country' => $country,
+                'country' => $country->id,
                 'alcohol' => $silpoItem->alcohol
             ]
         );
