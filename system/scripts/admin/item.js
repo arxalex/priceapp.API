@@ -58,7 +58,7 @@ Vue.component('item', {
                 consist: [],
                 term: 0,
                 units: 0,
-                aditional: [],
+                additional: [],
                 image: ""
             },
             currentSimilarLabels: {
