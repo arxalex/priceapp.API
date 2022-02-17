@@ -113,12 +113,14 @@ Vue.component('Items', {
                 similarLabels.push(similarLabel);
             }
 
-            this.itemModels = {
-                items: items,
-                similarItems: similarItems,
-                labels: labels,
-                similarLabels: similarLabels
-            };
+            for(var i = 0; i < items.Length; i++){
+                this.itemModels.push({
+                    item: items[i],
+                    similarItems: similarItems[i],
+                    labels: labels[i],
+                    similarLabels: similarLabels[i]
+                })
+            }
             console.log(this.itemModels);
         },
         getItemsFromDb: function (url, data) {
