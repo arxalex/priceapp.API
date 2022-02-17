@@ -32,7 +32,7 @@ class Request
     }
     public function fetchAll($method = PDO::FETCH_CLASS, ?string $class = "stdClass"){
         if($method == PDO::FETCH_CLASS){
-            $response = $this->statement->fetchAll();
+            $response = $this->statement->fetchAll(PDO::FETCH_ASSOC);
             $result = [];
             foreach($response as $valueR){
                 $preResult = new $class();

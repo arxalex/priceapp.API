@@ -25,7 +25,6 @@ class ItemsService extends DefaultEntitiesService
                 'label_like' => $labelArr
             ]);
         }
-        echo var_dump($items);
         $rates = StringHelper::rateItemsByKeywords($label, array_column($items, 'label'));
         return $this->orderItemsByRate($items, $rates, 5);
     }
