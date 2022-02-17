@@ -11,7 +11,7 @@ class Item extends DefaultEntity
     public ?string $image;
     public ?int $category;
     public ?int $brand;
-    public ?int $packege;
+    public ?int $package;
     public ?float $units;
     public ?float $term;
     public ?array $barcodes;
@@ -28,7 +28,7 @@ class Item extends DefaultEntity
         ?string $image = null,
         ?int $category = null,
         ?int $brand = null,
-        ?int $packege = null,
+        ?int $package = null,
         ?float $units = null,
         ?float $term = null,
         ?string $barcodes = null,
@@ -44,7 +44,7 @@ class Item extends DefaultEntity
         $this->image = $image;
         $this->category = $category;
         $this->brand = $brand;
-        $this->packege = $packege;
+        $this->package = $package;
         $this->units = $units;
         $this->term = $term;
         $this->barcodes = $this->stringConvert($barcodes);

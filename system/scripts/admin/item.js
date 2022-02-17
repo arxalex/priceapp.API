@@ -18,7 +18,7 @@ Vue.component('item', {
             </div>
             <div class="col-sm-6 row">
                 <div class="col-sm-4">
-                    <img class="w-100" :src="item.image">
+                    <img class="w-100" :src="currentSimilarItem.image">
                 </div>
                 <div class="col-sm-8">
                     <h1>{{ currentSimilarItem.label }}</h1>
