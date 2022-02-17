@@ -120,11 +120,7 @@ Vue.component('Items', {
             console.log(this.itemModels);
         },
         getItemsFromDb: function (url, data) {
-            return axios.post(url, data).then((response) => {
-                if (response.status == 200) {
-                    return response.data;
-                }
-            });
+            return await axios.post(url, data);
         },
         save: function () {
 
