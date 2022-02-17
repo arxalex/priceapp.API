@@ -96,6 +96,7 @@ Vue.component('Items', {
             });
 
             var similarLabels = [];
+            
             similarItems.forEach(elements => {
                 var similarLabelRequests = [];
                 elements.forEach(element => {
@@ -106,10 +107,12 @@ Vue.component('Items', {
                         consistIds: element.consist
                     });
                 });
-                var similarLabel = await this.getItemsFromDb(labelsUrl, {
+                this.getItemsFromDb(labelsUrl, {
                     labelIds: similarLabelRequests
+                }).then((response) => {
+                    var similarLabel = response;
+                    similarLabels.push(similarLabel);
                 });
-                similarLabels.push(similarLabel);
             });
 
             this.itemModels = {
