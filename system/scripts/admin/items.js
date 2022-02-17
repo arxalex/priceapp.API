@@ -45,7 +45,7 @@ Vue.component('Items', {
         }
     },
     methods: {
-        get_items: function () {
+        get_items: async function () {
             const similarUrl = "../be/items/get_similar_items";
             const labelsUrl = "../be/items/get_labels";
             var shop = this.selectedShopId;
@@ -72,13 +72,13 @@ Vue.component('Items', {
                     };
                     break;
             }
-            var items = this.getItemsFromDb(url, data);
+            var items = await this.getItemsFromDb(url, data);
 
             var itemLabels = [];
             items.forEach(element => {
                 itemLabels.push(element.label);
             });
-            var similarItems = this.getItemsFromDb(similarUrl, {
+            var similarItems = await this.getItemsFromDb(similarUrl, {
                 itemLabels: itemLabels
             });
 
@@ -91,7 +91,7 @@ Vue.component('Items', {
                     consistIds: element.consist
                 });
             });
-            var labels = this.getItemsFromDb(labelsUrl, {
+            var labels = await this.getItemsFromDb(labelsUrl, {
                 labelIds: labelsRequest
             });
 
@@ -106,7 +106,7 @@ Vue.component('Items', {
                         consistIds: element.consist
                     });
                 });
-                similarLabels.push(this.getItemsFromDb(labelsUrl, {
+                similarLabels.push(await this.getItemsFromDb(labelsUrl, {
                     labelIds: similarLabelRequests
                 }));
             });
