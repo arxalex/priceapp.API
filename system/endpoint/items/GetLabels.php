@@ -41,7 +41,7 @@ class GetLabels extends BaseEndpointBuilder
 
         $response = [];
         foreach ($labelIds as $labelId) {
-            $package = $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId'])->label : null;
+            $package = $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId']) : null;
 
             $response[] = new LabelsResponseViewModel(
                 $labelId['categoryId'] != null ? $this->_categoriesService->getItemFromDB($labelId['categoryId'])->label : null,
