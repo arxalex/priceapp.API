@@ -8,7 +8,7 @@ class SilpoCategoriesModel{
 
     public function __construct(
         ?int $id = null,
-        ?string $label = null,
+        ?string $label = null
     ) {
         $this->id = $id;
         $this->label = $label;
