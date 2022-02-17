@@ -97,7 +97,7 @@ Vue.component('Items', {
 
             var similarLabels = [];
             
-            for(var i = 0; i < similarItems.Length; i++){
+            for(var i = 0; i < similarItems.length; i++){
                 var similarLabelRequests = [];
                 similarItems[i].forEach(element => {
                     similarLabelRequests.push({
@@ -113,13 +113,13 @@ Vue.component('Items', {
                 similarLabels.push(similarLabel);
             }
 
-            for(var i = 0; i < items.Length; i++){
+            for(var i = 0; i < items.length; i++){
                 this.itemModels.push({
                     item: items[i],
                     similarItems: similarItems[i],
                     labels: labels[i],
                     similarLabels: similarLabels[i]
-                })
+                });
             }
             console.log(this.itemModels);
         },
