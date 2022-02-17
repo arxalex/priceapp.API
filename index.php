@@ -21,6 +21,7 @@ $namespaces = [
     'framework\entities\brands',
     'framework\entities\categories',
     'framework\entities\categories_link',
+    'framework\entities\consists',
     'framework\entities\countries',
     'framework\entities\default_entities',
     'framework\entities\items',
