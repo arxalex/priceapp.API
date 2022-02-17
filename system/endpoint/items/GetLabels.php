@@ -38,12 +38,12 @@ class GetLabels extends BaseEndpointBuilder
         $response = [];
         foreach ($labelIds as $labelId) {
             $response[] = new LabelsResponseViewModel(
-                $this->_categoriesService->getItemFromDB($labelId->categoryId)->label,
-                $this->_brandService->getItemFromDB($labelId->brandId)->label,
-                $this->_packageService->getItemFromDB($labelId->packageId)->label,
-                $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
+                $labelId->categoryId != null ? $this->_categoriesService->getItemFromDB($labelId->categoryId)->label : null,
+                $labelId->brandId != null ? $this->_brandService->getItemFromDB($labelId->brandId)->label : null,
+                $labelId->packageId != null ? $this->_packageService->getItemFromDB($labelId->packageId)->label : null,
+                count($labelId->consistIds) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
                     "id" => $labelId->consistIds
-                ]), "label")
+                ]), "label") : []
             );
         }
         return $response;
