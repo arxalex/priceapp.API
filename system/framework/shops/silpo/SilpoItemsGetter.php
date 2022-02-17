@@ -7,6 +7,7 @@ use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
 use framework\entities\categories_link\CategoriesLinkService;
+use framework\entities\countries\CountriesService;
 use framework\entities\packages\PackagesService;
 use PDO;
 use framework\shops\silpo\SilpoItemModel;
@@ -17,6 +18,7 @@ class SilpoItemsGetter
     private CategoriesLinkService $_categoriesLinkService;
     private PackagesService $_packageService;
     private BrandsService $_brandService;
+    private CountriesService $_countriesService;
 
     public function __construct()
     {
@@ -24,6 +26,7 @@ class SilpoItemsGetter
         $this->_categoriesService = new CategoriesService();
         $this->_packageService = new PackagesService();
         $this->_brandService = new BrandsService();
+        $this->_countriesService = new CountriesService();
     }
     public function get(int $categotyId, int $fillialId = 2043): array
     {
@@ -102,24 +105,6 @@ class SilpoItemsGetter
             }
         }
     }
-    private function getAndInsertParamInTable($value, $param, $table_name, $what, $connect)
-    {
-        $tmp = get_param($value, $param);
-        if ($tmp == false) {
-            $tm = 0;
-        } else {
-            $tmq = "SELECT `id` FROM `$table_name` WHERE `$what` = '" . mysql_escape_mimic($tmp) . "'";
-            $statement = $connect->prepare($tmq);
-            $statement->execute();
-            $tm = $statement->fetch(PDO::FETCH_ASSOC)["id"];
-            if ($tm == NULL) {
-                $tmiq = "INSERT INTO `$table_name` (`id`, `$what`) VALUES (DEFAULT, '" . mysql_escape_mimic($tmp) . "')";
-                $connect->prepare($tmiq)->execute();
-                $tm = $connect->lastInsertId();
-            }
-        }
-        return $tm;
-    }
     public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem): Item
     {
         $baseCategory = $this->_categoriesService->getItemFromDB($this->_categoriesLinkService->getItemsFromDB([
@@ -128,6 +113,7 @@ class SilpoItemsGetter
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
         $package = $this->_packageService->getPackage($silpoItem->package);
+        $country = $this->_countriesService->getCountry($silpoItem->country);
         $commonItem = new Item(
             null,
             $silpoItem->label,
@@ -144,7 +130,7 @@ class SilpoItemsGetter
             $silpoItem->fat,
             $silpoItem->proteins,
             [
-                'country' => $silpoItem->country,
+                'country' => $country,
                 'alcohol' => $silpoItem->alcohol
             ]
         );
