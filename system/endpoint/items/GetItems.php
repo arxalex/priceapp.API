@@ -7,7 +7,7 @@ use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
 use framework\shops\silpo\SilpoItemsGetter;
 
-class GetItem extends BaseEndpointBuilder
+class GetItems extends BaseEndpointBuilder
 {
     private ItemsService $_itemsService;
     private SilpoItemsGetter $_silpoItemsGetter;

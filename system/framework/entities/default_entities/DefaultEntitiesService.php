@@ -74,4 +74,12 @@ class DefaultEntitiesService
         }
         return $result;
     }
+    public function getColumn(array $objects, string $key) : array
+    {
+        $result = [];
+        foreach($objects as $object){
+            $result[] = $object->$key;
+        }
+        return $result;
+    }
 }

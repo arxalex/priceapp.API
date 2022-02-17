@@ -28,9 +28,21 @@
                         "className": "",
                         "contants": [
                             {
-                                "routeName": "get_item",
+                                "routeName": "get_items",
                                 "routeType": "default",
-                                "className": "items\\GetItem",
+                                "className": "items\\GetItems",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "get_similar_items",
+                                "routeType": "default",
+                                "className": "items\\GetSimilarItems",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "get_labels",
+                                "routeType": "default",
+                                "className": "items\\GetLabels",
                                 "contants": []
                             }
                         ]
