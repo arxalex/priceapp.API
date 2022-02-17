@@ -36,14 +36,13 @@ class GetLabels extends BaseEndpointBuilder
         }
 
         $response = [];
-        echo var_dump($labelIds);
         foreach ($labelIds as $labelId) {
             $response[] = new LabelsResponseViewModel(
-                $labelId->categoryId != null ? $this->_categoriesService->getItemFromDB($labelId->categoryId)->label : null,
-                $labelId->brandId != null ? $this->_brandService->getItemFromDB($labelId->brandId)->label : null,
-                $labelId->packageId != null ? $this->_packageService->getItemFromDB($labelId->packageId)->label : null,
-                count($labelId->consistIds) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
-                    "id" => $labelId->consistIds
+                $labelId['categoryId'] != null ? $this->_categoriesService->getItemFromDB($labelId['categoryId'])->label : null,
+                $labelId['brandId'] != null ? $this->_brandService->getItemFromDB($labelId['brandId'])->label : null,
+                $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId'])->label : null,
+                count($labelId['consistIds']) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
+                    "id" => $labelId['consistIds']
                 ]), "label") : []
             );
         }
