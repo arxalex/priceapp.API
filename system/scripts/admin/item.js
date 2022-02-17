@@ -110,6 +110,3 @@ Vue.component('item', {
     computed: {
     },
 });
-export function register() {
-
-}
