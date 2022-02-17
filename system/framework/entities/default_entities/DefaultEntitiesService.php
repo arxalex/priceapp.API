@@ -69,7 +69,7 @@ class DefaultEntitiesService
             return $items;
         }
         $result = [];
-        for($i = 0; $i < $max; $i++) {
+        for($i = 0; $i < $max && $items[$i] != null; $i++) {
             $result[] = $items[$i];
         }
         return $result;
