@@ -13,6 +13,7 @@ $namespaces = [
     //'endpoint',
     'endpoint\defaultBuild',
     'endpoint\items',
+    'endpoint\categories',
     //'framework',
     //'framework\core',
     'framework\core\constants',

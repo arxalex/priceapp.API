@@ -31,12 +31,11 @@ Vue.component('item', {
                     Country: {{ currentSimilarItem.additional.country }} - {{ currentSimilarLabels.countryLabel }}<br>
                 </div>
                 <div class="">
-                    <select v-model="currentSimilarId">
-                        <option disabled value="">Chose opinion</option>
+                    <select class="form-select" v-model="currentSimilarId">
+                        <option selected disabled>Chose opinion</option>
                         <option name="item" value="0">New item</option>
                         <option v-for="similarOption in similarOptions" v-bind:value="similarOption.value">{{ similarOption.text }}</option>
                     </select>
-                    <button class="btn btn-primary" @click="change">Change destination</button>
                     <button class="btn btn-primary" @click="insertToDB">Insert</button>
                 </div>
             </div>
@@ -111,4 +110,9 @@ Vue.component('item', {
     },
     computed: {
     },
+    watch: {
+        currentSimilarId: function(value){
+            this.change();
+        }
+    }
 });

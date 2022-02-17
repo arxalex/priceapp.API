@@ -9,7 +9,6 @@ use framework\entities\items\Item;
 use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\countries\CountriesService;
 use framework\entities\packages\PackagesService;
-use PDO;
 use framework\shops\silpo\SilpoItemModel;
 
 class SilpoItemsGetter

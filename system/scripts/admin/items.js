@@ -8,7 +8,15 @@ Vue.component('Items', {
                 </div>
             </p>
             <div class="input-group mb-3">
-            <input class="form-control" v-model="selectedShopId" type="number" placeholder="shop">
+                <span>
+                <select class="form-select" v-model="selectedShopId">
+                    <option selected disabled>Chose shop</option>
+                    <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
+                </select>
+                <select class="form-select" v-model="selectedCategoryId">
+                    <option selected disabled>Chose category</option>
+                    <option v-for="shopCategory in shopCategories" v-bind:value="shopCategory.id">{{ shopCategory.label }}</option>
+                </select>
             </div>
             <div class="input-group mb-3">
                 <button @click="get_items()" class="btn btn-primary mt-2 w-100">Get items</button>
@@ -41,38 +49,35 @@ Vue.component('Items', {
                 }
             },
             selectedShopId: null,
+            selectedCategoryId: null,
             itemModels: [],
+            shopCategories: []
         }
     },
     methods: {
+        get_categories: async function() {
+            const categoriesUrl = "../be/categories/get_categories";
+            var shop = this.selectedShopId;
+            var data = {
+                source: shop
+            }
+            var categories = await this.getItemsFromDb(categoriesUrl, data);
+            this.shopCategories = categories;
+        },
         get_items: async function () {
             const similarUrl = "../be/items/get_similar_items";
             const labelsUrl = "../be/items/get_labels";
+            const getItemUrl = "../be/items/get_items";
+
             var shop = this.selectedShopId;
-            var url = "";
-            var data = {};
-            switch (shop) {
-                case "1":
-                    url = "../be/items/get_items";
-                    data = {
-                        source: 1,
-                        category: 425
-                    };
-                    break;
-                case "2":
-                    url = "../get_items.php";
-                    data = {
-                        shop: 2,
-                    };
-                    break;
-                case "3":
-                    url = "../get_items.php";
-                    data = {
-                        shop: 3,
-                    };
-                    break;
-            }
-            var items = await this.getItemsFromDb(url, data);
+            var category = this.selectedCategoryId;
+
+            var data = {
+                source: shop.id,
+                category: category
+            };
+
+            var items = await this.getItemsFromDb(getItemUrl, data);
 
             var itemLabels = [];
             items.forEach(element => {
@@ -136,5 +141,10 @@ Vue.component('Items', {
 
         }
     },
+    watch: {
+        selectedShopId: function(value) {
+            this.get_categories();
+        }
+    }
 });
 

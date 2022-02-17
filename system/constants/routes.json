@@ -46,6 +46,19 @@
                                 "contants": []
                             }
                         ]
+                    },
+                    {
+                        "routeName": "categories",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_categories",
+                                "routeType": "default",
+                                "className": "categories\\GetCategories",
+                                "contants": []
+                            }
+                        ]
                     }
                 ]
             }
