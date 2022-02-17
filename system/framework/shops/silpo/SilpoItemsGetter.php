@@ -56,7 +56,7 @@ class SilpoItemsGetter
             $units = NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'numberOfUnits'), true);
             if ($this->getShopItemParam($value, 'isWeighted') == "") {
                 $package = "на вагу";
-            }            
+            }
             if (substr($value->unit, -4) == "кг") {
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -4), true);
             } elseif (substr($value->unit, -2) == "г") {
@@ -106,9 +106,11 @@ class SilpoItemsGetter
     }
     public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem): Item
     {
-        $baseCategory = $this->_categoriesService->getItemFromDB($this->_categoriesLinkService->getItemsFromDB([
+        $baseCategoryId = $this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
-        ])[0]->categoryid);
+        ])[0]->categoryid;
+        
+        $baseCategory = $baseCategoryId != null ? $this->_categoriesService->getItemFromDB($baseCategoryId) : null;
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
         $package = $this->_packageService->getPackage($silpoItem->package);
