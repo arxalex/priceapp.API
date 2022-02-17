@@ -36,6 +36,7 @@ class GetLabels extends BaseEndpointBuilder
         }
 
         $response = [];
+        echo var_dump($labelIds);
         foreach ($labelIds as $labelId) {
             $response[] = new LabelsResponseViewModel(
                 $labelId->categoryId != null ? $this->_categoriesService->getItemFromDB($labelId->categoryId)->label : null,
