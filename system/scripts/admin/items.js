@@ -97,9 +97,9 @@ Vue.component('Items', {
 
             var similarLabels = [];
             
-            similarItems.forEach(elements => {
+            for(var i = 0; i < similarItems.Length; i++){
                 var similarLabelRequests = [];
-                elements.forEach(element => {
+                similarItems[i].forEach(element => {
                     similarLabelRequests.push({
                         categoryId: element.category,
                         brandId: element.brand,
@@ -107,13 +107,11 @@ Vue.component('Items', {
                         consistIds: element.consist
                     });
                 });
-                this.getItemsFromDb(labelsUrl, {
+                var similarLabel = await this.getItemsFromDb(labelsUrl, {
                     labelIds: similarLabelRequests
-                }).then((response) => {
-                    var similarLabel = response;
-                    similarLabels.push(similarLabel);
                 });
-            });
+                similarLabels.push(similarLabel);
+            }
 
             this.itemModels = {
                 items: items,
