@@ -4,7 +4,7 @@ namespace framework\shops\silpo;
 
 use framework\shops\silpo\SilpoCategoriesModel;
 
-class SilpoItemsGetter{
+class SilpoCategoriesGetter{
     public function __construct()
     {}
     public function get(int $fillialId = 2043): array

@@ -3,15 +3,15 @@
 namespace endpoint\categories;
 
 use endpoint\defaultBuild\BaseEndpointBuilder;
-use framework\shops\silpo\SilpoItemsGetter;
+use framework\shops\silpo\SilpoCategoriesGetter;
 
 class GetCategories extends BaseEndpointBuilder
 {
-    private SilpoItemsGetter $_silpoItemsGetter;
+    private SilpoCategoriesGetter $_silpoCategoriesGetter;
     public function __construct()
     {
         parent::__construct();
-        $this->_silpoItemsGetter = new SilpoItemsGetter();
+        $this->_silpoCategoriesGetter = new SilpoCategoriesGetter();
     }
     public function defaultParams()
     {
@@ -24,12 +24,7 @@ class GetCategories extends BaseEndpointBuilder
         if ($this->getParam('source') === 0) {
             return [];
         } elseif($this->getParam('source') === 1){
-            $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'));
-            $items = [];
-            foreach($silpoItemsModels as $silpoItemModel){
-                $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);
-            }
-            return $items;
+            return $this->_silpoCategoriesGetter->get();
         }
     }
 }
