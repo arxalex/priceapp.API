@@ -41,14 +41,17 @@ class GetLabels extends BaseEndpointBuilder
 
         $response = [];
         foreach ($labelIds as $labelId) {
+            $package = $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId'])->label : null;
+
             $response[] = new LabelsResponseViewModel(
                 $labelId['categoryId'] != null ? $this->_categoriesService->getItemFromDB($labelId['categoryId'])->label : null,
                 $labelId['brandId'] != null ? $this->_brandService->getItemFromDB($labelId['brandId'])->label : null,
-                $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId'])->label : null,
+                $labelId['packageId'] != null ? $package->label : null,
                 count($labelId['consistIds']) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
                     "id" => $labelId['consistIds']
                 ]), "label") : [],
-                $labelId['countryId'] != null ? $this->_countriesService->getItemFromDB($labelId['countryId'])->label : null
+                $labelId['countryId'] != null ? $this->_countriesService->getItemFromDB($labelId['countryId'])->label : null,
+                $labelId['packageId'] != null ? $package->short : null
             );
         }
         return $response;
@@ -61,18 +64,21 @@ class LabelsResponseViewModel
     public ?string $packageLabel;
     public array $consistLabels;
     public ?string $countryLabel;
+    public ?string $packageShort;
 
     public function __construct(
         ?string $categoryLabel = null,
         ?string $brandLabel = null,
         ?string $packageLabel = null,
         array $consistLabels = [],
-        ?string $countryLabel = null
+        ?string $countryLabel = null,
+        ?string $packageShort = null
     ) {
         $this->categoryLabel = $categoryLabel;
         $this->brandLabel = $brandLabel;
         $this->packageLabel = $packageLabel;
         $this->consistLabels = $consistLabels;
         $this->countryLabel = $countryLabel;
+        $this->packageShort = $packageShort;
     }
 }

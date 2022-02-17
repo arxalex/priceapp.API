@@ -9,7 +9,7 @@ Vue.component('item', {
                     <h1>{{ item.label }}</h1>
                     Category: {{ item.category }} - {{ labels.categoryLabel }}<br>
                     Brand: {{ item.brand }} - {{ labels.brandLabel }}<br>
-                    Package: {{ item.package }} - {{ labels.packageLabel }}, units: {{ item.units }}, term: {{ item.term }}<br>
+                    Package: {{ item.package }} - {{ labels.packageLabel }}, units: {{ item.units }} {{ labels.packageShort }}, term: {{ item.term }}<br>
                     Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
                     Consist: <span v-for="consistId in item.consist">{{ consistId }}, </span> - <span v-for="consistLabel in labels.consistLabels">{{ consistLabel }}, </span><br>
                     Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
@@ -24,7 +24,7 @@ Vue.component('item', {
                     <h1>{{ currentSimilarItem.label }}</h1>
                     Category: {{ currentSimilarItem.category }} - {{ currentSimilarLabels.categoryLabel }}<br>
                     Brand: {{ currentSimilarItem.brand }} - {{ currentSimilarLabels.brandLabel }}<br>
-                    Package: {{ currentSimilarItem.package }} - {{ currentSimilarLabels.packageLabel }}, units: {{ currentSimilarItem.units }}, term: {{ currentSimilarItem.term }}<br>
+                    Package: {{ currentSimilarItem.package }} - {{ currentSimilarLabels.packageLabel }}, units: {{ currentSimilarItem.units }} {{ currentSimilarLabels.packageShort }}, term: {{ currentSimilarItem.term }}<br>
                     Barcodes: <span v-for="barcode in currentSimilarItem.barcodes">{{ barcode }}, </span><br>
                     Consist: <span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span> - <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span><br>
                     Calorie: {{ currentSimilarItem.calorie }}, carbohydrates: {{ currentSimilarItem.carbohydrates }}, fat: {{ currentSimilarItem.fat }}, proteins: {{ currentSimilarItem.proteins }}<br>
@@ -65,6 +65,7 @@ Vue.component('item', {
                 categoryLabel: "",
                 brandLabel: "",
                 packageLabel: "",
+                packageShort: "",
                 consistLabels: [],
                 countryLabel: ""
             },
