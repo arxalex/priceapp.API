@@ -12,7 +12,8 @@ class Items extends BaseRenderBuilder
             'header_title' => 'Items',
             'scripts' => [
                 '<script src="/system/scripts/admin/items.js"></script>',
-                '<script src="/system/scripts/admin/item.js"></script>'
+                '<script src="/system/scripts/admin/item.js"></script>',
+                '<script src="/system/scripts/admin/itemsaver.js"></script>'
             ]
         ];
     }
