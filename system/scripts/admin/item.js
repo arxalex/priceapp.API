@@ -36,8 +36,9 @@ Vue.component('item', {
                         <option name="item" value="0">New item</option>
                         <option v-for="similarOption in similarOptions" v-bind:value="similarOption.value">{{ similarOption.text }}</option>
                     </select>
-                    <button class="btn btn-primary" @click="insertToDB">Insert</button>
+                    <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
+                <itemsaver v-on:insert="saveDisabled = false" :disabled="saveDisabled"></itemsaver>
             </div>
         </div>
     `,
@@ -69,7 +70,8 @@ Vue.component('item', {
                 countryLabel: ""
             },
             currentSimilarId: 0,
-            similarOptions: []
+            similarOptions: [],
+            saveDisabled: false
         }
     },
     mounted() {
@@ -87,11 +89,8 @@ Vue.component('item', {
                 this.currentSimilarLabels = this.similarLabels[this.currentSimilarId - 1];
             }
         },
-        insertToDB: function () {
-
-        },
-        new_item: function () {
-
+        insert: function () {
+            this.saveDisabled = true;
         }
     },
     props: {
