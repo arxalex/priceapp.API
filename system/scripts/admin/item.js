@@ -54,6 +54,9 @@ Vue.component('item', {
         }
     },
     beforeCreate: function() {
+        
+    },
+    mounted() {
         console.log(this.$labels);
         var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
@@ -84,8 +87,6 @@ Vue.component('item', {
                 countryLabel: countryLabels.length >= 0 ? countryLabels[0].label : null
             };
         });
-    },
-    mounted() {
         var i = 1;
         this.similarItems.forEach(element => {
             this.similarOptions.push({ text: element.label, value: i++ });
