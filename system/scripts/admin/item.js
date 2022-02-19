@@ -69,7 +69,7 @@ Vue.component('item', {
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
         var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
-        var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.country);
+        var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.additional.country);
         console.log(itemCategoryLabels);
         console.log(itemBrandLabels);
         console.log(itemPackageLabels);
@@ -84,25 +84,25 @@ Vue.component('item', {
             countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
         };
 
-        /*this.similarLabels = this.similarItems.map(similarItem => {
+        this.similarLabels = this.similarItems.map(similarItem => {
             var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
             var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
             var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
             var consistLabels = similarItem.consist !== null && similarItem.consist.length > 0 ? this.$labels.consists.filter(value => similarItem.consist.includes(value.id)) : [];
-            var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.country);
+            var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.additional.country);
             return {
-                categoryLabel: categoryLabels.length >= 0 ? categoryLabels[0].label : null,
-                brandLabel: brandLabels.length >= 0 ? brandLabels[0].label : null,
-                packageLabel: packageLabels.length >= 0 ? packageLabels[0].label : null,
-                packageShort: packageLabels.length >= 0 ? packageLabels[0].short : null,
-                consistLabels: consistLabels.length >= 0 ? consistLabels.map(value => value.label) : [],
-                countryLabel: countryLabels.length >= 0 ? countryLabels[0].label : null
+                categoryLabel: categoryLabels.length > 0 ? categoryLabels[0].label : null,
+                brandLabel: brandLabels.length > 0 ? brandLabels[0].label : null,
+                packageLabel: packageLabels.length > 0 ? packageLabels[0].label : null,
+                packageShort: packageLabels.length > 0 ? packageLabels[0].short : null,
+                consistLabels: consistLabels.length > 0 ? consistLabels.map(value => value.label) : [],
+                countryLabel: countryLabels.length > 0 ? countryLabels[0].label : null
             };
         });
         var i = 1;
         this.similarItems.forEach(element => {
             this.similarOptions.push({ text: element.label, value: i++ });
-        });*/
+        });
     },
     methods: {
         change: function () {
