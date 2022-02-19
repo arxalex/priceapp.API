@@ -53,8 +53,7 @@ Vue.component('item', {
             itemLabels: null
         }
     },
-    mounted() {
-        var i = 1;
+    beforeCreate: function() {
         var itemCategoryLabels = this.$labels.categories.filter(value => value.id == item.category);
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == item.brand);
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == item.package);
@@ -84,6 +83,9 @@ Vue.component('item', {
                 countryLabel: countryLabels.length >= 0 ? countryLabels[0].label : null
             };
         });
+    },
+    mounted() {
+        var i = 1;
         this.similarItems.forEach(element => {
             this.similarOptions.push({ text: element.label, value: i++ });
         });
