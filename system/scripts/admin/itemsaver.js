@@ -149,28 +149,6 @@ Vue.component('itemsaver', {
             <button class="btn btn-primary" v-on:click='$emit("insert")'></button>
         </div>
     `,
-    data() {
-        return {
-            sourceLabels: {
-                categoryLabel: "",
-                brandLabel: "",
-                packageLabel: "",
-                consistLabels: [],
-                countryLabel: ""
-            },
-            categories: [],
-            brands: [],
-            consists: []
-        }
-    },
-    methods: {
-        change: function() {
-
-        },
-        get_categories: function() {
-
-        }
-    },
     props: {
         sourceItem: {
             type: Object
@@ -179,24 +157,31 @@ Vue.component('itemsaver', {
             type: Object
         }
     },
-    mounted() {
-        this.categories = this.$labels.categories;
-        this.brands = this.$labels.brands;
-        this.consists = this.$labels.consists;
-
-        var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.soureItem.category);
-        var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.soureItem.brand);
-        var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.soureItem.package);
-        var itemConsistLabels = this.soureItem.consist !== null && this.soureItem.consist.length > 0 ? this.$labels.consists.filter(value => this.soureItem.consist.includes(value.id)) : [];
-        var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.soureItem.additional.country);
-
-        this.sourceLabels = {
-            categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
-            brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
-            packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
-            consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
-            countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
-        };
+    computed: {
+        sourceLabels: function(){
+            var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.soureItem.category);
+            var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.soureItem.brand);
+            var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.soureItem.package);
+            var itemConsistLabels = this.soureItem.consist !== null && this.soureItem.consist.length > 0 ? this.$labels.consists.filter(value => this.soureItem.consist.includes(value.id)) : [];
+            var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.soureItem.additional.country);
+    
+            return {
+                categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
+                brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
+                packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
+                consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
+                countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
+            };
+        },
+        categories: function(){
+            return this.$labels.categories;
+        },
+        brands: function(){
+            return this.$labels.brands;
+        },
+        consists: function(){
+            return this.$labels.consists;
+        }
     }
 });
 
