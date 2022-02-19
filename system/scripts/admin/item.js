@@ -76,12 +76,12 @@ Vue.component('item', {
         console.log(itemConsistLabels);
         console.log(itemCountryLabels);
         this.itemLabels = {
-            categoryLabel: itemCategoryLabels.length >= 0 ? itemCategoryLabels[0].label : null,
-            brandLabel: itemBrandLabels.length >= 0 ? itemBrandLabels[0].label : null,
-            packageLabel: itemPackageLabels.length >= 0 ? itemPackageLabels[0].label : null,
-            packageShort: itemPackageLabels.length >= 0 ? itemPackageLabels[0].short : null,
-            consistLabels: itemConsistLabels.length >= 0 ? itemConsistLabels.map(value => value.label) : [],
-            countryLabel: itemCountryLabels.length >= 0 ? itemCountryLabels[0].label : null
+            categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
+            brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
+            packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
+            packageShort: itemPackageLabels.length > 0 ? itemPackageLabels[0].short : null,
+            consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
+            countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
         };
 
         /*this.similarLabels = this.similarItems.map(similarItem => {
