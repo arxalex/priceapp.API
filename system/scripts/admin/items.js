@@ -132,7 +132,7 @@ Vue.component('Items', {
             });
         },
         itemsaverActivate: function () {
-
+            console.log(this.$itemsaver);
         }
     },
     watch: {
