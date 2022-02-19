@@ -2,12 +2,14 @@
 
 namespace framework\shops\silpo;
 
+use framework\database\ListHelper;
 use framework\database\NumericHelper;
 use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
 use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\countries\CountriesService;
+use framework\entities\items_link\ItemsLinkService;
 use framework\entities\packages\PackagesService;
 use framework\shops\silpo\SilpoItemModel;
 
@@ -18,6 +20,7 @@ class SilpoItemsGetter
     private PackagesService $_packageService;
     private BrandsService $_brandService;
     private CountriesService $_countriesService;
+    private ItemsLinkService $_itemsLinkService;
 
     public function __construct()
     {
@@ -26,14 +29,15 @@ class SilpoItemsGetter
         $this->_packageService = new PackagesService();
         $this->_brandService = new BrandsService();
         $this->_countriesService = new CountriesService();
+        $this->_itemsLinkService = new ItemsLinkService();
     }
-    public function get(int $categotyId, int $fillialId = 2043): array
+    public function get(int $categotyId, int $from = 0, int $to = 25, int $fillialId = 2043): array
     {
         $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
         $data = json_encode([
             'data' => [
-                'From' => 0,
-                'To' => 10000,
+                'From' => $from,
+                'To' => $to,
                 'categoryId' => $categotyId,
                 'filialId' => $fillialId,
             ],
@@ -49,9 +53,19 @@ class SilpoItemsGetter
         ];
         $context  = stream_context_create($options);
         $result = json_decode(file_get_contents($url, false, $context));
-
+        $inTableItems = ListHelper::getColumn($this->_itemsLinkService->getItemsFromDB([
+            'inshopid' => ListHelper::getColumn($result->items, 'id')
+        ]), 'inshopid');
+        $handledResult = $result->items;
+        if (count($inTableItems) > 0) {
+            foreach ($handledResult as $key => $value) {
+                if(in_array($value->id, $inTableItems)){
+                    unset($handledResult[$key]);
+                }
+            }
+        }
         $items = [];
-        foreach ($result->items as $value) {
+        foreach ($handledResult as $value) {
             $package = $this->getShopItemParam($value, 'packageType');
             $units = NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'numberOfUnits'), true);
             if ($this->getShopItemParam($value, 'isWeighted') == "") {
@@ -109,7 +123,7 @@ class SilpoItemsGetter
         $baseCategoryId = $this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
         ])[0]->categoryid;
-        
+
         $baseCategory = $baseCategoryId != null ? $this->_categoriesService->getItemFromDB($baseCategoryId) : null;
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);

@@ -5,6 +5,7 @@ namespace framework\entities\default_entities;
 use framework\database\Request;
 use framework\database\SqlHelper;
 use PDO;
+use stdClass;
 
 class DefaultEntitiesService
 {
@@ -79,6 +80,18 @@ class DefaultEntitiesService
         $result = [];
         foreach($objects as $object){
             $result[] = $object->$key;
+        }
+        return $result;
+    }
+    public function getColumns(array $objects, array $keys) : array
+    {
+        $result = [];
+        foreach($objects as $object){
+            $temp = new stdClass();
+            foreach($keys as $key){
+                $temp->$key = $object->$key;
+            }
+            $result[] = $temp;
         }
         return $result;
     }

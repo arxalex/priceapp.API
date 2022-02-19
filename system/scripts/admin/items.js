@@ -25,11 +25,11 @@ Vue.component('Items', {
                 <item class="mb-3" 
                     v-for="itemModel in itemModels" 
                     :item="itemModel.item" 
-                    :similarItems="itemModel.similarItems"
-                    :labels="itemModel.labels"
-                    :similarLabels="itemModel.similarLabels">
+                    :similarItems="itemModel.similarItems">
                 </item>
             </div>
+            <button class="btn btn-secondary" @click="get_prev()" :disabled="page.isPrevDisabled">Prev</button>
+            <button class="btn btn-primary" @click="get_next()" :disabled="page.isNextDisabled">Next</button>
         </div>
     `,
     data() {
@@ -51,7 +51,13 @@ Vue.component('Items', {
             selectedShopId: null,
             selectedCategoryId: null,
             itemModels: [],
-            shopCategories: []
+            shopCategories: [],
+            page: {
+                from: 0,
+                to: 25,
+                isPrevDisabled: true,
+                isNextDisabled: false,
+            }
         }
     },
     methods: {
@@ -60,13 +66,13 @@ Vue.component('Items', {
             var shop = this.selectedShopId;
             var data = {
                 source: shop
-            }
+            };
             var categories = await this.getItemsFromDb(categoriesUrl, data);
             this.shopCategories = categories;
         },
         get_items: async function () {
+            this.itemModels = [];
             const similarUrl = "../be/items/get_similar_items";
-            const labelsUrl = "../be/items/get_labels";
             const getItemUrl = "../be/items/get_items";
 
             var shop = this.selectedShopId;
@@ -74,7 +80,9 @@ Vue.component('Items', {
 
             var data = {
                 source: shop,
-                category: category
+                category: category,
+                from: this.page.from,
+                to: this.page.to
             };
 
             var items = await this.getItemsFromDb(getItemUrl, data);
@@ -87,48 +95,32 @@ Vue.component('Items', {
                 itemLabels: itemLabels
             });
 
-            var labelsRequest = [];
-            items.forEach(element => {
-                labelsRequest.push({
-                    categoryId: element.category,
-                    brandId: element.brand,
-                    packageId: element.package,
-                    consistIds: element.consist,
-                    countryId: element.additional.country
-                });
-            });
-            var labels = await this.getItemsFromDb(labelsUrl, {
-                labelIds: labelsRequest
-            });
-
-            var similarLabels = [];
-            
-            for(var i = 0; i < similarItems.length; i++){
-                var similarLabelRequests = [];
-                similarItems[i].forEach(element => {
-                    similarLabelRequests.push({
-                        categoryId: element.category,
-                        brandId: element.brand,
-                        packageId: element.package,
-                        consistIds: element.consist,
-                        countryId: element.additional.country
-                    });
-                });
-                var similarLabel = await this.getItemsFromDb(labelsUrl, {
-                    labelIds: similarLabelRequests
-                });
-                similarLabels.push(similarLabel);
-            }
-
             for(var i = 0; i < items.length; i++){
                 this.itemModels.push({
                     item: items[i],
-                    similarItems: similarItems[i],
-                    labels: labels[i],
-                    similarLabels: similarLabels[i]
+                    similarItems: similarItems[i]
                 });
             }
-            console.log(this.itemModels);
+        },
+        get_prev: function(){
+            if(this.page.from >= 25 && !this.page.isPrevDisabled) {
+                this.page.from -= 25;
+                this.page.to -= 25;
+                this.get_items();
+                if(this.page.from <= 0){
+                    this.page.isPrevDisabled = true;
+                }
+            }
+        },
+        get_next: function(){
+            if(this.page.to <= 9975 && !this.page.isNextDisabled) {
+                this.page.from += 25;
+                this.page.to += 25;
+                this.get_items();
+                if(this.page.to >= 10000){
+                    this.page.isNextDisabled = true;
+                }
+            }
         },
         getItemsFromDb: function (url, data) {
             return axios.post(url, data).then((response) => {
@@ -145,6 +137,13 @@ Vue.component('Items', {
         selectedShopId: function(value) {
             this.get_categories();
         }
+    },
+    mounted() {
+        const labelsUrl = "../be/items/get_labels";
+        var labels = await this.getItemsFromDb(labelsUrl, {
+            method: "GetAllLabels"
+        });
+        app.data.itemLabels = labels;
     }
 });
 

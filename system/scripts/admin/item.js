@@ -38,37 +38,36 @@ Vue.component('item', {
                     </select>
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
-                <itemsaver v-on:insert="saveDisabled = false" :disabled="saveDisabled"></itemsaver>
+                <itemsaver
+                    v-on:insert="saveDisabled = false"
+                    :sourceItem=""
+                    :destinationItem="" 
+                    :disabled="saveDisabled">
+                </itemsaver>
             </div>
         </div>
     `,
     data() {
         return {
+            similarLabels: [],
             currentSimilarItem: {
-                id: 0,
-                label: "",
-                category: 0,
-                package: 0,
-                brand: 0,
-                calorie: 0,
-                carbohydrates: 0,
-                fat: 0,
-                proteins: 0,
+                id: null,
+                label: null,
+                category: null,
+                package: null,
+                brand: null,
+                calorie: null,
+                carbohydrates: null,
+                fat: null,
+                proteins: null,
                 barcodes: [],
                 consist: [],
-                term: 0,
-                units: 0,
+                term: null,
+                units: null,
                 additional: [],
-                image: ""
+                image: null
             },
-            currentSimilarLabels: {
-                categoryLabel: "",
-                brandLabel: "",
-                packageLabel: "",
-                packageShort: "",
-                consistLabels: [],
-                countryLabel: ""
-            },
+            currentSimilarLabels: null,
             currentSimilarId: 0,
             similarOptions: [],
             saveDisabled: false
@@ -76,6 +75,21 @@ Vue.component('item', {
     },
     mounted() {
         var i = 1;
+        this.similarLabels = this.similarItems.map(similarItem => {
+            var categoryLabels = app.data.labels.categories.filter(value => value.id == similarItem.category);
+            var brandLabels = app.data.labels.brands.filter(value => value.id == similarItem.brand);
+            var packageLabels = app.data.labels.packages.filter(value => value.id == similarItem.package);
+            var consistLabels = app.data.labels.consists.filter(value => similarItem.consist.includes(value.id));
+            var countryLabels = app.data.labels.countries.filter(value => value.id == similarItem.country);
+            return {
+                categoryLabel: categoryLabels.length >= 0 ? categoryLabels[0].label : null,
+                brandLabel: brandLabels.length >= 0 ? brandLabels[0].label : null,
+                packageLabel: packageLabels.length >= 0 ? packageLabels[0].label : null,
+                packageShort: packageLabels.length >= 0 ? packageLabels[0].short : null,
+                consistLabels: consistLabels.length >= 0 ? consistLabels.map(value => value.label) : [],
+                countryLabel: countryLabels.length >= 0 ? countryLabels[0].label : null
+            };
+        });
         this.similarItems.forEach(element => {
             this.similarOptions.push({ text: element.label, value: i++ });
         });
@@ -100,12 +114,6 @@ Vue.component('item', {
         similarItems: {
             type: Array
         },
-        labels: {
-            type: Object
-        },
-        similarLabels: {
-            type: Array
-        }
     },
     computed: {
     },

@@ -24,7 +24,9 @@ class GetItems extends BaseEndpointBuilder
             'method' => 'byId',
             'source' => 0,
             'name' => null,
-            'category' => null
+            'category' => null,
+            'from' => 0,
+            'to' => 25
         ];
     }
     public function build()
@@ -43,7 +45,7 @@ class GetItems extends BaseEndpointBuilder
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             }
         } elseif($this->getParam('source') === 1){
-            $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'));
+            $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
             $items = [];
             foreach($silpoItemsModels as $silpoItemModel){
                 $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);

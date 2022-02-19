@@ -30,31 +30,73 @@ class GetLabels extends BaseEndpointBuilder
     {
         return [
             'labelIds' => [],
+            'method' => "GetForOneItem",
+            'labelIdArrays' => null
         ];
     }
     public function build()
     {
-        $labelIds = $this->getParam("labelIds");
-        if (count($labelIds) < 1) {
-            return [];
-        }
+        if ($this->getParam('method') == "GetForOneItem") {
+            $labelIds = $this->getParam("labelIds");
+            if (count($labelIds) < 1) {
+                return [];
+            }
 
-        $response = [];
-        foreach ($labelIds as $labelId) {
-            $package = $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId']) : null;
+            $response = [];
+            foreach ($labelIds as $labelId) {
+                $package = $labelId['packageId'] != null ? $this->_packageService->getItemFromDB($labelId['packageId']) : null;
 
-            $response[] = new LabelsResponseViewModel(
-                $labelId['categoryId'] != null ? $this->_categoriesService->getItemFromDB($labelId['categoryId'])->label : null,
-                $labelId['brandId'] != null ? $this->_brandService->getItemFromDB($labelId['brandId'])->label : null,
-                $labelId['packageId'] != null ? $package->label : null,
-                count($labelId['consistIds']) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
-                    "id" => $labelId['consistIds']
-                ]), "label") : [],
-                $labelId['countryId'] != null ? $this->_countriesService->getItemFromDB($labelId['countryId'])->label : null,
-                $labelId['packageId'] != null ? $package->short : null
+                $response[] = new LabelsResponseViewModel(
+                    $labelId['categoryId'] != null ? $this->_categoriesService->getItemFromDB($labelId['categoryId'])->label : null,
+                    $labelId['brandId'] != null ? $this->_brandService->getItemFromDB($labelId['brandId'])->label : null,
+                    $labelId['packageId'] != null ? $package->label : null,
+                    count($labelId['consistIds']) < 1 ? $this->_consistsService->getColumn($this->_consistsService->getItemsFromDB([
+                        "id" => $labelId['consistIds']
+                    ]), "label") : [],
+                    $labelId['countryId'] != null ? $this->_countriesService->getItemFromDB($labelId['countryId'])->label : null,
+                    $labelId['packageId'] != null ? $package->short : null
+                );
+            }
+            return $response;
+        } elseif ($this->getParam('method') == "GetForMultipleItems"){
+            $labelIds = $this->getParam('labelIdArrays');
+            $categories = count($labelIds->categoryIds) > 0 ? $this->_categoriesService->getItemsFromDB([
+                "id" => $labelIds->categoryIds
+            ]) : [];
+            $brands = count($labelIds->brandIds) ? $this->_brandService->getItemsFromDB([
+                "id" => $labelIds->brandIds
+            ]) : [];
+            $packages = count($labelIds->packageIds) ? $this->_packageService->getItemsFromDB([
+                "id" => $labelIds->packageIds
+            ]) : [];
+            $consists = count($labelIds->consistIds) ? $this->_consistsService->getItemsFromDB([
+                "id" => $labelIds->consistIds
+            ]) : [];
+            $countries = count($labelIds->countryIds) ? $this->_countriesService->getItemsFromDB([
+                "id" => $labelIds->countryIds
+            ]) : [];
+            $response = new LabelArraysResponseViewModel(
+                $this->_categoriesService->getColumns($categories, ["id", "label"]),
+                $this->_brandService->getColumns($brands, ["id", "label"]),
+                $this->_packageService->getColumns($packages, ["id", "label", "short"]),
+                $this->_consistsService->getColumns($consists, ["id", "label"]),
+                $this->_countriesService->getColumns($countries, ["id", "label"])
+            );
+            return $response;
+        } elseif($this->getParam('method') == "GetAllLabels") {
+            $categories = $this->_categoriesService->getItemsFromDB();
+            $brands = $this->_brandService->getItemsFromDB();
+            $packages = $this->_packageService->getItemsFromDB();
+            $consists = $this->_consistsService->getItemsFromDB();
+            $countries = $this->_countriesService->getItemsFromDB();
+            $response = new LabelArraysResponseViewModel(
+                $this->_categoriesService->getColumns($categories, ["id", "label"]),
+                $this->_brandService->getColumns($categories, ["id", "label"]),
+                $this->_packageService->getColumns($categories, ["id", "label", "short"]),
+                $this->_consistsService->getColumns($categories, ["id", "label"]),
+                $this->_countriesService->getColumns($categories, ["id", "label"])
             );
         }
-        return $response;
     }
 }
 class LabelsResponseViewModel
@@ -80,5 +122,27 @@ class LabelsResponseViewModel
         $this->consistLabels = $consistLabels;
         $this->countryLabel = $countryLabel;
         $this->packageShort = $packageShort;
+    }
+}
+class LabelArraysResponseViewModel
+{
+    public array $categories;
+    public array $brands;
+    public array $packages;
+    public array $consists;
+    public array $countries;
+
+    public function __construct(
+        array $categories = [],
+        array $brands = [],
+        array $packages = [],
+        array $consists = [],
+        array $countries = []
+    ) {
+        $this->categories = $categories;
+        $this->brands = $brands;
+        $this->packages = $packages;
+        $this->consists = $consists;
+        $this->countries = $countries;
     }
 }
