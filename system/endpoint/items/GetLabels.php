@@ -91,10 +91,10 @@ class GetLabels extends BaseEndpointBuilder
             $countries = $this->_countriesService->getItemsFromDB();
             $response = new LabelArraysResponseViewModel(
                 $this->_categoriesService->getColumns($categories, ["id", "label"]),
-                $this->_brandService->getColumns($categories, ["id", "label"]),
-                $this->_packageService->getColumns($categories, ["id", "label", "short"]),
-                $this->_consistsService->getColumns($categories, ["id", "label"]),
-                $this->_countriesService->getColumns($categories, ["id", "label"])
+                $this->_brandService->getColumns($brands, ["id", "label"]),
+                $this->_packageService->getColumns($packages, ["id", "label", "short"]),
+                $this->_consistsService->getColumns($consists, ["id", "label"]),
+                $this->_countriesService->getColumns($countries, ["id", "label"])
             );
             return $response;
         }
