@@ -57,10 +57,30 @@ Vue.component('itemsaver', {
                     </tr>
                     <tr>
                         <th>
+                            <span>Package: </span>
+                        </th>
+                        <td>
+                            <span>{{ sourceLabels.packageLabel }} ({{ sourceItem.package }})</span>
+                            <br>
+                            <span class="fw-light text-secondary">{{ originalLabels.packageLabel }}</span>
+                        </td>
+                        <td class="input-group">
+                            <select class="form-select" v-model="destinationItem.package">
+                                <option disabled>Chose package</option>
+                                <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
+                            </select>
+                            <a class="btn btn-primary">
+                                <i class="bi bi-plus-square"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             <span>Brand: </span>
                         </th>
                         <td>
                             <span>{{ sourceLabels.brandLabel }} ({{ sourceItem.brand }})</span>
+                            <br>
                             <span class="fw-light text-secondary">{{ originalLabels.brandLabel }}</span>
                         </td>
                         <td class="input-group">
@@ -190,6 +210,9 @@ Vue.component('itemsaver', {
         },
         categories: function(){
             return this.$labels.categories;
+        },
+        packages: function(){
+            return this.$labels.packages;
         },
         brands: function(){
             return this.$labels.brands;
