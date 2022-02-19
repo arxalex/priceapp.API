@@ -84,7 +84,6 @@ class GetLabels extends BaseEndpointBuilder
             );
             return $response;
         } elseif($this->getParam('method') == "GetAllLabels") {
-            echo "123";
             $categories = $this->_categoriesService->getItemsFromDB();
             $brands = $this->_brandService->getItemsFromDB();
             $packages = $this->_packageService->getItemsFromDB();
@@ -97,6 +96,7 @@ class GetLabels extends BaseEndpointBuilder
                 $this->_consistsService->getColumns($categories, ["id", "label"]),
                 $this->_countriesService->getColumns($categories, ["id", "label"])
             );
+            return $response;
         }
     }
 }
