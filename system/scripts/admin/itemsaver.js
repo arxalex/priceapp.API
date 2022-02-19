@@ -159,11 +159,11 @@ Vue.component('itemsaver', {
     },
     computed: {
         sourceLabels: function(){
-            var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.soureItem.category);
-            var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.soureItem.brand);
-            var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.soureItem.package);
-            var itemConsistLabels = this.soureItem.consist !== null && this.soureItem.consist.length > 0 ? this.$labels.consists.filter(value => this.soureItem.consist.includes(value.id)) : [];
-            var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.soureItem.additional.country);
+            var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.sourceItem.category);
+            var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.sourceItem.brand);
+            var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.sourceItem.package);
+            var itemConsistLabels = this.sourceItem.consist !== null && this.sourceItem.consist.length > 0 ? this.$labels.consists.filter(value => this.sourceItem.consist.includes(value.id)) : [];
+            var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.sourceItem.additional.country);
     
             return {
                 categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
