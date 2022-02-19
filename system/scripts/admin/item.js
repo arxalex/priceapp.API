@@ -38,12 +38,7 @@ Vue.component('item', {
                     </select>
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
-                <itemsaver
-                    v-on:insert="saveDisabled = false"
-                    :sourceItem=""
-                    :destinationItem="" 
-                    :disabled="saveDisabled">
-                </itemsaver>
+
             </div>
         </div>
     `,
