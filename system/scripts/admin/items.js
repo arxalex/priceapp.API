@@ -142,7 +142,7 @@ Vue.component('Items', {
         var labels = await this.getItemsFromDb(labelsUrl, {
             method: "GetAllLabels"
         });
-        app.data.labels = labels;
+        Vue.prototype.$labels = labels;
     }
 });
 

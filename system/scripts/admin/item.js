@@ -76,11 +76,11 @@ Vue.component('item', {
     mounted() {
         var i = 1;
         this.similarLabels = this.similarItems.map(similarItem => {
-            var categoryLabels = app.data.labels.categories.filter(value => value.id == similarItem.category);
-            var brandLabels = app.data.labels.brands.filter(value => value.id == similarItem.brand);
-            var packageLabels = app.data.labels.packages.filter(value => value.id == similarItem.package);
-            var consistLabels = app.data.labels.consists.filter(value => similarItem.consist.includes(value.id));
-            var countryLabels = app.data.labels.countries.filter(value => value.id == similarItem.country);
+            var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
+            var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
+            var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
+            var consistLabels = this.$labels.consists.filter(value => similarItem.consist.includes(value.id));
+            var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.country);
             return {
                 categoryLabel: categoryLabels.length >= 0 ? categoryLabels[0].label : null,
                 brandLabel: brandLabels.length >= 0 ? brandLabels[0].label : null,
