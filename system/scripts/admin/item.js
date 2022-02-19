@@ -38,8 +38,10 @@ Vue.component('item', {
                     </select>
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
-
             </div>
+            <itemsaver :soureItem="item"
+                :destinationItem="currentSimilarItem"
+                :disabled="saveDisabled"></itemsaver>
         </div>
     `,
     data() {
@@ -64,17 +66,11 @@ Vue.component('item', {
         
     },
     mounted() {
-        console.log(this.$labels);
         var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
         var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
         var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.additional.country);
-        console.log(itemCategoryLabels);
-        console.log(itemBrandLabels);
-        console.log(itemPackageLabels);
-        console.log(itemConsistLabels);
-        console.log(itemCountryLabels);
         this.itemLabels = {
             categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
             brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
