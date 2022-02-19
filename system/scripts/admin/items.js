@@ -8,7 +8,6 @@ Vue.component('Items', {
                 </div>
             </p>
             <div class="input-group mb-3">
-                <span>
                 <select class="form-select" v-model="selectedShopId">
                     <option selected disabled>Chose shop</option>
                     <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
