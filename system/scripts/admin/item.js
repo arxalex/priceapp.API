@@ -41,7 +41,7 @@ Vue.component('item', {
             </div>
             <itemsaver :soureItem="item"
                 :destinationItem="currentSimilarItem"
-                :disabled="saveDisabled"></itemsaver>
+                v-if="!saveDisabled"></itemsaver>
         </div>
     `,
     data() {
