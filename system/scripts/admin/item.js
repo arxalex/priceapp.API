@@ -107,7 +107,8 @@ Vue.component('item', {
     methods: {
         change: function () {
             if (this.currentSimilarId == 0) {
-                this.insertToDB();
+                this.currentSimilarItem = null;
+                this.currentSimilarLabels = null;
             } else {
                 this.currentSimilarItem = this.similarItems[this.currentSimilarId - 1];
                 this.currentSimilarLabels = this.similarLabels[this.currentSimilarId - 1];
