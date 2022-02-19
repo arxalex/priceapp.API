@@ -70,6 +70,11 @@ Vue.component('item', {
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
         var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
         var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.country);
+        console.log(itemCategoryLabels);
+        console.log(itemBrandLabels);
+        console.log(itemPackageLabels);
+        console.log(itemConsistLabels);
+        console.log(itemCountryLabels);
         this.itemLabels = {
             categoryLabel: itemCategoryLabels.length >= 0 ? itemCategoryLabels[0].label : null,
             brandLabel: itemBrandLabels.length >= 0 ? itemBrandLabels[0].label : null,
@@ -79,7 +84,7 @@ Vue.component('item', {
             countryLabel: itemCountryLabels.length >= 0 ? itemCountryLabels[0].label : null
         };
 
-        this.similarLabels = this.similarItems.map(similarItem => {
+        /*this.similarLabels = this.similarItems.map(similarItem => {
             var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
             var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
             var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
@@ -97,7 +102,7 @@ Vue.component('item', {
         var i = 1;
         this.similarItems.forEach(element => {
             this.similarOptions.push({ text: element.label, value: i++ });
-        });
+        });*/
     },
     methods: {
         change: function () {
