@@ -1,6 +1,6 @@
 Vue.component('Items', {
     template: `
-        <div v-on:itemsaver="itemsaverActivate">
+        <div>
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 v-if="itemsaverModel.saveActive"></itemsaver>
@@ -27,7 +27,8 @@ Vue.component('Items', {
                 <item class="mb-3" 
                     v-for="itemModel in itemModels" 
                     :item="itemModel.item" 
-                    :similarItems="itemModel.similarItems">
+                    :similarItems="itemModel.similarItems"
+                    v-on:itemsaver="itemsaverActivate">
                 </item>
             </div>
             <button class="btn btn-secondary" @click="get_prev()" :disabled="page.isPrevDisabled">Prev</button>
