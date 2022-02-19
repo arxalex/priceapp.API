@@ -6,10 +6,13 @@ Vue.component('item', {
                     <img class="w-100" :src="item.image">
                 </div>
                 <div class="col-sm-8">
-                    <h1>{{ item.label }}</h1>
+                    <h1><a :href="originalLabels.url">{{ item.label }}</a></h1>
                     Category: {{ itemLabels.categoryLabel }} ({{ item.category }})<br>
+                    Original category: {{ originalLabels.categoryLabel }}<br>
                     Brand: {{ itemLabels.brandLabel }} ({{ item.brand }})<br>
+                    Original brand: {{ originalLabels.brandLabel }}<br>
                     Package: {{ itemLabels.packageLabel }} ({{ item.package }}), units: {{ item.units }} {{ itemLabels.packageShort }}, term: {{ item.term }}<br>
+                    Original package: {{ originalLabels.packageLabel }}
                     Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
                     Consist: <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span> (<span v-for="consistId in item.consist">{{ consistId }}, </span>)<br>
                     Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
@@ -51,7 +54,8 @@ Vue.component('item', {
             Vue.prototype.$itemsaver = {
                 sourceItem: this.item,
                 destinationItem: this.currentSimilarItem,
-                saveActive: true
+                saveActive: true,
+                originalLabels: this.originalLabels
             }
             this.$emit("itemsaver");
         }
@@ -63,6 +67,9 @@ Vue.component('item', {
         similarItems: {
             type: Array
         },
+        originalLabels: {
+            type: Object
+        }
     },
     mounted(){
         this.item.consist = this.item.consist ?? [];

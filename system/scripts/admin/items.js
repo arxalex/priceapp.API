@@ -3,6 +3,7 @@ Vue.component('Items', {
         <div>
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
+                :originalLabels="itemsaverModel.originalLabels"
                 v-if="itemsaverModel.saveActive"></itemsaver>
             <div v-if="!itemsaverModel.saveActive">
                 <h1>Prepare items</h1>
@@ -27,7 +28,8 @@ Vue.component('Items', {
                 <div class="col-sm-12">
                     <item class="mb-3" 
                         v-for="itemModel in itemModels" 
-                        :item="itemModel.item" 
+                        :item="itemModel.item.item" 
+                        :originalLabels="itemModel.item.originalLabels"
                         :similarItems="itemModel.similarItems"
                         v-on:itemsaver="itemsaverActivate">
                     </item>
@@ -66,7 +68,8 @@ Vue.component('Items', {
             itemsaverModel: {
                 sourceItem: null,
                 destinationItem: null,
-                saveActive: false
+                saveActive: false,
+                originalLabels: null
             }
         }
     },
@@ -143,7 +146,8 @@ Vue.component('Items', {
             this.itemsaverModel = this.$itemsaver ?? {
                 sourceItem: null,
                 destinationItem: null,
-                saveActive: false
+                saveActive: false,
+                originalLabels: null
             }
         }
     },

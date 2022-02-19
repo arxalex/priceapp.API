@@ -16,6 +16,7 @@ class SilpoItemModel{
     public ?float $fat;
     public ?float $proteins;
     public ?string $country;
+    public ?string $url;
 
     public function __construct(
         ?int $inshopid = null,
@@ -30,7 +31,8 @@ class SilpoItemModel{
         ?float $carbohydrates = null,
         ?float $fat = null,
         ?float $proteins = null,
-        ?string $country = null
+        ?string $country = null,
+        ?string $url
     ) {
         $this->inshopid = $inshopid;
         $this->label = $label;
@@ -45,5 +47,6 @@ class SilpoItemModel{
         $this->fat = $fat;
         $this->proteins = $proteins;
         $this->country = $country;
+        $this->url = $url;
     }
 }

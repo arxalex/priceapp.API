@@ -2,7 +2,7 @@
     word-break: break-all;
 }
 .table img{
-    width: 100px;
+    width: 100%;
 }
 .table{
     table-layout: fixed;

@@ -12,6 +12,7 @@ use framework\entities\countries\CountriesService;
 use framework\entities\items_link\ItemsLinkService;
 use framework\entities\packages\PackagesService;
 use framework\shops\silpo\SilpoItemModel;
+use stdClass;
 
 class SilpoItemsGetter
 {
@@ -92,7 +93,8 @@ class SilpoItemsGetter
                 NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'carbohydrates'), true),
                 NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'fats'), true),
                 NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'proteins'), true),
-                $this->getShopItemParam($value, 'country')
+                $this->getShopItemParam($value, 'country'),
+                "https://shop.silpo.ua/product/" . $value->slug
             );
         }
         return $items;
@@ -118,7 +120,7 @@ class SilpoItemsGetter
             }
         }
     }
-    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem): Item
+    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem)
     {
         $baseCategoryId = $this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
@@ -149,11 +151,38 @@ class SilpoItemsGetter
                 'alcohol' => $silpoItem->alcohol
             ]
         );
+        $originalLabels = new SilpoOriginalItemLabelsViewModel(
+            $baseCategory !== null ? $baseCategory->label : null,
+            $silpoItem->brand,
+            $silpoItem->package,
+            $silpoItem->url
+        );
+        $result = new stdClass();
+        $result->item = $commonItem;
+        $result->originalLabels = $originalLabels;
 
-        return $commonItem;
+        return $result;
     }
     private function calorieConverter(?string $cal)
     {
         return $cal != null ? str_replace(",", ".", explode("/", $cal, 2)[0]) : null;
+    }
+}
+class SilpoOriginalItemLabelsViewModel{
+    public ?string $categoryLabel;
+    public ?string $brandLabel;
+    public ?string $packageLabel;
+    public ?string $url;
+    public function __construct(
+        ?string $categoryLabel = null,
+        ?string $brandLabel = null,
+        ?string $packageLabel = null,
+        ?string $url = null
+    )
+    {
+        $this->categoryLabel = $categoryLabel;
+        $this->brandLabel = $brandLabel;
+        $this->packageLabel = $packageLabel;
+        $this->url = $url;
     }
 }

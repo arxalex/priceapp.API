@@ -30,7 +30,7 @@ Vue.component('itemsaver', {
                             <span>Label: </span>
                         </th>
                         <td>
-                            <span>{{ sourceItem.label }}</span>
+                            <span><a :href="originalLabels.url">{{ sourceItem.label }}</a></span>
                         </td>
                         <td class="input-group">
                             <input class="form-control" v-model="destinationItem.label">
@@ -42,12 +42,17 @@ Vue.component('itemsaver', {
                         </th>
                         <td>
                             <span>{{ sourceLabels.categoryLabel }} ({{ sourceItem.category }})</span>
+                            <br>
+                            <span class="fw-light text-secondary">{{ originalLabels.categoryLabel }}</span>
                         </td>
                         <td class="input-group">
                             <select class="form-select" v-model="destinationItem.category">
                                 <option disabled>Chose category</option>
                                 <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
                             </select>
+                            <a class="btn btn-primary">
+                                <i class="bi bi-plus-square"></i>
+                            </a>
                         </td>
                     </tr>
                     <tr>
@@ -56,12 +61,16 @@ Vue.component('itemsaver', {
                         </th>
                         <td>
                             <span>{{ sourceLabels.brandLabel }} ({{ sourceItem.brand }})</span>
+                            <span class="fw-light text-secondary">{{ originalLabels.brandLabel }}</span>
                         </td>
                         <td class="input-group">
                             <select class="form-select" v-model="destinationItem.brand">
                                 <option disabled>Chose brand</option>
                                 <option v-for="brand in brands" v-bind:value="brand.id">{{ brand.label }}</option>
                             </select>
+                            <a class="btn btn-primary">
+                                <i class="bi bi-plus-square"></i>
+                            </a>
                         </td>
                     </tr>
                     <tr>
@@ -76,6 +85,9 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose consists</option>
                                 <option v-for="consist in consists" v-bind:value="consist.id">{{ consist.label }}</option>
                             </select>
+                            <a class="btn btn-primary">
+                                <i class="bi bi-plus-square"></i>
+                            </a>
                         </td>
                     </tr>
                     <tr>
@@ -154,6 +166,9 @@ Vue.component('itemsaver', {
             type: Object
         },
         destinationItem: {
+            type: Object
+        },
+        originalLabels: {
             type: Object
         }
     },
