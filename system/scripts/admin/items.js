@@ -1,9 +1,9 @@
 Vue.component('Items', {
     template: `
         <div v-on:itemsaver="itemsaverActivate">
-            <itemsaver :sourceItem="itemsaver.sourceItem"
-                :destinationItem="itemsaver.destinationItem"
-                v-if="itemsaver.saveActive"></itemsaver>
+            <itemsaver :sourceItem="itemsaverModel.sourceItem"
+                :destinationItem="itemsaverModel.destinationItem"
+                v-if="itemsaverModel.saveActive"></itemsaver>
             <h1>Prepare items</h1>
             <p>List:
                 <div v-for="shop in shops">
@@ -132,7 +132,7 @@ Vue.component('Items', {
             });
         },
         itemsaverActivate: function () {
-            
+
         }
     },
     watch: {
@@ -153,7 +153,7 @@ Vue.component('Items', {
         }
     },
     computed: {
-        itemsaver: function() {
+        itemsaverModel: function() {
             return this.$itemsaver;
         }
     }
