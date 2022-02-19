@@ -17,7 +17,7 @@ Vue.component('item', {
                 </div>
             </div>
             <div class="col-sm-6 row">
-                <div class="col-sm-4">
+                <div class="col-sm-4" v-if="currentSimilarItem !== null">
                     <img class="w-100" :src="currentSimilarItem.image">
                 </div>
                 <div class="col-sm-8" v-if="currentSimilarItem !== null">
