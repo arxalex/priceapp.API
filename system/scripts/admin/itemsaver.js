@@ -1,12 +1,12 @@
 Vue.component('itemsaver', {
     template: `
         <div class="row col-sm-12 position-fixed z-5 bg-light">
-            <table class="table">
+            <table class="table word-break">
                 <tbody>
                     <tr>
-                        <td>
+                        <th>
                             <span>Image: </span>
-                        </td>
+                        </th>
                         <td>
                             <img :src="sourceItem.image">
                         </td>
@@ -15,9 +15,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Image url: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.image }}</span>
                         </td>
@@ -26,9 +26,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Label: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.label }}</span>
                         </td>
@@ -37,9 +37,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Category: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceLabels.categoryLabel }} ({{ sourceItem.category }})</span>
                         </td>
@@ -51,9 +51,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Brand: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceLabels.brandLabel }} ({{ sourceItem.brand }})</span>
                         </td>
@@ -65,9 +65,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Consist: </span>
-                        </td>
+                        </th>
                         <td>
                             <span v-for="consistLabel in sourceLabels.consistLabels">{{ consistLabel }}</span>
                         </td>
@@ -79,9 +79,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Units: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.units }}</span>
                         </td>
@@ -90,9 +90,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Term: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.term }}</span>
                         </td>
@@ -101,9 +101,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Calorie: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.calorie }}</span>
                         </td>
@@ -112,9 +112,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Carbohydrates: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.carbohydrates }}</span>
                         </td>
@@ -123,9 +123,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Fat: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.fat }}</span>
                         </td>
@@ -134,9 +134,9 @@ Vue.component('itemsaver', {
                         </td>
                     </tr>
                     <tr>
-                        <td>
+                        <th>
                             <span>Proteins: </span>
-                        </td>
+                        </th>
                         <td>
                             <span>{{ sourceItem.proteins }}</span>
                         </td>

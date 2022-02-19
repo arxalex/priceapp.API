@@ -1,0 +1,6 @@
+.word-break td{
+    word-break: break-all;
+}
+.table img{
+    width: 100px;
+}
