@@ -39,79 +39,18 @@ Vue.component('item', {
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
             </div>
-            <itemsaver :sourceItem="item"
-                :destinationItem="currentSimilarItem"
-                v-if="!saveDisabled"></itemsaver>
+            
         </div>
     `,
     data() {
         return {
-            similarLabels: [],
-            currentSimilarItem: null,
-            currentSimilarLabels: null,
             currentSimilarId: 0,
-            similarOptions: [],
-            saveDisabled: false,
-            itemLabels: {
-                categoryLabel: "",
-                brandLabel: "",
-                packageLabel: "",
-                packageShort: "",
-                consistLabels: [],
-                countryLabel: ""
-            }
+            saveActive: false,
         }
     },
-    beforeCreate: function() {
-        
-    },
-    mounted() {
-        var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
-        var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
-        var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
-        var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
-        var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.additional.country);
-        this.itemLabels = {
-            categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
-            brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
-            packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
-            packageShort: itemPackageLabels.length > 0 ? itemPackageLabels[0].short : null,
-            consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
-            countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
-        };
-
-        this.similarLabels = this.similarItems.map(similarItem => {
-            var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
-            var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
-            var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
-            var consistLabels = similarItem.consist !== null && similarItem.consist.length > 0 ? this.$labels.consists.filter(value => similarItem.consist.includes(value.id)) : [];
-            var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.additional.country);
-            return {
-                categoryLabel: categoryLabels.length > 0 ? categoryLabels[0].label : null,
-                brandLabel: brandLabels.length > 0 ? brandLabels[0].label : null,
-                packageLabel: packageLabels.length > 0 ? packageLabels[0].label : null,
-                packageShort: packageLabels.length > 0 ? packageLabels[0].short : null,
-                consistLabels: consistLabels.length > 0 ? consistLabels.map(value => value.label) : [],
-                countryLabel: countryLabels.length > 0 ? countryLabels[0].label : null
-            };
-        });
-        var i = 1;
-        this.similarItems.forEach(element => {
-            this.similarOptions.push({ text: element.label, value: i++ });
-        });
-    },
     methods: {
-        change: function () {
-            if (this.currentSimilarId == 0) {
-                this.currentSimilarItem = null;
-                this.currentSimilarLabels = null;
-            } else {
-                this.currentSimilarItem = this.similarItems[this.currentSimilarId - 1];
-                this.currentSimilarLabels = this.similarLabels[this.currentSimilarId - 1];
-            }
-        },
         insert: function () {
-            this.saveDisabled = true;
+            this.saveActive = true;
         }
     },
     props: {
@@ -123,10 +62,59 @@ Vue.component('item', {
         },
     },
     computed: {
-    },
-    watch: {
-        currentSimilarId: function (value) {
-            this.change();
+        currentSimilarItem: function () {
+            if (this.currentSimilarId == 0) {
+                return null;
+            } else {
+                return this.similarItems[this.currentSimilarId - 1];
+            }
+        },
+        currentSimilarLabels: function () {
+            if (this.currentSimilarId == 0) {
+                return null;
+            } else {
+                return this.similarLabels[this.currentSimilarId - 1];
+            }
+        },
+        itemLabels: function () {
+            var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
+            var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
+            var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
+            var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
+            var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.additional.country);
+            return {
+                categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
+                brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
+                packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
+                packageShort: itemPackageLabels.length > 0 ? itemPackageLabels[0].short : null,
+                consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
+                countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
+            };
+        },
+        similarLabels: function () {
+            return this.similarItems.map(similarItem => {
+                var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
+                var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
+                var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
+                var consistLabels = similarItem.consist !== null && similarItem.consist.length > 0 ? this.$labels.consists.filter(value => similarItem.consist.includes(value.id)) : [];
+                var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.additional.country);
+                return {
+                    categoryLabel: categoryLabels.length > 0 ? categoryLabels[0].label : null,
+                    brandLabel: brandLabels.length > 0 ? brandLabels[0].label : null,
+                    packageLabel: packageLabels.length > 0 ? packageLabels[0].label : null,
+                    packageShort: packageLabels.length > 0 ? packageLabels[0].short : null,
+                    consistLabels: consistLabels.length > 0 ? consistLabels.map(value => value.label) : [],
+                    countryLabel: countryLabels.length > 0 ? countryLabels[0].label : null
+                };
+            });
+        },
+        similarOptions: function () {
+            var array = [];
+            var i = 1;
+            this.similarItems.forEach(element => {
+                array.push({ text: element.label, value: i++ });
+            });
+            return array;
         }
     }
 });
