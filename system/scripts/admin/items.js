@@ -143,7 +143,6 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
-        console.log(this.$labels);
     }
 });
 

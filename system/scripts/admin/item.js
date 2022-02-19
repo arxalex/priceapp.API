@@ -54,6 +54,7 @@ Vue.component('item', {
         }
     },
     beforeCreate: function() {
+        console.log(this.$labels);
         var itemCategoryLabels = this.$labels.categories.filter(value => value.id == item.category);
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == item.brand);
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == item.package);
