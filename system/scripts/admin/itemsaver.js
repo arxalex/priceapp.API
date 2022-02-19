@@ -21,8 +21,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.image }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.image">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.image">
                         </td>
                     </tr>
                     <tr>
@@ -32,8 +32,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.label }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.label">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.label">
                         </td>
                     </tr>
                     <tr>
@@ -43,7 +43,7 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceLabels.categoryLabel }} ({{ sourceItem.category }})</span>
                         </td>
-                        <td>
+                        <td class="input-group">
                             <select class="form-select" v-model="destinationItem.category">
                                 <option disabled>Chose category</option>
                                 <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
@@ -57,7 +57,7 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceLabels.brandLabel }} ({{ sourceItem.brand }})</span>
                         </td>
-                        <td>
+                        <td class="input-group">
                             <select class="form-select" v-model="destinationItem.brand">
                                 <option disabled>Chose brand</option>
                                 <option v-for="brand in brands" v-bind:value="brand.id">{{ brand.label }}</option>
@@ -71,7 +71,7 @@ Vue.component('itemsaver', {
                         <td>
                             <span v-for="consistLabel in sourceLabels.consistLabels">{{ consistLabel }}</span>
                         </td>
-                        <td>
+                        <td class="input-group">
                             <select class="form-select" multiple v-model="destinationItem.consist">
                                 <option disabled>Chose consists</option>
                                 <option v-for="consist in consists" v-bind:value="consist.id">{{ consist.label }}</option>
@@ -85,8 +85,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.units }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.units">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.units">
                         </td>
                     </tr>
                     <tr>
@@ -96,8 +96,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.term }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.term">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.term">
                         </td>
                     </tr>
                     <tr>
@@ -107,8 +107,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.calorie }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.calorie">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.calorie">
                         </td>
                     </tr>
                     <tr>
@@ -118,8 +118,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.carbohydrates }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.carbohydrates">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.carbohydrates">
                         </td>
                     </tr>
                     <tr>
@@ -129,8 +129,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.fat }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.fat">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.fat">
                         </td>
                     </tr>
                     <tr>
@@ -140,8 +140,8 @@ Vue.component('itemsaver', {
                         <td>
                             <span>{{ sourceItem.proteins }}</span>
                         </td>
-                        <td>
-                            <input v-model="destinationItem.proteins">
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.proteins">
                         </td>
                     </tr>
                 </tbody>
