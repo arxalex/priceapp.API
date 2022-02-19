@@ -172,7 +172,7 @@ Vue.component('itemsaver', {
         }
     },
     props: {
-        soureItem: {
+        sourceItem: {
             type: Object
         },
         destinationItem: {
