@@ -122,11 +122,13 @@ class SilpoItemsGetter
     }
     public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem)
     {
-        $baseCategoryId = $this->_categoriesLinkService->getItemsFromDB([
+        $baseCategoryLinks = $this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
-        ])[0]->categoryid;
+        ])[0];
+        $baseCategoryLink = count($baseCategoryLinks) > 0 ? $baseCategoryLinks[0] : null;
+        $baseCategoryId = $baseCategoryLink !== null ? $baseCategoryLink->categoryid : null;
 
-        $baseCategory = $baseCategoryId != null ? $this->_categoriesService->getItemFromDB($baseCategoryId) : null;
+        $baseCategory = $baseCategoryId !== null ? $this->_categoriesService->getItemFromDB($baseCategoryId) : null;
         $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
         $brand = $this->_brandService->getBrand($silpoItem->brand);
         $package = $this->_packageService->getPackage($silpoItem->package);
@@ -152,7 +154,7 @@ class SilpoItemsGetter
             ]
         );
         $originalLabels = new SilpoOriginalItemLabelsViewModel(
-            $baseCategory !== null ? $baseCategory->label : null,
+            $baseCategoryLink !== null ? $baseCategoryLink->shopcategorylabel : null,
             $silpoItem->brand,
             $silpoItem->package,
             $silpoItem->url
