@@ -124,7 +124,7 @@ class SilpoItemsGetter
     {
         $baseCategoryLinks = $this->_categoriesLinkService->getItemsFromDB([
             'categoryshopid' => [$silpoItem->shopcategoryid]
-        ])[0];
+        ]);
         $baseCategoryLink = count($baseCategoryLinks) > 0 ? $baseCategoryLinks[0] : null;
         $baseCategoryId = $baseCategoryLink !== null ? $baseCategoryLink->categoryid : null;
 
