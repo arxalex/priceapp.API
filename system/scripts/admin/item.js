@@ -20,7 +20,7 @@ Vue.component('item', {
                 <div class="col-sm-4">
                     <img class="w-100" :src="currentSimilarItem.image">
                 </div>
-                <div class="col-sm-8">
+                <div class="col-sm-8" v-if="currentSimilarItem !== null">
                     <h1>{{ currentSimilarItem.label }}</h1>
                     Category: {{ currentSimilarItem.category }} - {{ currentSimilarLabels.categoryLabel }}<br>
                     Brand: {{ currentSimilarItem.brand }} - {{ currentSimilarLabels.brandLabel }}<br>
@@ -45,23 +45,7 @@ Vue.component('item', {
     data() {
         return {
             similarLabels: [],
-            currentSimilarItem: {
-                id: null,
-                label: null,
-                category: null,
-                package: null,
-                brand: null,
-                calorie: null,
-                carbohydrates: null,
-                fat: null,
-                proteins: null,
-                barcodes: [],
-                consist: [],
-                term: null,
-                units: null,
-                additional: [],
-                image: null
-            },
+            currentSimilarItem: null,
             currentSimilarLabels: null,
             currentSimilarId: 0,
             similarOptions: [],
