@@ -69,7 +69,9 @@ Vue.component('item', {
     computed: {
         currentSimilarItem: function () {
             if (this.currentSimilarId == 0) {
-                return null;
+                var item = this.items;
+                item.consist = item.consist ?? [];
+                return item;
             } else {
                 var item = this.similarItems[this.currentSimilarId - 1];
                 item.consist = item.consist ?? [];
@@ -78,7 +80,7 @@ Vue.component('item', {
         },
         currentSimilarLabels: function () {
             if (this.currentSimilarId == 0) {
-                return null;
+                return this.itemLabels;
             } else {
                 return this.similarLabels[this.currentSimilarId - 1];
             }
