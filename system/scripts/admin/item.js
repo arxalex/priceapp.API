@@ -69,7 +69,7 @@ Vue.component('item', {
     computed: {
         currentSimilarItem: function () {
             if (this.currentSimilarId == 0) {
-                var item = this.items;
+                var item = this.item;
                 item.consist = item.consist ?? [];
                 return item;
             } else {
