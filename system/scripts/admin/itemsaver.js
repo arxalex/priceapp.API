@@ -1,6 +1,6 @@
 Vue.component('itemsaver', {
     template: `
-        <div class="row col-sm-12">
+        <div class="row col-sm-12 position-fixed z-5 bg-light">
             <table class="table">
                 <tbody>
                     <tr>
