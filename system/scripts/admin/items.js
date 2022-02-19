@@ -146,15 +146,15 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
-        Vue.prototype.$itemsaver = {
-            sourceItem: null,
-            destinationItem: null,
-            saveActive: false
-        }
     },
     computed: {
         itemsaverModel: function() {
-            return this.$itemsaver;
+            console.log(this.$itemsaver);
+            return this.$itemsaver ?? {
+                sourceItem: null,
+                destinationItem: null,
+                saveActive: false
+            };
         }
     }
 });
