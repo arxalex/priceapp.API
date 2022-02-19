@@ -102,7 +102,7 @@ Vue.component('Items', {
 
             var itemLabels = [];
             items.forEach(element => {
-                itemLabels.push(element.label);
+                itemLabels.push(element.item.label);
             });
             var similarItems = await this.getItemsFromDb(similarUrl, {
                 itemLabels: itemLabels
@@ -110,7 +110,8 @@ Vue.component('Items', {
 
             for (var i = 0; i < items.length; i++) {
                 this.itemModels.push({
-                    item: items[i],
+                    item: items[i].item,
+                    originalLabels: items[i].originalLabels,
                     similarItems: similarItems[i]
                 });
             }
