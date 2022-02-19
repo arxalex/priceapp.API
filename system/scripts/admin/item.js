@@ -55,11 +55,11 @@ Vue.component('item', {
     },
     beforeCreate: function() {
         console.log(this.$labels);
-        var itemCategoryLabels = this.$labels.categories.filter(value => value.id == item.category);
-        var itemBrandLabels = this.$labels.brands.filter(value => value.id == item.brand);
-        var itemPackageLabels = this.$labels.packages.filter(value => value.id == item.package);
-        var itemConsistLabels = this.$labels.consists.filter(value => item.consist.includes(value.id));
-        var itemCountryLabels = this.$labels.countries.filter(value => value.id == item.country);
+        var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
+        var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
+        var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
+        var itemConsistLabels = this.$labels.consists.filter(value => this.item.consist.includes(value.id));
+        var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.country);
         this.itemLabels = {
             categoryLabel: itemCategoryLabels.length >= 0 ? itemCategoryLabels[0].label : null,
             brandLabel: itemBrandLabels.length >= 0 ? itemBrandLabels[0].label : null,
