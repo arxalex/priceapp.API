@@ -68,7 +68,7 @@ Vue.component('item', {
         var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.item.category);
         var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.item.brand);
         var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.item.package);
-        var itemConsistLabels = this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
+        var itemConsistLabels = this.item.consist !== null && this.item.consist.length > 0 ? this.$labels.consists.filter(value => this.item.consist.includes(value.id)) : [];
         var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.item.country);
         this.itemLabels = {
             categoryLabel: itemCategoryLabels.length >= 0 ? itemCategoryLabels[0].label : null,
@@ -83,7 +83,7 @@ Vue.component('item', {
             var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
             var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
             var packageLabels = this.$labels.packages.filter(value => value.id == similarItem.package);
-            var consistLabels = similarItem.consist.length > 0 ? this.$labels.consists.filter(value => similarItem.consist.includes(value.id)) : [];
+            var consistLabels = similarItem.consist !== null && similarItem.consist.length > 0 ? this.$labels.consists.filter(value => similarItem.consist.includes(value.id)) : [];
             var countryLabels = this.$labels.countries.filter(value => value.id == similarItem.country);
             return {
                 categoryLabel: categoryLabels.length >= 0 ? categoryLabels[0].label : null,
