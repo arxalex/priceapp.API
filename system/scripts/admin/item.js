@@ -63,12 +63,17 @@ Vue.component('item', {
             type: Array
         },
     },
+    mounted(){
+        this.item.consist = this.item.consist ?? [];
+    },
     computed: {
         currentSimilarItem: function () {
             if (this.currentSimilarId == 0) {
                 return null;
             } else {
-                return this.similarItems[this.currentSimilarId - 1];
+                var item = this.similarItems[this.currentSimilarId - 1];
+                item.consist = item.consist ?? [];
+                return item;
             }
         },
         currentSimilarLabels: function () {
