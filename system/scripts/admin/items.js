@@ -60,6 +60,11 @@ Vue.component('Items', {
                 to: 25,
                 isPrevDisabled: true,
                 isNextDisabled: false,
+            },
+            itemsaverModel: {
+                sourceItem: null,
+                destinationItem: null,
+                saveActive: false
             }
         }
     },
@@ -133,7 +138,11 @@ Vue.component('Items', {
             });
         },
         itemsaverActivate: function () {
-            console.log(this.$itemsaver);
+            this.itemsaverModel = this.$itemsaver ?? {
+                sourceItem: null,
+                destinationItem: null,
+                saveActive: false
+            }
         }
     },
     watch: {
@@ -147,16 +156,6 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
-    },
-    computed: {
-        itemsaverModel: function() {
-            console.log(this.$itemsaver);
-            return this.$itemsaver ?? {
-                sourceItem: null,
-                destinationItem: null,
-                saveActive: false
-            };
-        }
     }
 });
 

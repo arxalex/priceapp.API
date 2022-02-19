@@ -48,13 +48,12 @@ Vue.component('item', {
     },
     methods: {
         insert: function () {
-            console.log(this.$itemsaver);
-            this.$emit("itemsaver");
             Vue.prototype.$itemsaver = {
                 sourceItem: this.item,
                 destinationItem: this.currentSimilarItem,
                 saveActive: true
             }
+            this.$emit("itemsaver");
         }
     },
     props: {
