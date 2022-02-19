@@ -39,7 +39,7 @@ Vue.component('item', {
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
             </div>
-            <itemsaver :soureItem="item"
+            <itemsaver :sourceItem="item"
                 :destinationItem="currentSimilarItem"
                 v-if="!saveDisabled"></itemsaver>
         </div>
