@@ -50,7 +50,14 @@ Vue.component('item', {
             currentSimilarId: 0,
             similarOptions: [],
             saveDisabled: false,
-            itemLabels: null
+            itemLabels: {
+                categoryLabel: "",
+                brandLabel: "",
+                packageLabel: "",
+                packageShort: "",
+                consistLabels: [],
+                countryLabel: ""
+            }
         }
     },
     beforeCreate: function() {
