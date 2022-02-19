@@ -4,35 +4,37 @@ Vue.component('Items', {
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 v-if="itemsaverModel.saveActive"></itemsaver>
-            <h1>Prepare items</h1>
-            <p>List:
-                <div v-for="shop in shops">
-                    <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
+            <div v-if="!itemsaverModel.saveActive">
+                <h1>Prepare items</h1>
+                <p>List:
+                    <div v-for="shop in shops">
+                        <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
+                    </div>
+                </p>
+                <div class="input-group mb-3">
+                    <select class="form-select" v-model="selectedShopId">
+                        <option selected disabled>Chose shop</option>
+                        <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
+                    </select>
+                    <select class="form-select" v-model="selectedCategoryId">
+                        <option selected disabled>Chose category</option>
+                        <option v-for="shopCategory in shopCategories" v-bind:value="shopCategory.id">{{ shopCategory.label }}</option>
+                    </select>
                 </div>
-            </p>
-            <div class="input-group mb-3">
-                <select class="form-select" v-model="selectedShopId">
-                    <option selected disabled>Chose shop</option>
-                    <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
-                </select>
-                <select class="form-select" v-model="selectedCategoryId">
-                    <option selected disabled>Chose category</option>
-                    <option v-for="shopCategory in shopCategories" v-bind:value="shopCategory.id">{{ shopCategory.label }}</option>
-                </select>
+                <div class="input-group mb-3">
+                    <button @click="get_items()" class="btn btn-primary mt-2 w-100">Get items</button>
+                </div>
+                <div class="col-sm-12">
+                    <item class="mb-3" 
+                        v-for="itemModel in itemModels" 
+                        :item="itemModel.item" 
+                        :similarItems="itemModel.similarItems"
+                        v-on:itemsaver="itemsaverActivate">
+                    </item>
+                </div>
+                <button class="btn btn-secondary" @click="get_prev()" :disabled="page.isPrevDisabled">Prev</button>
+                <button class="btn btn-primary" @click="get_next()" :disabled="page.isNextDisabled">Next</button>
             </div>
-            <div class="input-group mb-3">
-                <button @click="get_items()" class="btn btn-primary mt-2 w-100">Get items</button>
-            </div>
-            <div class="col-sm-12">
-                <item class="mb-3" 
-                    v-for="itemModel in itemModels" 
-                    :item="itemModel.item" 
-                    :similarItems="itemModel.similarItems"
-                    v-on:itemsaver="itemsaverActivate">
-                </item>
-            </div>
-            <button class="btn btn-secondary" @click="get_prev()" :disabled="page.isPrevDisabled">Prev</button>
-            <button class="btn btn-primary" @click="get_next()" :disabled="page.isNextDisabled">Next</button>
         </div>
     `,
     data() {
