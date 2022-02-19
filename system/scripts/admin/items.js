@@ -28,8 +28,8 @@ Vue.component('Items', {
                 <div class="col-sm-12">
                     <item class="mb-3" 
                         v-for="itemModel in itemModels" 
-                        :item="itemModel.item.item" 
-                        :originalLabels="itemModel.item.originalLabels"
+                        :item="itemModel.item" 
+                        :originalLabels="itemModel.originalLabels"
                         :similarItems="itemModel.similarItems"
                         v-on:itemsaver="itemsaverActivate">
                     </item>
