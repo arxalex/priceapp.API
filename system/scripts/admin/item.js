@@ -7,30 +7,30 @@ Vue.component('item', {
                 </div>
                 <div class="col-sm-8">
                     <h1>{{ item.label }}</h1>
-                    Category: {{ item.category }} - {{ itemLabels.categoryLabel }}<br>
-                    Brand: {{ item.brand }} - {{ itemLabels.brandLabel }}<br>
-                    Package: {{ item.package }} - {{ itemLabels.packageLabel }}, units: {{ item.units }} {{ itemLabels.packageShort }}, term: {{ item.term }}<br>
+                    Category: {{ itemLabels.categoryLabel }} ({{ item.category }})<br>
+                    Brand: {{ itemLabels.brandLabel }} ({{ item.brand }})<br>
+                    Package: {{ itemLabels.packageLabel }} ({{ item.package }}), units: {{ item.units }} {{ itemLabels.packageShort }}, term: {{ item.term }}<br>
                     Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
-                    Consist: <span v-for="consistId in item.consist">{{ consistId }}, </span> - <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span><br>
+                    Consist: <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span> (<span v-for="consistId in item.consist">{{ consistId }}, </span>)<br>
                     Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
-                    Country: {{ item.additional.country }} - {{ itemLabels.countryLabel }} <br>
+                    Country: {{ itemLabels.countryLabel }} ({{ item.additional.country }})<br>
                 </div>
             </div>
             <div class="col-sm-6 row">
                 <div class="col-sm-4" v-if="currentSimilarItem !== null">
                     <img class="w-100" :src="currentSimilarItem.image">
                 </div>
-                <div class="col-sm-8" v-if="currentSimilarItem !== null">
+                <div class="col-sm-8 mb-3" v-if="currentSimilarItem !== null">
                     <h1>{{ currentSimilarItem.label }}</h1>
-                    Category: {{ currentSimilarItem.category }} - {{ currentSimilarLabels.categoryLabel }}<br>
-                    Brand: {{ currentSimilarItem.brand }} - {{ currentSimilarLabels.brandLabel }}<br>
-                    Package: {{ currentSimilarItem.package }} - {{ currentSimilarLabels.packageLabel }}, units: {{ currentSimilarItem.units }} {{ currentSimilarLabels.packageShort }}, term: {{ currentSimilarItem.term }}<br>
+                    Category: {{ currentSimilarLabels.categoryLabel }} ({{ currentSimilarItem.category }})<br>
+                    Brand: {{ currentSimilarLabels.brandLabel }} ({{ currentSimilarItem.brand }})<br>
+                    Package: {{ currentSimilarLabels.packageLabel }} ({{ currentSimilarItem.package }}), units: {{ currentSimilarItem.units }} {{ currentSimilarLabels.packageShort }}, term: {{ currentSimilarItem.term }}<br>
                     Barcodes: <span v-for="barcode in currentSimilarItem.barcodes">{{ barcode }}, </span><br>
-                    Consist: <span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span> - <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span><br>
+                    Consist: <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span> (<span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span>)<br>
                     Calorie: {{ currentSimilarItem.calorie }}, carbohydrates: {{ currentSimilarItem.carbohydrates }}, fat: {{ currentSimilarItem.fat }}, proteins: {{ currentSimilarItem.proteins }}<br>
-                    Country: {{ currentSimilarItem.additional.country }} - {{ currentSimilarLabels.countryLabel }}<br>
+                    Country: {{ currentSimilarLabels.countryLabel }} ({{ currentSimilarItem.additional.country }})<br>
                 </div>
-                <div class="">
+                <div class="input-group">
                     <select class="form-select" v-model="currentSimilarId">
                         <option selected disabled>Chose opinion</option>
                         <option name="item" value="0">New item</option>
@@ -38,21 +38,22 @@ Vue.component('item', {
                     </select>
                     <button class="btn btn-primary" @click="insert">Insert</button>
                 </div>
-            </div>
-            <itemsaver :sourceItem="item"
-                :destinationItem="currentSimilarItem"
-                v-if="saveActive"></itemsaver>
+            </div> 
         </div>
     `,
     data() {
         return {
-            currentSimilarId: 0,
-            saveActive: false,
+            currentSimilarId: 0
         }
     },
     methods: {
         insert: function () {
-            this.saveActive = true;
+            this.$emit("itemsaver");
+            Vue.prototype.$itemsaver = {
+                sourceItem: this.item,
+                destinationItem: this.currentSimilarItem,
+                saveActive: true
+            }
         }
     },
     props: {

@@ -1,6 +1,9 @@
 Vue.component('Items', {
     template: `
-        <div>
+        <div v-on:itemsaver="itemsaverActivate">
+            <itemsaver :sourceItem="itemsaver.sourceItem"
+                :destinationItem="itemsaver.destinationItem"
+                v-if="itemsaver.saveActive"></itemsaver>
             <h1>Prepare items</h1>
             <p>List:
                 <div v-for="shop in shops">
@@ -60,7 +63,7 @@ Vue.component('Items', {
         }
     },
     methods: {
-        get_categories: async function() {
+        get_categories: async function () {
             const categoriesUrl = "../be/categories/get_categories";
             var shop = this.selectedShopId;
             var data = {
@@ -94,29 +97,29 @@ Vue.component('Items', {
                 itemLabels: itemLabels
             });
 
-            for(var i = 0; i < items.length; i++){
+            for (var i = 0; i < items.length; i++) {
                 this.itemModels.push({
                     item: items[i],
                     similarItems: similarItems[i]
                 });
             }
         },
-        get_prev: function(){
-            if(this.page.from >= 25 && !this.page.isPrevDisabled) {
+        get_prev: function () {
+            if (this.page.from >= 25 && !this.page.isPrevDisabled) {
                 this.page.from -= 25;
                 this.page.to -= 25;
                 this.get_items();
-                if(this.page.from <= 0){
+                if (this.page.from <= 0) {
                     this.page.isPrevDisabled = true;
                 }
             }
         },
-        get_next: function(){
-            if(this.page.to <= 9975 && !this.page.isNextDisabled) {
+        get_next: function () {
+            if (this.page.to <= 9975 && !this.page.isNextDisabled) {
                 this.page.from += 25;
                 this.page.to += 25;
                 this.get_items();
-                if(this.page.to >= 10000){
+                if (this.page.to >= 10000) {
                     this.page.isNextDisabled = true;
                 }
             }
@@ -128,12 +131,12 @@ Vue.component('Items', {
                 }
             });
         },
-        save: function () {
-
+        itemsaverActivate: function () {
+            
         }
     },
     watch: {
-        selectedShopId: function(value) {
+        selectedShopId: function (value) {
             this.get_categories();
         }
     },
@@ -143,6 +146,16 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
+        Vue.prototype.$itemsaver = {
+            sourceItem: null,
+            destinationItem: null,
+            saveActive: false
+        }
+    },
+    computed: {
+        itemsaver: function() {
+            return this.$itemsaver;
+        }
     }
 });
 
