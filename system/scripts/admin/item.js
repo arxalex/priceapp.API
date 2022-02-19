@@ -7,13 +7,13 @@ Vue.component('item', {
                 </div>
                 <div class="col-sm-8">
                     <h1>{{ item.label }}</h1>
-                    Category: {{ item.category }} - {{ labels.categoryLabel }}<br>
-                    Brand: {{ item.brand }} - {{ labels.brandLabel }}<br>
-                    Package: {{ item.package }} - {{ labels.packageLabel }}, units: {{ item.units }} {{ labels.packageShort }}, term: {{ item.term }}<br>
+                    Category: {{ item.category }} - {{ itemLabels.categoryLabel }}<br>
+                    Brand: {{ item.brand }} - {{ itemLabels.brandLabel }}<br>
+                    Package: {{ item.package }} - {{ itemLabels.packageLabel }}, units: {{ item.units }} {{ itemLabels.packageShort }}, term: {{ item.term }}<br>
                     Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
-                    Consist: <span v-for="consistId in item.consist">{{ consistId }}, </span> - <span v-for="consistLabel in labels.consistLabels">{{ consistLabel }}, </span><br>
+                    Consist: <span v-for="consistId in item.consist">{{ consistId }}, </span> - <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span><br>
                     Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
-                    Country: {{ item.additional.country }} - {{ labels.countryLabel }} <br>
+                    Country: {{ item.additional.country }} - {{ itemLabels.countryLabel }} <br>
                 </div>
             </div>
             <div class="col-sm-6 row">
@@ -65,11 +65,26 @@ Vue.component('item', {
             currentSimilarLabels: null,
             currentSimilarId: 0,
             similarOptions: [],
-            saveDisabled: false
+            saveDisabled: false,
+            itemLabels: null
         }
     },
     mounted() {
         var i = 1;
+        var itemCategoryLabels = this.$labels.categories.filter(value => value.id == item.category);
+        var itemBrandLabels = this.$labels.brands.filter(value => value.id == item.brand);
+        var itemPackageLabels = this.$labels.packages.filter(value => value.id == item.package);
+        var itemConsistLabels = this.$labels.consists.filter(value => item.consist.includes(value.id));
+        var itemCountryLabels = this.$labels.countries.filter(value => value.id == item.country);
+        this.itemLabels = {
+            categoryLabel: itemCategoryLabels.length >= 0 ? itemCategoryLabels[0].label : null,
+            brandLabel: itemBrandLabels.length >= 0 ? itemBrandLabels[0].label : null,
+            packageLabel: itemPackageLabels.length >= 0 ? itemPackageLabels[0].label : null,
+            packageShort: itemPackageLabels.length >= 0 ? itemPackageLabels[0].short : null,
+            consistLabels: itemConsistLabels.length >= 0 ? itemConsistLabels.map(value => value.label) : [],
+            countryLabel: itemCountryLabels.length >= 0 ? itemCountryLabels[0].label : null
+        };
+
         this.similarLabels = this.similarItems.map(similarItem => {
             var categoryLabels = this.$labels.categories.filter(value => value.id == similarItem.category);
             var brandLabels = this.$labels.brands.filter(value => value.id == similarItem.brand);
@@ -113,7 +128,7 @@ Vue.component('item', {
     computed: {
     },
     watch: {
-        currentSimilarId: function(value){
+        currentSimilarId: function (value) {
             this.change();
         }
     }
