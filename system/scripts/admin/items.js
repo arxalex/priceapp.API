@@ -138,7 +138,7 @@ Vue.component('Items', {
             this.get_categories();
         }
     },
-    mounted() {
+    async mounted() {
         const labelsUrl = "../be/items/get_labels";
         var labels = await this.getItemsFromDb(labelsUrl, {
             method: "GetAllLabels"
