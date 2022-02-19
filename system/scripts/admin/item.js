@@ -6,17 +6,118 @@ Vue.component('item', {
                     <img class="w-100" :src="item.image">
                 </div>
                 <div class="col-sm-8">
-                    <h1><a :href="originalLabels.url">{{ item.label }}</a></h1>
-                    Category: {{ itemLabels.categoryLabel }} ({{ item.category }})<br>
-                    Original category: {{ originalLabels.categoryLabel }}<br>
-                    Brand: {{ itemLabels.brandLabel }} ({{ item.brand }})<br>
-                    Original brand: {{ originalLabels.brandLabel }}<br>
-                    Package: {{ itemLabels.packageLabel }} ({{ item.package }}), units: {{ item.units }} {{ itemLabels.packageShort }}, term: {{ item.term }}<br>
-                    Original package: {{ originalLabels.packageLabel }}
-                    Barcodes: <span v-for="barcode in item.barcodes">{{ barcode }}, </span><br>
-                    Consist: <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span> (<span v-for="consistId in item.consist">{{ consistId }}, </span>)<br>
-                    Calorie: {{ item.calorie }}, carbohydrates: {{ item.carbohydrates }}, fat: {{ item.fat }}, proteins: {{ item.proteins }}<br>
-                    Country: {{ itemLabels.countryLabel }} ({{ item.additional.country }})<br>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th colspan="2">
+                                    <a class="text-reset" :href="originalLabels.url">{{ item.label }}</a>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Category:
+                                </th>
+                                <td>
+                                    {{ itemLabels.categoryLabel }} ({{ item.category }})
+                                    <br>
+                                    <span class="text-secondary">{{ originalLabels.categoryLabel }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Brand: 
+                                </th>
+                                <td>
+                                    {{ itemLabels.brandLabel }} ({{ item.brand }})
+                                    <br>
+                                    <span class="text-secondary">{{ originalLabels.brandLabel }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Package:
+                                </th>
+                                <td>
+                                    {{ itemLabels.packageLabel }} ({{ item.package }})
+                                    <br>
+                                    <span class="text-secondary">{{ originalLabels.packageLabel }}</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Units:
+                                </th>
+                                <td>
+                                    {{ item.units }} {{ itemLabels.packageShort }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Term:
+                                </th>
+                                <td>
+                                    {{ item.term }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Barcodes:
+                                </th>
+                                <td>
+                                    <span v-for="barcode in item.barcodes">{{ barcode }}, </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Consist: 
+                                </th>
+                                <td>
+                                    <span v-for="consistLabel in itemLabels.consistLabels">{{ consistLabel }}, </span> 
+                                    (<span v-for="consistId in item.consist">{{ consistId }}, </span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Calorie:
+                                </th>
+                                <td>
+                                    {{ item.calorie }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Carbohydrates:
+                                </th>
+                                <td>
+                                    {{ item.carbohydrates }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Fat:
+                                </th>
+                                <td>
+                                    {{ item.fat }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Proteins:
+                                </th>
+                                <td>
+                                    {{ item.proteins }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Country:
+                                </th>
+                                <td>
+                                    {{ itemLabels.countryLabel }} ({{ item.additional.country }})
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="col-sm-6 row">
@@ -24,14 +125,112 @@ Vue.component('item', {
                     <img class="w-100" :src="currentSimilarItem.image">
                 </div>
                 <div class="col-sm-8 mb-3" v-if="currentSimilarItem !== null">
-                    <h1>{{ currentSimilarItem.label }}</h1>
-                    Category: {{ currentSimilarLabels.categoryLabel }} ({{ currentSimilarItem.category }})<br>
-                    Brand: {{ currentSimilarLabels.brandLabel }} ({{ currentSimilarItem.brand }})<br>
-                    Package: {{ currentSimilarLabels.packageLabel }} ({{ currentSimilarItem.package }}), units: {{ currentSimilarItem.units }} {{ currentSimilarLabels.packageShort }}, term: {{ currentSimilarItem.term }}<br>
-                    Barcodes: <span v-for="barcode in currentSimilarItem.barcodes">{{ barcode }}, </span><br>
-                    Consist: <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span> (<span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span>)<br>
-                    Calorie: {{ currentSimilarItem.calorie }}, carbohydrates: {{ currentSimilarItem.carbohydrates }}, fat: {{ currentSimilarItem.fat }}, proteins: {{ currentSimilarItem.proteins }}<br>
-                    Country: {{ currentSimilarLabels.countryLabel }} ({{ currentSimilarItem.additional.country }})<br>
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th colspan="2">
+                                    {{ currentSimilarItem.label }}
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Category:
+                                </th>
+                                <td>
+                                    {{ currentSimilarLabels.categoryLabel }} ({{ currentSimilarItem.category }})
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Brand: 
+                                </th>
+                                <td>
+                                    {{ currentSimilarLabels.brandLabel }} ({{ currentSimilarItem.brand }})
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Package:
+                                </th>
+                                <td>
+                                    {{ currentSimilarLabels.packageLabel }} ({{ currentSimilarItem.package }})
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Units:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.units }} {{ currentSimilarLabels.packageShort }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Term:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.term }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Barcodes:
+                                </th>
+                                <td>
+                                    <span v-for="barcode in currentSimilarItem.barcodes">{{ barcode }}, </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Consist: 
+                                </th>
+                                <td>
+                                    <span v-for="consistLabel in currentSimilarLabels.consistLabels">{{ consistLabel }}, </span> 
+                                    (<span v-for="consistId in currentSimilarItem.consist">{{ consistId }}, </span>)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Calorie:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.calorie }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Carbohydrates:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.carbohydrates }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Fat:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.fat }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Proteins:
+                                </th>
+                                <td>
+                                    {{ currentSimilarItem.proteins }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Country:
+                                </th>
+                                <td>
+                                    {{ currentSimilarLabels.countryLabel }} ({{ currentSimilarItem.additional.country }})
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="input-group">
                     <select class="form-select" v-model="currentSimilarId">
