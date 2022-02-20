@@ -20,7 +20,7 @@ class CategoriesLinkService extends DefaultEntitiesService
         }
         $labelArr = StringHelper::nameToKeywords($label);
         $categoryLinks = $this->getItemsFromDB([
-            'label_like' => $labelArr
+            'shopcategorylabel_like' => $labelArr
         ]);
         $rates = StringHelper::rateItemsByKeywords($label, array_column($categoryLinks, 'label'));
         return count($this->orderItemsByRate($categoryLinks, $rates, 1)) > 0 ? ($this->orderItemsByRate($categoryLinks, $rates, 1))[0] : $this->getItemFromDB(0);
