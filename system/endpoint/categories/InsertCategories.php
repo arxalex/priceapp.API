@@ -7,6 +7,7 @@ use framework\entities\categories\CategoriesService;
 use framework\entities\categories\Category;
 use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\categories_link\CategoryLink;
+use stdClass;
 
 class InsertCategories extends BaseEndpointBuilder
 {
@@ -39,6 +40,13 @@ class InsertCategories extends BaseEndpointBuilder
             $category = $this->_categoriesService->getLastInsertedItem();
             $categoryLink->categoryid = $category->id;
             $this->_categoriesLinkService->updateItemInDB($categoryLink);
+
+            $statusInsert = $this->_categoriesService->getItemFromDB($category->id)->label == $categoryModel->label;
+            $statusUpdate = $this->_categoriesLinkService->getItemFromDB($categoryLink->id)->categoryid == $categoryLink->categoryid;
+            $result = new stdClass();
+            $result->statusUpdate = $statusUpdate;
+            $result->statusInsert = $statusInsert;
+            return $result;
         }
     }
 }

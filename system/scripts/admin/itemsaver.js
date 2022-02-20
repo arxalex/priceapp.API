@@ -1,6 +1,11 @@
 Vue.component('itemsaver', {
     template: `
         <div>
+            <categoryInsert 
+                v-if="isCategoryInsertAwailible"
+                @categoryInserted="categoryInserted"
+                :sourceCategory="originalLabels.categoryLabel">
+            </categoryInsert>
             <table class="table word-break">
                 <tbody>
                     <tr>
@@ -50,9 +55,9 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose category</option>
                                 <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
                             </select>
-                            <a class="btn btn-primary">
+                            <button class="btn btn-primary" @click="insertCategory">
                                 <i class="bi bi-plus-square"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -181,6 +186,11 @@ Vue.component('itemsaver', {
             <button class="btn btn-primary" v-on:click='$emit("insert")'></button>
         </div>
     `,
+    data(){
+        return {        
+            isCategoryInsertAwailible: false
+        }
+    },
     props: {
         sourceItem: {
             type: Object
@@ -190,6 +200,15 @@ Vue.component('itemsaver', {
         },
         originalLabels: {
             type: Object
+        }
+    },
+    methods: {
+        insertCategory: function(){
+            this.isCategoryInsertAwailible = true;
+        },
+        categoryInserted: function(){
+            this.isCategoryInsertAwailible = false;
+            this.$labels.categories;
         }
     },
     computed: {
