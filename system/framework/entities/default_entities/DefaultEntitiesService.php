@@ -25,6 +25,14 @@ class DefaultEntitiesService
         $response = $connection->fetchObject($this->className);
         return $response;
     }
+    public function getLastInsertedItem(){
+        $table = $this->tableName;
+        $query = "SELECT * FROM `$table` ORDER BY `id` DESC LIMIT 1";
+        $connection = new Request($query);
+        $connection->execute();
+        $response = $connection->fetchObject($this->className);
+        return $response;
+    }
     public function getItemsFromDB(array $where = []): array
     {
         $table = $this->tableName;
@@ -44,6 +52,15 @@ class DefaultEntitiesService
         $table = $this->tableName;
         $query = "insert into `$table`
         values " . SqlHelper::insertObjects([$item]);
+        return (new Request($query))->execute();
+    }
+    public function updateItemInDB($item){
+        $table = $this->tableName;
+        $query = "UPDATE `$table`
+        SET " . SqlHelper::updateObject($item)
+        . "WHERE " . SqlHelper::whereCreate([
+            'id' => [$item->id]
+        ]);
         return (new Request($query))->execute();
     }
     public function orderItemsByRate(array $items, array $rates, int $max = null) : array

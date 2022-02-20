@@ -25,84 +25,112 @@ class SqlHelper
     /**
      * Return query string that goes after "VALUES "
      */
-    public static function insertObjects(array $objects){
+    public static function insertObjects(array $objects)
+    {
         $query = "";
-        
-        foreach($objects as $obj){
+
+        foreach ($objects as $obj) {
             $query .= "(";
-            foreach($obj as $key => $value)
-            {
+            foreach ($obj as $key => $value) {
                 $v = "DEFAULT";
-                if(is_array($value)){
-                    $v = "'". json_encode($value) ."'";
-                } elseif (is_object($value)){
-                    $v = "'". json_encode($value) ."'";
+                if (is_array($value)) {
+                    $v = "'" . json_encode($value) . "'";
+                } elseif (is_object($value)) {
+                    $v = "'" . json_encode($value) . "'";
                 } elseif ($value == null) {
                     $v = "DEFAULT";
                 } else {
-                    $v = "'". $value ."'";
+                    $v = "'" . self::mysql_escape_mimic($value) . "'";
                 }
-                $query .= "$key = $value, ";
+                $query .= "$key = $v, ";
             }
-            
-            $query = substr($query, 0, -2). "), ";
+
+            $query = substr($query, 0, -2) . "), ";
         }
+        $query = substr($query, 0, -2);
+    }
+
+    /**
+     * Return query string that goes after "SET "
+     */
+    public static function updateObject($object)
+    {
+        $query = "";
+
+        foreach ($object as $key => $value) {
+            $v = "DEFAULT";
+            if (is_array($value)) {
+                $v = "'" . json_encode($value) . "'";
+            } elseif (is_object($value)) {
+                $v = "'" . json_encode($value) . "'";
+            } elseif ($value == null) {
+                $v = "DEFAULT";
+            } else {
+                $v = "'" . self::mysql_escape_mimic($value) . "'";
+            }
+            $query .= "`$key` = $v, ";
+        }
+
         $query = substr($query, 0, -2);
     }
 
     /**
      * Return query string that implements ($value[0], ...) for "in"
      */
-    public static function arrayInNumeric(array $values){
+    public static function arrayInNumeric(array $values)
+    {
         $result = "(";
-        foreach($values as $value){
+        foreach ($values as $value) {
             $result .= "$value, ";
         }
-        $result = substr($result, 0, -2). ")";
+        $result = substr($result, 0, -2) . ")";
         return $result;
     }
 
     /**
      * Return query string that implements ($value[0], ...) for "in"
      */
-    public static function arrayInString(array $values){
+    public static function arrayInString(array $values)
+    {
         $result = "(";
-        foreach($values as $value){
+        foreach ($values as $value) {
             $value = self::mysql_escape_mimic($value);
             $result .= "'$value', ";
         }
-        $result = substr($result, 0, -2). ")";
+        $result = substr($result, 0, -2) . ")";
         return $result;
     }
 
     /**
      * Return query string that implements ($value[0], ...) for "in"
      */
-    public static function arrayLikeString(string $key, array $values){
+    public static function arrayLikeString(string $key, array $values)
+    {
         $result = "(";
-        foreach($values as $value){
+        foreach ($values as $value) {
             $value = self::mysql_escape_mimic($value);
             $result .= "$key LIKE '%$value%' OR ";
         }
-        $result = substr($result, 0, -4). ")";
+        $result = substr($result, 0, -4) . ")";
         return $result;
     }
 
     /**
      * Return query string that goes after "WHERE "
      */
-    public static function whereCreate(array $where){
+    public static function whereCreate(array $where)
+    {
         $query = "";
-        foreach($where as $key => $value){
-            if(is_numeric($value[0])){
+        foreach ($where as $key => $value) {
+            if (is_numeric($value[0])) {
                 $query .= "$key in ";
                 $query .= self::arrayInNumeric($value);
                 $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5) == "_like"){
+            } elseif (is_string($value[0]) && substr($key, -5) == "_like") {
                 $key = substr($key, 0, -5);
                 $query .= self::arrayLikeString($key, $value);
                 $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5) != "_like"){
+            } elseif (is_string($value[0]) && substr($key, -5) != "_like") {
                 $query .= "$key in ";
                 $query .= self::arrayInString($value);
                 $query .= " AND ";

@@ -57,6 +57,12 @@
                                 "routeType": "default",
                                 "className": "categories\\GetCategories",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "insert_categories",
+                                "routeType": "default",
+                                "className": "categories\\InsertCategories",
+                                "contants": []
                             }
                         ]
                     }
