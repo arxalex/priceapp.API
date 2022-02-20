@@ -1,7 +1,11 @@
 Vue.component('categoryInsert', {
     template: `
         <div class="bg-white position-fixed p-4 window-insert shadow-lg rounded">
-            <h5 class="ms-1 fw-bold mb-3">Category</h5>
+            <div class="d-flex mb-3"><h5 class="ms-1 fw-bold flex-fill">Category</h5>
+                <button class="btn mt-0 pt-0 px-0" @click="close">
+                    <i class="bi bi-x text-danger"></i>
+                </button>
+            </div>
             <div class="d-flex mb-3">
                 <div class="position-relative flex-fill me-2">
                     <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
@@ -121,6 +125,11 @@ Vue.component('categoryInsert', {
                 }
             });
         },
+        close: function(){
+            Vue.prototype.$labels = labels;
+            this.$labels = labels;
+            this.$emit("categoryInserted");
+        }
     },
     async mounted() {
         const cateoryLinkUrl = "../be/categories/get_categories";
