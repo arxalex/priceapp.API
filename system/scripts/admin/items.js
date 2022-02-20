@@ -136,6 +136,13 @@ Vue.component('Items', {
                 saveActive: false,
                 originalLabels: null
             }
+        },
+        reload: function(){
+            const labelsUrl = "../be/items/get_labels";
+            var labels = await this.getItemsFromDb(labelsUrl, {
+                method: "GetAllLabels"
+            });
+            Vue.prototype.$labels = labels;
         }
     },
     watch: {
@@ -160,7 +167,7 @@ Vue.component('Items', {
     computed:{
         shops: function(){
             if(this.$labels == null){
-                this.beforeCreated();
+                this.reload();
             }
             return this.$labels.shops;
         }
