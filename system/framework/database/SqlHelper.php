@@ -23,15 +23,27 @@ class SqlHelper
         return $inp;
     }
     /**
-     * Return query string that goes after "VALUES "
+     * Return query string that goes before and after "VALUES "
      */
     public static function insertObjects(array $objects)
     {
-        $query = "";
+        $queryBefore = "(";
+        $queryAfter = "";
+        $isNeededBefore = true;
 
         foreach ($objects as $obj) {
-            $query .= "(";
+            $queryAfter .= "(";
+
+            if ($isNeededBefore) {
+                foreach ($obj as $key => $value) {
+                    $queryBefore .= "$key, ";
+                }
+                $queryBefore = substr($queryBefore, 0, -2) . ")";
+                $isNeededBefore = false;
+            }
+
             foreach ($obj as $value) {
+
                 $v = "DEFAULT";
                 if (is_array($value)) {
                     $v = "'" . json_encode($value) . "'";
@@ -42,13 +54,12 @@ class SqlHelper
                 } else {
                     $v = "'" . self::mysql_escape_mimic($value) . "'";
                 }
-                $query .= "$v, ";
+                $queryAfter .= "$v, ";
             }
 
-            $query = substr($query, 0, -2) . "), ";
+            $queryAfter = substr($queryAfter, 0, -2) . "), ";
         }
-        $query = substr($query, 0, -2);
-        return $query;
+        return $queryBefore . " VALUES " . substr($queryAfter, 0, -2);
     }
 
     /**
