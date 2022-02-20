@@ -1,6 +1,6 @@
 Vue.component('Items', {
     template: `
-        <div>
+        <div v-if="loaded">
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
@@ -45,6 +45,7 @@ Vue.component('Items', {
             selectedCategoryId: null,
             itemModels: [],
             shopCategories: [],
+            loaded: false,
             page: {
                 from: 0,
                 to: 25,
@@ -151,6 +152,7 @@ Vue.component('Items', {
         }
     },
     async mounted() {
+        this.loaded = true;
         /*const labelsUrl = "../be/items/get_labels";
         var labels = await this.getItemsFromDb(labelsUrl, {
             method: "GetAllLabels"
