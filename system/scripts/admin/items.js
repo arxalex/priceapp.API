@@ -8,12 +8,12 @@ Vue.component('Items', {
             <div v-if="!itemsaverModel.saveActive">
                 <h1>Prepare items</h1>
                 <p>List:
-                    <div v-for="shop in shops" v-if="shops != null">
+                    <div v-for="shop in shops" v-if="loaded">
                         <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
                     </div>
                 </p>
                 <div class="input-group mb-3">
-                    <select class="form-select" v-model="selectedShopId">
+                    <select class="form-select" v-model="selectedShopId" v-if="loaded">
                         <option selected disabled>Chose shop</option>
                         <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
                     </select>
@@ -137,13 +137,6 @@ Vue.component('Items', {
                 saveActive: false,
                 originalLabels: null
             }
-        },
-        reload: async function(){
-            const labelsUrl = "../be/items/get_labels";
-            var labels = await this.getItemsFromDb(labelsUrl, {
-                method: "GetAllLabels"
-            });
-            Vue.prototype.$labels = labels;
         }
     },
     watch: {
@@ -157,6 +150,7 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
+        loaded = true;
     },
     computed:{
         shops: function(){
