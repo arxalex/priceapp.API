@@ -8,12 +8,12 @@ Vue.component('Items', {
             <div v-if="!itemsaverModel.saveActive">
                 <h1>Prepare items</h1>
                 <p>List:
-                    <div v-for="shop in shops" v-if="loaded">
+                    <div v-for="shop in shops" v-if="false">
                         <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
                     </div>
                 </p>
                 <div class="input-group mb-3">
-                    <select class="form-select" v-model="selectedShopId" v-if="loaded">
+                    <select class="form-select" v-model="selectedShopId" v-if="false">
                         <option selected disabled>Chose shop</option>
                         <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
                     </select>
