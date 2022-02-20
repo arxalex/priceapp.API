@@ -6,7 +6,7 @@ Vue.component('categoryInsert', {
                 <input class="form-control" v-model="category.label" placeholder="Label">
                 <select v-model="category.parent">
                     <option disabled value="">Chose parent cateory</option>
-                    <option v-for="category in categories" :value="category.id">{{ cateory.label }}</oprion>
+                    <option v-for="category in categories" :value="category.id">{{ cateory.label }}</option>
                 </select>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" v-model="category.isFilter">
