@@ -126,6 +126,7 @@ Vue.component('categoryInsert', {
             });
         },
         close: async function(){
+            const labelsUrl = "../be/items/get_labels";
             var labels = await this.getItemsFromDb(labelsUrl, {
                 method: "GetAllLabels"
             });
