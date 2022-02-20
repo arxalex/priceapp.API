@@ -31,7 +31,7 @@ class SqlHelper
 
         foreach ($objects as $obj) {
             $query .= "(";
-            foreach ($obj as $key => $value) {
+            foreach ($obj as $value) {
                 $v = "DEFAULT";
                 if (is_array($value)) {
                     $v = "'" . json_encode($value) . "'";
@@ -42,7 +42,7 @@ class SqlHelper
                 } else {
                     $v = "'" . self::mysql_escape_mimic($value) . "'";
                 }
-                $query .= "$key = $v, ";
+                $query .= "$v, ";
             }
 
             $query = substr($query, 0, -2) . "), ";
