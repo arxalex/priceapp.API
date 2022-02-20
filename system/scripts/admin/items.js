@@ -5,7 +5,7 @@ Vue.component('Items', {
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
                 v-if="itemsaverModel.saveActive"></itemsaver>
-            <div v-if="!itemsaverModel.saveActive && false">
+            <div v-if="!itemsaverModel.saveActive && loaded">
                 <h1>Prepare items</h1>
                 <p>List:
                     <div v-for="shop in shops">
