@@ -150,7 +150,7 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
-        loaded = true;
+        this.loaded = true;
     },
     computed:{
         shops: function(){
