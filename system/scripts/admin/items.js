@@ -144,6 +144,13 @@ Vue.component('Items', {
         }
     },
     async mounted() {
+        /*const labelsUrl = "../be/items/get_labels";
+        var labels = await this.getItemsFromDb(labelsUrl, {
+            method: "GetAllLabels"
+        });
+        Vue.prototype.$labels = labels;*/
+    },
+    async beforeCreated() {
         const labelsUrl = "../be/items/get_labels";
         var labels = await this.getItemsFromDb(labelsUrl, {
             method: "GetAllLabels"
