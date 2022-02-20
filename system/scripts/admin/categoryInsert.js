@@ -3,7 +3,6 @@ Vue.component('categoryInsert', {
         <div class="bg-white position-fixed p-4 window-insert shadow-lg rounded">
             <h5 class="ms-1 fw-bold mb-3">Category</h5>
             <div class="d-flex mb-3">
-                <span>{{ category.id }}</span>
                 <div class="position-relative flex-fill me-2">
                     <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
                     <input class="form-control" v-model="category.label" placeholder="Label">
@@ -27,7 +26,7 @@ Vue.component('categoryInsert', {
                     <input class="form-control" v-model="categoryLink.id" placeholder="Id">
                 </div>
                 <div class="position-relative flex-fill me-2">
-                    <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
+                    <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Category</label>
                     <select class="form-select" v-model="categoryLink.categoryid">
                         <option disabled>Chose category</option>
                         <option :value="null">Null</option>
@@ -52,7 +51,9 @@ Vue.component('categoryInsert', {
                 </div>
             </div>
             <div class="input-group">
-                <button class="btn btn-primary form-control" v-on:click='insertCategory'>Insert</button>
+                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdateCategory(1)'>Insert category</button>
+                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdateCategory(2)'>Update or insert link</button>
+                <button class="btn btn-primary form-control" v-on:click='insertAndUpdateCategory(3)'>Insert and Update</button>
             </div>
         </div>
     `,
@@ -79,14 +80,33 @@ Vue.component('categoryInsert', {
         },
     },
     methods: {
-        insertCategory: async function () {
+        insertCategory: async function (variant) {
             const insertUrl = "../be/categories/insert_categories";
-            await this.getItemsFromDb(insertUrl, {
-                method: "InsertToCategoriesAndUpdateLink",
-                category: this.category,
-                category_link: this.categoryLink
-            });
             const labelsUrl = "../be/items/get_labels";
+            var data;
+            switch (variant) {
+                case 1:
+                    data = {
+                        method: "InsertToCategories",
+                        category: this.category
+                    }
+                    break;
+                case 2:
+                    data = {
+                        method: "InsertOrUpdateLink",
+                        category_link: this.categoryLink
+                    }
+                    break;
+                case 3:
+                    data = {
+                        method: "InsertToCategoriesAndUpdateLink",
+                        category: this.category,
+                        category_link: this.categoryLink
+                    }
+                    break;
+            }
+            await this.getItemsFromDb(insertUrl, data);
+            
             var labels = await this.getItemsFromDb(labelsUrl, {
                 method: "GetAllLabels"
             });
@@ -117,7 +137,7 @@ Vue.component('categoryInsert', {
                 return this.$labels.categories;
             }
         },
-        shops: function() {
+        shops: function () {
             return this.$labels.shops;
         }
     }
