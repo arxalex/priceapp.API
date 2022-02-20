@@ -157,14 +157,10 @@ Vue.component('Items', {
         });
         Vue.prototype.$labels = labels;
     },
-    computed: {
-        shops: async function () {
-            if (this.$labels == null) {
-                const labelsUrl = "../be/items/get_labels";
-                var labels = await this.getItemsFromDb(labelsUrl, {
-                    method: "GetAllLabels"
-                });
-                Vue.prototype.$labels = labels;
+    computed:{
+        shops: function(){
+            if(this.$labels == null){
+                this.beforeCreated();
             }
             return this.$labels.shops;
         }
