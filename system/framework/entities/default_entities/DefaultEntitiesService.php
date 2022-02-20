@@ -42,6 +42,7 @@ class DefaultEntitiesService
         } else {
             $query = "select * from `$table`";
         }
+        echo $query. "\n";
         $connection = new Request($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
