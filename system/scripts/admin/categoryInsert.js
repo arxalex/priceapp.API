@@ -40,7 +40,7 @@ Vue.component('categoryInsert', {
             </div>
         </div>
     `,
-    data(){
+    data() {
         return {
             category: {
                 id: null,
@@ -63,7 +63,7 @@ Vue.component('categoryInsert', {
         },
     },
     methods: {
-        insertCategory: async function() {
+        insertCategory: async function () {
             const insertUrl = "../be/categories/insert_categories";
             await this.getItemsFromDb(insertUrl, {
                 method: "InsertToCategoriesAndUpdateLink",
@@ -86,7 +86,7 @@ Vue.component('categoryInsert', {
             });
         },
     },
-    async mounted(){
+    async mounted() {
         const cateoryLinkUrl = "../be/categories/get_categories";
         var categoryLink = await this.getItemsFromDb(cateoryLinkUrl, {
             method: "GetCategoryLinkByLabel",
@@ -95,9 +95,12 @@ Vue.component('categoryInsert', {
         this.categoryLink = categoryLink;
     },
     computed: {
-        categories: function(){
-            return this.$labels.categories;
-        },
+        categories: {
+            cache: false,
+            get: function () {
+                return this.$labels.categories;
+            }
+        }
     }
 });
 

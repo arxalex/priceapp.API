@@ -186,8 +186,8 @@ Vue.component('itemsaver', {
             <button class="btn btn-primary" v-on:click='$emit("insert")'></button>
         </div>
     `,
-    data(){
-        return {        
+    data() {
+        return {
             isCategoryInsertAwailible: false
         }
     },
@@ -203,22 +203,21 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
-        insertCategory: function(){
+        insertCategory: function () {
             this.isCategoryInsertAwailible = true;
         },
-        categoryInserted: function(){
+        categoryInserted: function () {
             this.isCategoryInsertAwailible = false;
-            this.$labels.categories;
         }
     },
     computed: {
-        sourceLabels: function(){
+        sourceLabels: function () {
             var itemCategoryLabels = this.$labels.categories.filter(value => value.id == this.sourceItem.category);
             var itemBrandLabels = this.$labels.brands.filter(value => value.id == this.sourceItem.brand);
             var itemPackageLabels = this.$labels.packages.filter(value => value.id == this.sourceItem.package);
             var itemConsistLabels = this.sourceItem.consist !== null && this.sourceItem.consist.length > 0 ? this.$labels.consists.filter(value => this.sourceItem.consist.includes(value.id)) : [];
             var itemCountryLabels = this.$labels.countries.filter(value => value.id == this.sourceItem.additional.country);
-    
+
             return {
                 categoryLabel: itemCategoryLabels.length > 0 ? itemCategoryLabels[0].label : null,
                 brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
@@ -227,17 +226,29 @@ Vue.component('itemsaver', {
                 countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
             };
         },
-        categories: function(){
-            return this.$labels.categories;
+        categories: {
+            cache: false,
+            get: function () {
+                return this.$labels.categories;
+            }
         },
-        packages: function(){
-            return this.$labels.packages;
+        packages: {
+            cache: false,
+            get: function () {
+                return this.$labels.packages;
+            }
         },
-        brands: function(){
-            return this.$labels.brands;
+        brands: {
+            cache: false,
+            get: function () {
+                return this.$labels.brands;
+            }
         },
-        consists: function(){
-            return this.$labels.consists;
+        consists: {
+            cache: false,
+            get: function () {
+                return this.$labels.consists;
+            }
         }
     }
 });
