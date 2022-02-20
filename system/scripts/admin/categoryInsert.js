@@ -6,7 +6,7 @@ Vue.component('categoryInsert', {
                 <input class="form-control" v-model="category.label" placeholder="Label">
                 <select v-model="category.parent">
                     <option disabled value="">Chose parent cateory</option>
-                    <option v-for="category in categories" :value="category.id">{{ cateory.label }}</option>
+                    <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
                 </select>
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" v-model="category.isFilter">
@@ -72,7 +72,7 @@ Vue.component('categoryInsert', {
         const cateoryLinkUrl = "../be/categories/get_categories";
         var categoryLink = await this.getItemsFromDb(cateoryLinkUrl, {
             method: "GetCategoryLinkByLabel",
-            label: sourceCategory
+            label: this.sourceCategory
         });
         this.categoryLink = categoryLink;
     },
