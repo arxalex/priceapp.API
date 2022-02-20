@@ -5,7 +5,7 @@ Vue.component('categoryInsert', {
                 <span>{{ category.id }}</span>
                 <input class="form-control" v-model="category.label" placeholder="Label">
                 <select v-model="category.parent">
-                    <option disabled value="">Chose parent cateory</option>
+                    <option disabled value="">Chose parent category</option>
                     <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
                 </select>
                 <div class="form-check m-2">
@@ -14,26 +14,19 @@ Vue.component('categoryInsert', {
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-sm-2">
-                    <span>CategoryLink id: </span>
-                    <span>{{ categoryLink.id }}</span>
-                </div>
-                <div class="col-sm-2">
-                    <span>Category id: </span>
-                    <span>{{ categoryLink.cateoryid }}</span>
-                </div>
-                <div class="col-sm-2">
-                    <span>Shop id: </span>
-                    <span>{{ categoryLink.shopid }}</span>
-                </div>
-                <div class="col-sm-2">
-                    <span>Category in shop id: </span>
-                    <span>{{ categoryLink.categoryshopid }}</span>
-                </div>
-                <div class="col-sm-4">
-                    <span>Shop category label: </span>
-                    <span>{{ categoryLink.shopcategorylabel }}</span>
-                </div>
+                <input class="form-control" v-model="categoryLink.id" placeholder="Id">
+                <select v-model="categoryLink.categoryid">
+                    <option disabled>Chose category</option>
+                    <option :value="null">Null</option>
+                    <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
+                </select>
+                <select v-model="categoryLink.shopid">
+                    <option disabled>Chose shop</option>
+                    <option :value="null">Null</option>
+                    <option v-for="shop in shops" :value="shop.id">{{ shop.label }}</option>
+                </select>
+                <input class="form-control" v-model="categoryLink.categoryshopid" placeholder="Category shop id">
+                <input class="form-control" v-model="categoryLink.shopcategorylabel" placeholder="Category shop id">
             </div>
             <div class="input-group">
                 <button class="btn btn-primary form-control" v-on:click='insertCategory'>Insert</button>
@@ -100,6 +93,9 @@ Vue.component('categoryInsert', {
             get: function () {
                 return this.$labels.categories;
             }
+        },
+        shops: function() {
+            return this.$labels.shops;
         }
     }
 });

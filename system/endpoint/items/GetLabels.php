@@ -8,6 +8,7 @@ use framework\entities\categories\CategoriesService;
 use framework\entities\consists\ConsistsService;
 use framework\entities\countries\CountriesService;
 use framework\entities\packages\PackagesService;
+use framework\entities\shops\ShopsService;
 
 class GetLabels extends BaseEndpointBuilder
 {
@@ -16,6 +17,7 @@ class GetLabels extends BaseEndpointBuilder
     private PackagesService $_packageService;
     private ConsistsService $_consistsService;
     private CountriesService $_countriesService;
+    private ShopsService $_shopsService;
 
     public function __construct()
     {
@@ -25,6 +27,7 @@ class GetLabels extends BaseEndpointBuilder
         $this->_packageService = new PackagesService();
         $this->_consistsService = new ConsistsService();
         $this->_countriesService = new CountriesService();
+        $this->_shopsService = new ShopsService();
     }
     public function defaultParams()
     {
@@ -89,12 +92,14 @@ class GetLabels extends BaseEndpointBuilder
             $packages = $this->_packageService->getItemsFromDB();
             $consists = $this->_consistsService->getItemsFromDB();
             $countries = $this->_countriesService->getItemsFromDB();
+            $shops = $this->_shopsService->getItemsFromDB();
             $response = new LabelArraysResponseViewModel(
                 $this->_categoriesService->getColumns($categories, ["id", "label"]),
                 $this->_brandService->getColumns($brands, ["id", "label"]),
                 $this->_packageService->getColumns($packages, ["id", "label", "short"]),
                 $this->_consistsService->getColumns($consists, ["id", "label"]),
-                $this->_countriesService->getColumns($countries, ["id", "label"])
+                $this->_countriesService->getColumns($countries, ["id", "label"]),
+                $this->_shopsService->getColumns($shops, ["id", "label"])
             );
             return $response;
         }

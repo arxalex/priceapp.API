@@ -41,20 +41,6 @@ Vue.component('Items', {
     `,
     data() {
         return {
-            shops: {
-                silpo: {
-                    label: 'silpo',
-                    id: 1,
-                },
-                atb: {
-                    label: 'atb',
-                    id: 3,
-                },
-                auchan: {
-                    label: 'auchan',
-                    id: 2,
-                }
-            },
             selectedShopId: null,
             selectedCategoryId: null,
             itemModels: [],
@@ -163,6 +149,11 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
+    },
+    computed:{
+        shops: function(){
+            return this.$labels.shops;
+        }
     }
 });
 
