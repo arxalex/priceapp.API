@@ -1,26 +1,43 @@
 Vue.component('categoryInsert', {
     template: `
-        <div>
-            <div class="input-group">
+        <div class="bg-white position-fixed p-4 window-insert shadow-lg rounded">
+            <div class="input-group mb-3">
                 <span>{{ category.id }}</span>
                 <input class="form-control" v-model="category.label" placeholder="Label">
                 <select v-model="category.parent">
                     <option disabled value="">Chose parent cateory</option>
                     <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
                 </select>
-                <div class="form-check">
+                <div class="form-check m-2">
                     <input class="form-check-input" type="checkbox" v-model="category.isFilter">
                     <label class="form-check-label">isFilter</label>
                 </div>
             </div>
-            <div class="input-group">
-                <span>{{ categoryLink.id }}</span>
-                <span>{{ categoryLink.cateoryid }}</span>
-                <span>{{ categoryLink.shopid }}</span>
-                <span>{{ categoryLink.categoryshopid }}</span>
-                <span>{{ categoryLink.shopcategorylabel }}</span>
+            <div class="row mb-3">
+                <div class="col-sm-3">
+                    <span>CategoryLink id: </span>
+                    <span>{{ categoryLink.id }}</span>
+                </div>
+                <div class="col-sm-3">
+                    <span>Category id: </span>
+                    <span>{{ categoryLink.cateoryid }}</span>
+                </div>
+                <div class="col-sm-3">
+                    <span>Shop id: </span>
+                    <span>{{ categoryLink.shopid }}</span>
+                </div>
+                <div class="col-sm-3">
+                    <span>Category in shop id: </span>
+                    <span>{{ categoryLink.categoryshopid }}</span>
+                </div>
+                <div class="col-sm-3">
+                    <span>Shop category label: </span>
+                    <span>{{ categoryLink.shopcategorylabel }}</span>
+                </div>
             </div>
-            <button class="btn btn-primary" v-on:click='insertCategory'></button>
+            <div class="input-group">
+                <button class="btn btn-primary form-control" v-on:click='insertCategory'>Insert</button>
+            </div>
         </div>
     `,
     data(){

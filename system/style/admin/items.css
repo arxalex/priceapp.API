@@ -10,3 +10,10 @@
 .table th{
     width: 20%;
 }
+.window-insert{
+    left: 0;
+    margin: 50px;
+    width: calc(100% - 100px);
+    height: calc(100vh - 100px);
+    z-index: 5;
+}
