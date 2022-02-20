@@ -137,18 +137,21 @@ class LabelArraysResponseViewModel
     public array $packages;
     public array $consists;
     public array $countries;
+    public array $shops;
 
     public function __construct(
         array $categories = [],
         array $brands = [],
         array $packages = [],
         array $consists = [],
-        array $countries = []
+        array $countries = [],
+        array $shops = []
     ) {
         $this->categories = $categories;
         $this->brands = $brands;
         $this->packages = $packages;
         $this->consists = $consists;
         $this->countries = $countries;
+        $this->shops = $shops;
     }
 }
