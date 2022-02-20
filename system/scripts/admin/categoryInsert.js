@@ -126,6 +126,9 @@ Vue.component('categoryInsert', {
             });
         },
         close: function(){
+            var labels = await this.getItemsFromDb(labelsUrl, {
+                method: "GetAllLabels"
+            });
             Vue.prototype.$labels = labels;
             this.$labels = labels;
             this.$emit("categoryInserted");
