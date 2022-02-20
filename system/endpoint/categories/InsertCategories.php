@@ -32,7 +32,7 @@ class InsertCategories extends BaseEndpointBuilder
         if($this->getParam('method') == "InsertToCategoriesAndUpdateLink"){
             $categoryModel = $this->getParam('category');
             $categoryLinkModel = $this->getParam('category_link');
-            
+            echo var_dump($categoryLinkModel);
             $category = new Category(null, $categoryModel->label, $categoryModel->parent, $categoryModel->isFilter);
             $categoryLink = $this->_categoriesLinkService->getItemFromDB($categoryLinkModel->id);
             
