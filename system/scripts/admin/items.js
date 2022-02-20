@@ -169,7 +169,9 @@ Vue.component('Items', {
     computed:{
         shops: function(){
             if(this.$labels == null){
+                this.loaded = false;
                 this.reload();
+                this.loaded = true;
             }
             return this.$labels.shops;
         }
