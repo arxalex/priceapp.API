@@ -1,6 +1,6 @@
 Vue.component('Items', {
     template: `
-        <div v-if="loaded">
+        <div>
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
@@ -8,7 +8,7 @@ Vue.component('Items', {
             <div v-if="!itemsaverModel.saveActive">
                 <h1>Prepare items</h1>
                 <p>List:
-                    <div v-for="shop in shops">
+                    <div v-for="shop in shops" v-if="shops != null">
                         <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
                     </div>
                 </p>
@@ -152,14 +152,6 @@ Vue.component('Items', {
         }
     },
     async mounted() {
-        this.loaded = true;
-        /*const labelsUrl = "../be/items/get_labels";
-        var labels = await this.getItemsFromDb(labelsUrl, {
-            method: "GetAllLabels"
-        });
-        Vue.prototype.$labels = labels;*/
-    },
-    async beforeCreated() {
         const labelsUrl = "../be/items/get_labels";
         var labels = await this.getItemsFromDb(labelsUrl, {
             method: "GetAllLabels"
@@ -168,11 +160,6 @@ Vue.component('Items', {
     },
     computed:{
         shops: function(){
-            if(this.$labels == null){
-                this.loaded = false;
-                this.reload();
-                this.loaded = true;
-            }
             return this.$labels.shops;
         }
     }
