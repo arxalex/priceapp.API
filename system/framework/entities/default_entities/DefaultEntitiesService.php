@@ -52,7 +52,7 @@ class DefaultEntitiesService
         $table = $this->tableName;
         $query = "INSERT INTO `$table`
         values " . SqlHelper::insertObjects([$item]);
-        echo $item;
+        echo var_dump($item);
         echo $query;
         return (new Request($query))->execute();
     }
