@@ -3,14 +3,20 @@ Vue.component('categoryInsert', {
         <div class="bg-white position-fixed p-4 window-insert shadow-lg rounded">
             <div class="input-group mb-3">
                 <span>{{ category.id }}</span>
-                <input class="form-control" v-model="category.label" placeholder="Label">
-                <select v-model="category.parent">
-                    <option disabled value="">Chose parent category</option>
-                    <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
-                </select>
-                <div class="form-check m-2">
-                    <input class="form-check-input" type="checkbox" v-model="category.isFilter">
-                    <label class="form-check-label">isFilter</label>
+                <div class="position-relative">
+                    <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
+                    <input class="form-control" v-model="category.label" placeholder="Label">
+                </div>
+                <div class="position-relative">
+                    <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Parent</label>
+                    <select v-model="category.parent">
+                        <option disabled value="">Chose parent category</option>
+                        <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
+                    </select>
+                </div>
+                <div class="m-2">
+                    <label class="fw-light fs-min bg-white position-absolute input-label">isFilter</label>
+                    <input class="form-check-input mx-2" type="checkbox" v-model="category.isFilter">
                 </div>
             </div>
             <div class="row mb-3">
