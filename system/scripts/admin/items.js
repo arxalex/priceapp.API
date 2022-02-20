@@ -159,7 +159,7 @@ Vue.component('Items', {
     },
     computed: {
         shops: async function () {
-            if (this.$labels.shops == null) {
+            if (this.$labels == null) {
                 const labelsUrl = "../be/items/get_labels";
                 var labels = await this.getItemsFromDb(labelsUrl, {
                     method: "GetAllLabels"
