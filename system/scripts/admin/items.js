@@ -5,15 +5,15 @@ Vue.component('Items', {
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
                 v-if="itemsaverModel.saveActive"></itemsaver>
-            <div v-if="!itemsaverModel.saveActive">
+            <div v-if="!itemsaverModel.saveActive && false">
                 <h1>Prepare items</h1>
                 <p>List:
-                    <div v-for="shop in shops" v-if="false">
+                    <div v-for="shop in shops">
                         <span>{{ shop.id }}</span> - <span>{{ shop.label }}</span>
                     </div>
                 </p>
                 <div class="input-group mb-3">
-                    <select class="form-select" v-model="selectedShopId" v-if="false">
+                    <select class="form-select" v-model="selectedShopId">
                         <option selected disabled>Chose shop</option>
                         <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
                     </select>
