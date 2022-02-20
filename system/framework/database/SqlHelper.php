@@ -48,6 +48,7 @@ class SqlHelper
             $query = substr($query, 0, -2) . "), ";
         }
         $query = substr($query, 0, -2);
+        return $query;
     }
 
     /**
@@ -72,6 +73,7 @@ class SqlHelper
         }
 
         $query = substr($query, 0, -2);
+        return $query;
     }
 
     /**
