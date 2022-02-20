@@ -157,8 +157,15 @@ Vue.component('Items', {
         });
         Vue.prototype.$labels = labels;
     },
-    computed:{
-        shops: function(){
+    computed: {
+        shops: async function () {
+            if (this.$labels.shops == null) {
+                const labelsUrl = "../be/items/get_labels";
+                var labels = await this.getItemsFromDb(labelsUrl, {
+                    method: "GetAllLabels"
+                });
+                Vue.prototype.$labels = labels;
+            }
             return this.$labels.shops;
         }
     }
