@@ -137,7 +137,7 @@ Vue.component('Items', {
                 originalLabels: null
             }
         },
-        reload: function(){
+        reload: async function(){
             const labelsUrl = "../be/items/get_labels";
             var labels = await this.getItemsFromDb(labelsUrl, {
                 method: "GetAllLabels"
