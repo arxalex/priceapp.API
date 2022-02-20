@@ -14,23 +14,23 @@ Vue.component('categoryInsert', {
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <span>CategoryLink id: </span>
                     <span>{{ categoryLink.id }}</span>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <span>Category id: </span>
                     <span>{{ categoryLink.cateoryid }}</span>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <span>Shop id: </span>
                     <span>{{ categoryLink.shopid }}</span>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <span>Category in shop id: </span>
                     <span>{{ categoryLink.categoryshopid }}</span>
                 </div>
-                <div class="col-sm-3">
+                <div class="col-sm-4">
                     <span>Shop category label: </span>
                     <span>{{ categoryLink.shopcategorylabel }}</span>
                 </div>
