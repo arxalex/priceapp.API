@@ -52,6 +52,7 @@ class DefaultEntitiesService
         $table = $this->tableName;
         $query = "INSERT INTO `$table`
         VALUES " . SqlHelper::insertObjects([$item]);
+        echo $query;
         return (new Request($query))->execute();
     }
     public function updateItemInDB($item){
@@ -61,6 +62,7 @@ class DefaultEntitiesService
         . "WHERE " . SqlHelper::whereCreate([
             'id' => [$item->id]
         ]);
+        echo $query;
         return (new Request($query))->execute();
     }
     public function orderItemsByRate(array $items, array $rates, int $max = null) : array
