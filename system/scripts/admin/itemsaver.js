@@ -9,7 +9,7 @@ Vue.component('itemsaver', {
             <packageInsert 
                 v-if="isPackageInsertAwailible"
                 @packageInserted="itemInserted('package')"
-                :sourcePackage="originalLabels.packageLabel">
+                :sourcePackage="originalPackageLabel">
             </packageInsert>
             <brandInsert 
                 v-if="isBrandInsertAwailible"
@@ -80,7 +80,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.packageLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationItem.package">
+                            <select class="form-select" v-model="destinationPackage">
                                 <option disabled>Chose package</option>
                                 <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
                             </select>
@@ -200,7 +200,9 @@ Vue.component('itemsaver', {
         return {
             isCategoryInsertAwailible: false,
             isPackageInsertAwailible: false,
-            isBrandInsertAwailible: false
+            isBrandInsertAwailible: false,
+            originalPackageLabel: this.originalLabels.packageLabel,
+            destinationPackage: this.destinationItem.package,
         }
     },
     props: {
@@ -240,6 +242,13 @@ Vue.component('itemsaver', {
                     this.isBrandInsertAwailible = false;
                     break;
             }
+        }
+    },
+    watch: {
+        destinationPackage: function(packageId){
+            var itemPackageLabels = this.$labels.package.filter(value => value.id == packageId);
+            this.originalPackageLabel = itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null;
+            this.destinationItem.package = packageId;
         }
     },
     computed: {
