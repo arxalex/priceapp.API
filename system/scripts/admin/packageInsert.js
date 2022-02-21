@@ -11,7 +11,7 @@ Vue.component('packageInsert', {
                     <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Id</label>
                     <input class="form-control" v-model="package.id" placeholder="Id">
                 </div>
-                <div class="position-relative flex-fill">
+                <div class="position-relative flex-fill me-2">
                     <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
                     <input class="form-control" v-model="package.label">
                 </div>

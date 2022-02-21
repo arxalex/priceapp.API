@@ -5,7 +5,7 @@ namespace endpoint\packages;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\packages\PackagesService;
 
-class GetCategories extends BaseEndpointBuilder
+class GetPackages extends BaseEndpointBuilder
 {
     private PackagesService $_packagesService;
     public function __construct()
