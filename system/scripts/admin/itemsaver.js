@@ -125,7 +125,7 @@ Vue.component('itemsaver', {
                             <span>Units: </span>
                         </th>
                         <td>
-                            <span>{{ sourceItem.units }}</span>
+                            <span>{{ sourceItem.units }} {{ sourceLabels.packageShort }}</span>
                         </td>
                         <td class="input-group">
                             <input class="form-control" v-model="destinationItem.units">
@@ -235,7 +235,8 @@ Vue.component('itemsaver', {
                 brandLabel: itemBrandLabels.length > 0 ? itemBrandLabels[0].label : null,
                 packageLabel: itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null,
                 consistLabels: itemConsistLabels.length > 0 ? itemConsistLabels.map(value => value.label) : [],
-                countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null
+                countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null,
+                packageShort: itemPackageLabels.length > 0 ? itemPackageLabels[0].short : null,
             };
         },
         categories: {
