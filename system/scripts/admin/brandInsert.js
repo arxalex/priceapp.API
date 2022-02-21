@@ -40,7 +40,7 @@ Vue.component('brandInsert', {
         },
     },
     methods: {
-        insertOrUpdateBrand: async function () {
+        insertOrUpdate: async function () {
             const insertUrl = "../be/brands/insert_brands";
             const labelsUrl = "../be/items/get_labels";
             var data = {

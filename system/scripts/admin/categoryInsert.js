@@ -55,9 +55,9 @@ Vue.component('categoryInsert', {
                 </div>
             </div>
             <div class="input-group">
-                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdateCategory(1)'>Insert category</button>
-                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdateCategory(2)'>Update or insert link</button>
-                <button class="btn btn-primary form-control" v-on:click='insertAndUpdateCategory(3)'>Insert and Update</button>
+                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdate(1)'>Insert category</button>
+                <button class="btn btn-secondary form-control" v-on:click='insertAndUpdate(2)'>Update or insert link</button>
+                <button class="btn btn-primary form-control" v-on:click='insertAndUpdate(3)'>Insert and Update</button>
             </div>
         </div>
     `,
@@ -84,7 +84,7 @@ Vue.component('categoryInsert', {
         },
     },
     methods: {
-        insertCategory: async function (variant) {
+        insertAndUpdate: async function (variant) {
             const insertUrl = "../be/categories/insert_categories";
             const labelsUrl = "../be/items/get_labels";
             var data;

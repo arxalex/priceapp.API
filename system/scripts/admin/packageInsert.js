@@ -21,7 +21,7 @@ Vue.component('packageInsert', {
                 </div>
             </div>
             <div class="input-group">
-                <button class="btn btn-primary form-control" v-on:click='insertOrUpdatePackage'>Insert or Update</button>
+                <button class="btn btn-primary form-control" v-on:click='insertOrUpdate'>Insert or Update</button>
             </div>
         </div>
     `,
@@ -40,7 +40,7 @@ Vue.component('packageInsert', {
         },
     },
     methods: {
-        insertOrUpdatePackage: async function () {
+        insertOrUpdate: async function () {
             const insertUrl = "../be/packages/insert_packages";
             const labelsUrl = "../be/items/get_labels";
             var data = {
