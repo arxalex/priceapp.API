@@ -246,9 +246,8 @@ Vue.component('itemsaver', {
     },
     watch: {
         destinationPackage: function(packageId){
-            var itemPackageLabels = this.$labels.package.filter(value => value.id == packageId);
+            var itemPackageLabels = this.$labels.packages.filter(value => value.id == packageId);
             this.originalPackageLabel = itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null;
-            console.log(this.originalPackageLabel);
             this.destinationItem.package = packageId;
         }
     },
