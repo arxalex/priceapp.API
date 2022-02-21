@@ -26,15 +26,16 @@ class InsertPackages extends BaseEndpointBuilder
     {
         if ($this->getParam('method') == "InsertOrUpdatePackage") {
             $packageModel = (object) $this->getParam('package');
-            $package = new Package($packageModel->id, $packageModel->label, $packageModel->short);
             $result = new stdClass();
             if ($packageModel->id == null || $packageModel->id == "") {
+                $package = new Package(null, $packageModel->label, $packageModel->short);
                 $this->_packagesService->insertItemToDB($package);
                 $package = $this->_packagesService->getLastInsertedItem();
                 $statusInsert = $this->_packagesService->getItemFromDB($package->id)->label == $packageModel->label;
                 $result->statusInsert = $statusInsert;
                 $result->package = $package;
             } else {
+                $package = new Package(intval($packageModel->id), $packageModel->label, $packageModel->short);
                 $this->_packagesService->updateItemInDB($package);
                 $statusUpdate = $this->_packagesService->getItemFromDB($package->id)->label == $package->label;
                 $result->statusUpdate = $statusUpdate;
