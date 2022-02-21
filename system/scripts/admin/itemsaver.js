@@ -6,6 +6,11 @@ Vue.component('itemsaver', {
                 @categoryInserted="categoryInserted"
                 :sourceCategory="originalLabels.categoryLabel">
             </categoryInsert>
+            <packageInsert 
+                v-if="isPackageInsertAwailible"
+                @packageInserted="packageInserted"
+                :sourcePackage="originalLabels.packageLabel">
+            </packageInsert>
             <table class="table word-break">
                 <tbody>
                     <tr>
@@ -74,9 +79,9 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose package</option>
                                 <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
                             </select>
-                            <a class="btn btn-primary">
+                            <button class="btn btn-primary" @click="insertPackage">
                                 <i class="bi bi-plus-square"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -188,7 +193,8 @@ Vue.component('itemsaver', {
     `,
     data() {
         return {
-            isCategoryInsertAwailible: false
+            isCategoryInsertAwailible: false,
+            isPackageInsertAwailible: false
         }
     },
     props: {
@@ -208,6 +214,12 @@ Vue.component('itemsaver', {
         },
         categoryInserted: function () {
             this.isCategoryInsertAwailible = false;
+        },
+        insertPackage: function () {
+            this.isPackageInsertAwailible = true;
+        },
+        packageInserted: function () {
+            this.isPackageInsertAwailible = false;
         }
     },
     computed: {

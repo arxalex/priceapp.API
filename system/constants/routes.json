@@ -65,6 +65,25 @@
                                 "contants": []
                             }
                         ]
+                    },
+                    {
+                        "routeName": "packages",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_packages",
+                                "routeType": "default",
+                                "className": "packages\\GetPackages",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "insert_packages",
+                                "routeType": "default",
+                                "className": "packages\\InsertPackages",
+                                "contants": []
+                            }
+                        ]
                     }
                 ]
             }

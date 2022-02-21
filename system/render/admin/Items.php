@@ -14,7 +14,8 @@ class Items extends BaseRenderBuilder
                 '<script src="/system/scripts/admin/items.js"></script>',
                 '<script src="/system/scripts/admin/item.js"></script>',
                 '<script src="/system/scripts/admin/itemsaver.js"></script>',
-                '<script src="/system/scripts/admin/categoryInsert.js"></script>'
+                '<script src="/system/scripts/admin/categoryInsert.js"></script>',
+                '<script src="/system/scripts/admin/packageInsert.js"></script>'
             ],
             'links' => [
                 '<link href="/system/style/admin/items.css" rel="stylesheet">'
