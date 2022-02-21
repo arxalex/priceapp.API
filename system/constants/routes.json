@@ -84,6 +84,25 @@
                                 "contants": []
                             }
                         ]
+                    },
+                    {
+                        "routeName": "brands",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_brands",
+                                "routeType": "default",
+                                "className": "brands\\GetBrands",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "insert_brands",
+                                "routeType": "default",
+                                "className": "brands\\InsertBrands",
+                                "contants": []
+                            }
+                        ]
                     }
                 ]
             }

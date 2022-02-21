@@ -3,14 +3,19 @@ Vue.component('itemsaver', {
         <div>
             <categoryInsert 
                 v-if="isCategoryInsertAwailible"
-                @categoryInserted="categoryInserted"
+                @categoryInserted="itemInserted('category')"
                 :sourceCategory="originalLabels.categoryLabel">
             </categoryInsert>
             <packageInsert 
                 v-if="isPackageInsertAwailible"
-                @packageInserted="packageInserted"
+                @packageInserted="itemInserted('package')"
                 :sourcePackage="originalLabels.packageLabel">
             </packageInsert>
+            <brandInsert 
+                v-if="isBrandInsertAwailible"
+                @brandInserted="itemInserted('brand')"
+                :sourceBrand="originalLabels.brandLabel">
+            </brandInsert>
             <table class="table word-break">
                 <tbody>
                     <tr>
@@ -60,7 +65,7 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose category</option>
                                 <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
                             </select>
-                            <button class="btn btn-primary" @click="insertCategory">
+                            <button class="btn btn-primary" @click="insertItem('category')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
                         </td>
@@ -79,7 +84,7 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose package</option>
                                 <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
                             </select>
-                            <button class="btn btn-primary" @click="insertPackage">
+                            <button class="btn btn-primary" @click="insertItem('package')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
                         </td>
@@ -98,9 +103,9 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose brand</option>
                                 <option v-for="brand in brands" v-bind:value="brand.id">{{ brand.label }}</option>
                             </select>
-                            <a class="btn btn-primary">
+                            <button class="btn btn-primary" @click="insertItem('brand')">
                                 <i class="bi bi-plus-square"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -194,7 +199,8 @@ Vue.component('itemsaver', {
     data() {
         return {
             isCategoryInsertAwailible: false,
-            isPackageInsertAwailible: false
+            isPackageInsertAwailible: false,
+            isBrandInsertAwailible: false
         }
     },
     props: {
@@ -209,17 +215,31 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
-        insertCategory: function () {
-            this.isCategoryInsertAwailible = true;
+        insertItem: function (source) {
+            switch (source) {
+                case "category":
+                    this.isCategoryInsertAwailible = true;
+                    break;
+                case "package":
+                    this.isPackageInsertAwailible = true;
+                    break;
+                case "brand":
+                    this.isBrandInsertAwailible = true;
+                    break;
+            }
         },
-        categoryInserted: function () {
-            this.isCategoryInsertAwailible = false;
-        },
-        insertPackage: function () {
-            this.isPackageInsertAwailible = true;
-        },
-        packageInserted: function () {
-            this.isPackageInsertAwailible = false;
+        itemInserted: function(source){
+            switch (source) {
+                case "category":
+                    this.isCategoryInsertAwailible = false;
+                    break;
+                case "package":
+                    this.isPackageInsertAwailible = false;
+                    break;
+                case "brand":
+                    this.isBrandInsertAwailible = false;
+                    break;
+            }
         }
     },
     computed: {

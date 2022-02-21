@@ -16,7 +16,7 @@ class GetPackages extends BaseEndpointBuilder
     public function defaultParams()
     {
         return [
-            'method' => "GetCategoryFromSource",
+            'method' => "GetPackageByLabel",
             'label' => ""
         ];
     }

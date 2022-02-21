@@ -15,6 +15,7 @@ $namespaces = [
     'endpoint\items',
     'endpoint\categories',
     'endpoint\packages',
+    'endpoint\brands',
     //'framework',
     //'framework\core',
     'framework\core\constants',
