@@ -11,10 +11,14 @@
     width: 20%;
 }
 .window-insert{
+    padding-top: 100px;
     left: 0;
-    margin: 50px;
-    width: calc(100% - 100px);
+    top: 0;
+    width: 100%;
     z-index: 5;
+    height: 100vh;
+    background: #0003;
+    backdrop-filter: blur(5px);
 }
 .input-label{
     bottom: 31px;
