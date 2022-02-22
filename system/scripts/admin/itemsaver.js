@@ -234,7 +234,7 @@ Vue.component('itemsaver', {
                         <th>
                             <span>Price factor (Dest. price / source price):</span>
                         </th>
-                        <td class="input-group" colspan="2">
+                        <td colspan="2">
                             <input class="form-control" v-model="itemLink.factor">
                         </td>
                     </tr>
