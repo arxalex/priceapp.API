@@ -140,7 +140,7 @@ Vue.component('categoryInsert', {
         const cateoryLinkUrl = "../be/categories/get_categories";
         var categoryLink = await this.getItemsFromDb(cateoryLinkUrl, {
             method: "GetCategoryLinkByLabel",
-            label: this.sourceitem.label
+            label: this.sourceItem.label
         });
         this.categoryLink = categoryLink;
     },
