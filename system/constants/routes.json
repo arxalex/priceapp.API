@@ -103,6 +103,44 @@
                                 "contants": []
                             }
                         ]
+                    },
+                    {
+                        "routeName": "consists",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_consists",
+                                "routeType": "default",
+                                "className": "consists\\GetConsists",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "insert_consists",
+                                "routeType": "default",
+                                "className": "consists\\InsertConsists",
+                                "contants": []
+                            }
+                        ]
+                    },
+                    {
+                        "routeName": "countries",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_countries",
+                                "routeType": "default",
+                                "className": "countries\\GetCountries",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "insert_countries",
+                                "routeType": "default",
+                                "className": "countries\\InsertCountries",
+                                "contants": []
+                            }
+                        ]
                     }
                 ]
             }

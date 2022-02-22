@@ -1,7 +1,7 @@
 Vue.component('brandInsert', {
     template: `
         <div class="position-fixed window-insert">
-            <div class="bg-white p-4 shadow-lg rounded">
+            <div class="bg-white p-4 container shadow-lg rounded">
                 <div class="d-flex mb-3"><h5 class="ms-1 fw-bold flex-fill">Brand</h5>
                     <button class="btn mt-0 pt-0 px-0" @click="close">
                         <i class="bi bi-x text-danger"></i>
@@ -10,15 +10,15 @@ Vue.component('brandInsert', {
                 <div class="d-flex mb-3">
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Id</label>
-                        <input class="form-control" v-model="brand.id" placeholder="Id">
+                        <input class="form-control" v-model="item.id" placeholder="Id">
                     </div>
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
-                        <input class="form-control" v-model="brand.label">
+                        <input class="form-control" v-model="item.label">
                     </div>
                     <div class="position-relative flex-fill">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Short</label>
-                        <input class="form-control" v-model="brand.short">
+                        <input class="form-control" v-model="item.short">
                     </div>
                 </div>
                 <div class="input-group">
@@ -29,11 +29,11 @@ Vue.component('brandInsert', {
     `,
     data() {
         return {
-            brand: this.sourceBrand,
+            item: this.sourceItem,
         }
     },
     props: {
-        sourceBrand: {
+        sourceItem: {
             type: Object
         },
     },
@@ -43,7 +43,7 @@ Vue.component('brandInsert', {
             const labelsUrl = "../be/items/get_labels";
             var data = {
                 method: "InsertOrUpdateBrand",
-                brand: this.brand
+                brand: this.item
             }
             await this.getItemsFromDb(insertUrl, data);
 
@@ -52,7 +52,7 @@ Vue.component('brandInsert', {
             });
             Vue.prototype.$labels = labels;
             this.$labels = labels;
-            this.$emit("brandInserted");
+            this.$emit("itemInserted");
         },
         getItemsFromDb: function (url, data) {
             return axios.post(url, data).then((response) => {
@@ -68,7 +68,7 @@ Vue.component('brandInsert', {
             });
             Vue.prototype.$labels = labels;
             this.$labels = labels;
-            this.$emit("brandInserted");
+            this.$emit("itemInserted");
         }
     },
 });

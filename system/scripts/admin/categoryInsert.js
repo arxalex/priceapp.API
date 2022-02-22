@@ -1,7 +1,7 @@
 Vue.component('categoryInsert', {
     template: `
         <div class="position-fixed window-insert">
-            <div class="bg-white p-4 shadow-lg rounded">
+            <div class="bg-white p-4 container shadow-lg rounded">
                 <div class="d-flex mb-3"><h5 class="ms-1 fw-bold flex-fill">Category</h5>
                     <button class="btn mt-0 pt-0 px-0" @click="close">
                         <i class="bi bi-x text-danger"></i>
@@ -10,22 +10,22 @@ Vue.component('categoryInsert', {
                 <div class="d-flex mb-3">
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Id</label>
-                        <input class="form-control" v-model="category.id" placeholder="Id">
+                        <input class="form-control" v-model="item.id" placeholder="Id">
                     </div>
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
-                        <input class="form-control" v-model="category.label" placeholder="Label">
+                        <input class="form-control" v-model="item.label" placeholder="Label">
                     </div>
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Parent</label>
-                        <select class="form-select" v-model="category.parent">
-                            <option disabled value="">Chose parent category</option>
-                            <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
+                        <select class="form-select" v-model="item.parent">
+                            <option disabled value="">Chose parent item</option>
+                            <option v-for="itemL in items" :value="itemL.id">{{ itemL.label }}</option>
                         </select>
                     </div>
                     <div class="position-relative mx-2 mt-2">
                         <label class="fw-light fs-min bg-white position-absolute input-label">isFilter</label>
-                        <input class="form-check-input mx-2" type="checkbox" v-model="category.isFilter">
+                        <input class="form-check-input mx-2" type="checkbox" v-model="item.isFilter">
                     </div>
                 </div>
                 <h5 class="ms-1 fw-bold mb-3">Category link</h5>
@@ -37,9 +37,9 @@ Vue.component('categoryInsert', {
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Category</label>
                         <select class="form-select" v-model="categoryLink.categoryid">
-                            <option disabled>Chose category</option>
+                            <option disabled>Chose item</option>
                             <option :value="null">Null</option>
-                            <option v-for="categoryL in categories" :value="categoryL.id">{{ categoryL.label }}</option>
+                            <option v-for="itemL in items" :value="itemL.id">{{ itemL.label }}</option>
                         </select>
                     </div>
                     <div class="position-relative flex-fill me-2">
@@ -69,7 +69,7 @@ Vue.component('categoryInsert', {
     `,
     data() {
         return {
-            category: this.sourceCategory,
+            item: this.sourceItem,
             categoryLink: {
                 id: null,
                 categoryid: null,
@@ -80,7 +80,7 @@ Vue.component('categoryInsert', {
         }
     },
     props: {
-        sourceCategory: {
+        sourceItem: {
             type: Object
         },
     },
@@ -93,7 +93,7 @@ Vue.component('categoryInsert', {
                 case 1:
                     data = {
                         method: "InsertToCategories",
-                        category: this.category
+                        category: this.item
                     }
                     break;
                 case 2:
@@ -105,7 +105,7 @@ Vue.component('categoryInsert', {
                 case 3:
                     data = {
                         method: "InsertToCategoriesAndUpdateLink",
-                        category: this.category,
+                        category: this.item,
                         category_link: this.categoryLink
                     }
                     break;
@@ -117,7 +117,7 @@ Vue.component('categoryInsert', {
             });
             Vue.prototype.$labels = labels;
             this.$labels = labels;
-            this.$emit("categoryInserted");
+            this.$emit("itemInserted");
         },
         getItemsFromDb: function (url, data) {
             return axios.post(url, data).then((response) => {
@@ -133,19 +133,19 @@ Vue.component('categoryInsert', {
             });
             Vue.prototype.$labels = labels;
             this.$labels = labels;
-            this.$emit("categoryInserted");
+            this.$emit("itemInserted");
         }
     },
     async mounted() {
         const cateoryLinkUrl = "../be/categories/get_categories";
         var categoryLink = await this.getItemsFromDb(cateoryLinkUrl, {
             method: "GetCategoryLinkByLabel",
-            label: this.sourceCategory.label
+            label: this.sourceitem.label
         });
         this.categoryLink = categoryLink;
     },
     computed: {
-        categories: {
+        items: {
             cache: false,
             get: function () {
                 return this.$labels.categories;

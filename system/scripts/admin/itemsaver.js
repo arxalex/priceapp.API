@@ -2,20 +2,30 @@ Vue.component('itemsaver', {
     template: `
         <div>
             <categoryInsert 
-                v-if="isCategoryInsertAwailible"
-                @categoryInserted="itemInserted('category')"
-                :sourceCategory="destinationSelect.category">
+                v-if="isInsertAwailible.category"
+                @itemInserted="itemInserted('category')"
+                :sourceItem="destinationSelect.category">
             </categoryInsert>
             <packageInsert 
-                v-if="isPackageInsertAwailible"
-                @packageInserted="itemInserted('package')"
-                :sourcePackage="destinationSelect.package">
+                v-if="isInsertAwailible.package"
+                @itemInserted="itemInserted('package')"
+                :sourceItem="destinationSelect.package">
             </packageInsert>
             <brandInsert 
-                v-if="isBrandInsertAwailible"
-                @brandInserted="itemInserted('brand')"
-                :sourceBrand="destinationSelect.brand">
+                v-if="isInsertAwailible.brand"
+                @itemInserted="itemInserted('brand')"
+                :sourceItem="destinationSelect.brand">
             </brandInsert>
+            <consistInsert 
+                v-if="isInsertAwailible.consist"
+                @itemInserted="itemInserted('consist')"
+                :sourceItem="destinationSelect.consist">
+            </consistInsert>
+            <countryInsert 
+                v-if="isInsertAwailible.country"
+                @itemInserted="itemInserted('country')"
+                :sourceItem="destinationSelect.country">
+            </countryInsert>
             <table class="table word-break">
                 <tbody>
                     <tr>
@@ -123,9 +133,9 @@ Vue.component('itemsaver', {
                                 <option disabled>Chose consists</option>
                                 <option v-for="consist in consists" v-bind:value="consist.id">{{ consist.label }}</option>
                             </select>
-                            <a class="btn btn-primary">
+                            <button class="btn btn-primary" @click="insertItem('consist')">
                                 <i class="bi bi-plus-square"></i>
-                            </a>
+                            </button>
                         </td>
                     </tr>
                     <tr>
@@ -194,6 +204,26 @@ Vue.component('itemsaver', {
                             <input class="form-control" v-model="destinationItem.proteins">
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            <span>Country: </span>
+                        </th>
+                        <td>
+                            <span>{{ sourceLabels.countryLabel }} ({{ sourceItem.additional.country }})</span>
+                            <br>
+                            <span class="fw-light text-secondary">{{ originalLabels.countryLabel }}</span>
+                        </td>
+                        <td class="input-group">
+                            <select class="form-select" v-model="destinationItem.additional.country">
+                                <option disabled>Chose country</option>
+                                <option :value="-1">New item</option>
+                                <option v-for="country in countries" :value="country.id">{{ country.label }}</option>
+                            </select>
+                            <button class="btn btn-primary" @click="insertItem('country')">
+                                <i class="bi bi-plus-square"></i>
+                            </button>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
             <button class="btn btn-primary" v-on:click='$emit("insert")'></button>
@@ -201,9 +231,13 @@ Vue.component('itemsaver', {
     `,
     data() {
         return {
-            isCategoryInsertAwailible: false,
-            isPackageInsertAwailible: false,
-            isBrandInsertAwailible: false
+            isInsertAwailible: {
+                category: false,
+                package: false,
+                brand: false,
+                consist: false,
+                country: false
+            }
         }
     },
     props: {
@@ -221,26 +255,38 @@ Vue.component('itemsaver', {
         insertItem: function (source) {
             switch (source) {
                 case "category":
-                    this.isCategoryInsertAwailible = true;
+                    this.isInsertAwailible.category = true;
                     break;
                 case "package":
-                    this.isPackageInsertAwailible = true;
+                    this.isInsertAwailible.package = true;
                     break;
                 case "brand":
-                    this.isBrandInsertAwailible = true;
+                    this.isInsertAwailible.brand = true;
+                    break;
+                case "consist":
+                    this.isInsertAwailible.consist = true;
+                    break;
+                case "country":
+                    this.isInsertAwailible.country = true;
                     break;
             }
         },
         itemInserted: function (source) {
             switch (source) {
                 case "category":
-                    this.isCategoryInsertAwailible = false;
+                    this.isInsertAwailible.category = false;
                     break;
                 case "package":
-                    this.isPackageInsertAwailible = false;
+                    this.isInsertAwailible.package = false;
                     break;
                 case "brand":
-                    this.isBrandInsertAwailible = false;
+                    this.isInsertAwailible.brand = false;
+                    break;
+                case "consist":
+                    this.isInsertAwailible.consist = false;
+                    break;
+                case "country":
+                    this.isInsertAwailible.country = false;
                     break;
             }
         }
@@ -326,6 +372,12 @@ Vue.component('itemsaver', {
             cache: false,
             get: function () {
                 return this.$labels.brands;
+            }
+        },
+        countries: {
+            cache: false,
+            get: function () {
+                return this.$labels.countries;
             }
         },
         consists: {

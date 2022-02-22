@@ -157,7 +157,8 @@ class SilpoItemsGetter
             $baseCategoryLink !== null ? $baseCategoryLink->shopcategorylabel : null,
             $silpoItem->brand,
             $silpoItem->package,
-            $silpoItem->url
+            $silpoItem->url,
+            $silpoItem->country
         );
         $result = new stdClass();
         $result->item = $commonItem;
@@ -175,16 +176,20 @@ class SilpoOriginalItemLabelsViewModel{
     public ?string $brandLabel;
     public ?string $packageLabel;
     public ?string $url;
+    public ?string $countryLabel;
+
     public function __construct(
         ?string $categoryLabel = null,
         ?string $brandLabel = null,
         ?string $packageLabel = null,
-        ?string $url = null
+        ?string $url = null,
+        ?string $countryLabel = null
     )
     {
         $this->categoryLabel = $categoryLabel;
         $this->brandLabel = $brandLabel;
         $this->packageLabel = $packageLabel;
         $this->url = $url;
+        $this->countryLabel = $countryLabel;
     }
 }
