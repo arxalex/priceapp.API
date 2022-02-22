@@ -27,16 +27,12 @@ Vue.component('packageInsert', {
     `,
     data() {
         return {
-            package: {
-                id: null,
-                label: this.sourcePackage,
-                short: null
-            }
+            package: this.sourcePackage
         }
     },
     props: {
         sourcePackage: {
-            type: String
+            type: Object
         },
     },
     methods: {
@@ -72,14 +68,6 @@ Vue.component('packageInsert', {
             this.$labels = labels;
             this.$emit("packageInserted");
         }
-    },
-    async mounted() {
-        const packageUrl = "../be/packages/get_packages";
-        var package = await this.getItemsFromDb(packageUrl, {
-            method: "GetPackageByLabel",
-            label: this.sourcePackage
-        });
-        this.package = package;
     }
 });
 

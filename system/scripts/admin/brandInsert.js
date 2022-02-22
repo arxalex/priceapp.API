@@ -27,16 +27,12 @@ Vue.component('brandInsert', {
     `,
     data() {
         return {
-            brand: {
-                id: null,
-                label: this.sourceBrand,
-                short: null
-            }
+            brand: this.sourceBrand,
         }
     },
     props: {
         sourceBrand: {
-            type: String
+            type: Object
         },
     },
     methods: {
@@ -73,13 +69,5 @@ Vue.component('brandInsert', {
             this.$emit("brandInserted");
         }
     },
-    async mounted() {
-        const brandUrl = "../be/brands/get_brands";
-        var brand = await this.getItemsFromDb(brandUrl, {
-            method: "GetBrandByLabel",
-            label: this.sourceBrand
-        });
-        this.brand = brand;
-    }
 });
 

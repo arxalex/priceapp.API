@@ -8,6 +8,10 @@ Vue.component('categoryInsert', {
             </div>
             <div class="d-flex mb-3">
                 <div class="position-relative flex-fill me-2">
+                    <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Id</label>
+                    <input class="form-control" v-model="category.id" placeholder="Id">
+                </div>
+                <div class="position-relative flex-fill me-2">
                     <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Label</label>
                     <input class="form-control" v-model="category.label" placeholder="Label">
                 </div>
@@ -63,12 +67,7 @@ Vue.component('categoryInsert', {
     `,
     data() {
         return {
-            category: {
-                id: null,
-                label: this.sourceCategory,
-                parent: null,
-                isFilter: true
-            },
+            category: this.sourceCategory,
             categoryLink: {
                 id: null,
                 categoryid: null,
@@ -80,7 +79,7 @@ Vue.component('categoryInsert', {
     },
     props: {
         sourceCategory: {
-            type: String
+            type: Object
         },
     },
     methods: {
@@ -139,7 +138,7 @@ Vue.component('categoryInsert', {
         const cateoryLinkUrl = "../be/categories/get_categories";
         var categoryLink = await this.getItemsFromDb(cateoryLinkUrl, {
             method: "GetCategoryLinkByLabel",
-            label: this.sourceCategory
+            label: this.sourceCategory.label
         });
         this.categoryLink = categoryLink;
     },

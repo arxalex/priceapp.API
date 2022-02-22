@@ -4,17 +4,17 @@ Vue.component('itemsaver', {
             <categoryInsert 
                 v-if="isCategoryInsertAwailible"
                 @categoryInserted="itemInserted('category')"
-                :sourceCategory="originalLabels.categoryLabel">
+                :sourceCategory="destinationSelect.category">
             </categoryInsert>
             <packageInsert 
                 v-if="isPackageInsertAwailible"
                 @packageInserted="itemInserted('package')"
-                :sourcePackage="originalPackageLabel">
+                :sourcePackage="destinationSelect.package">
             </packageInsert>
             <brandInsert 
                 v-if="isBrandInsertAwailible"
                 @brandInserted="itemInserted('brand')"
-                :sourceBrand="originalLabels.brandLabel">
+                :sourceBrand="destinationSelect.brand">
             </brandInsert>
             <table class="table word-break">
                 <tbody>
@@ -63,6 +63,7 @@ Vue.component('itemsaver', {
                         <td class="input-group">
                             <select class="form-select" v-model="destinationItem.category">
                                 <option disabled>Chose category</option>
+                                <option :value="-1">New item</option>
                                 <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
                             </select>
                             <button class="btn btn-primary" @click="insertItem('category')">
@@ -80,8 +81,9 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.packageLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationPackage">
+                            <select class="form-select" v-model="destinationItem.package">
                                 <option disabled>Chose package</option>
+                                <option :value="-1">New item</option>
                                 <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
                             </select>
                             <button class="btn btn-primary" @click="insertItem('package')">
@@ -101,7 +103,8 @@ Vue.component('itemsaver', {
                         <td class="input-group">
                             <select class="form-select" v-model="destinationItem.brand">
                                 <option disabled>Chose brand</option>
-                                <option v-for="brand in brands" v-bind:value="brand.id">{{ brand.label }}</option>
+                                <option :value="-1">New item</option>
+                                <option v-for="brand in brands" :value="brand.id">{{ brand.label }}</option>
                             </select>
                             <button class="btn btn-primary" @click="insertItem('brand')">
                                 <i class="bi bi-plus-square"></i>
@@ -200,9 +203,7 @@ Vue.component('itemsaver', {
         return {
             isCategoryInsertAwailible: false,
             isPackageInsertAwailible: false,
-            isBrandInsertAwailible: false,
-            originalPackageLabel: this.originalLabels.packageLabel,
-            destinationPackage: this.destinationItem.package,
+            isBrandInsertAwailible: false
         }
     },
     props: {
@@ -230,7 +231,7 @@ Vue.component('itemsaver', {
                     break;
             }
         },
-        itemInserted: function(source){
+        itemInserted: function (source) {
             switch (source) {
                 case "category":
                     this.isCategoryInsertAwailible = false;
@@ -242,13 +243,6 @@ Vue.component('itemsaver', {
                     this.isBrandInsertAwailible = false;
                     break;
             }
-        }
-    },
-    watch: {
-        destinationPackage: function(packageId){
-            var itemPackageLabels = this.$labels.packages.filter(value => value.id == packageId);
-            this.originalPackageLabel = itemPackageLabels.length > 0 ? itemPackageLabels[0].label : null;
-            this.destinationItem.package = packageId;
         }
     },
     computed: {
@@ -267,6 +261,54 @@ Vue.component('itemsaver', {
                 countryLabel: itemCountryLabels.length > 0 ? itemCountryLabels[0].label : null,
                 packageShort: itemPackageLabels.length > 0 ? itemPackageLabels[0].short : null,
             };
+        },
+        destinationSelect: function () {
+
+            var itemCategoryLabels = this.destinationItem.category != -1 ?
+                this.$labels.categories.filter(value => value.id == this.destinationItem.category) :
+                [{
+                    id: null,
+                    label: this.originalLabels.categoryLabel ?? "",
+                    parent: null,
+                    isFilter: false
+                }];
+            var itemBrandLabels = this.destinationItem.brand != -1 ?
+                this.$labels.brands.filter(value => value.id == this.destinationItem.brand) :
+                [{
+                    id: null,
+                    label: this.originalLabels.brandLabel ?? "",
+                    short: ""
+                }];
+            var itemPackageLabels = this.destinationItem.package != -1 ?
+                this.$labels.packages.filter(value => value.id == this.destinationItem.package) :
+                [{
+                    id: null,
+                    label: this.originalLabels.packageLabel ?? "",
+                    short: ""
+                }];
+            var itemConsistLabels = this.destinationItem.consist.length != 1 || this.destinationItem.consist[0] != -1 ?
+                (this.sourceItem.consist !== null && this.destinationItem.consist.length > 0 ?
+                    this.$labels.consists.filter(value => this.destinationItem.consist.includes(value.id)) :
+                    []) :
+                [{
+                    id: null,
+                    label: "",
+                }];
+            var itemCountryLabels = this.destinationItem.additional.country != -1 ?
+                this.$labels.countries.filter(value => value.id == this.destinationItem.additional.country) :
+                [{
+                    id: null,
+                    label: "",
+                    short: ""
+                }];
+
+            return {
+                category: itemCategoryLabels.length > 0 ? itemCategoryLabels[0] : null,
+                package: itemPackageLabels.length > 0 ? itemPackageLabels[0] : null,
+                brand: itemBrandLabels.length > 0 ? itemBrandLabels[0] : null,
+                consist: itemConsistLabels.length > 0 ? itemConsistLabels[0] : null,
+                country: itemCountryLabels.length > 0 ? itemCountryLabels[0] : null,
+            }
         },
         categories: {
             cache: false,
