@@ -241,7 +241,8 @@ Vue.component('itemsaver', {
                 </tbody>
             </table>
             <div class="input-group mb-3">
-            <button class="btn btn-primary w-100" v-on:click='insert'>Insert</button>
+                <button class="btn btn-primary w-100" v-on:click='insert'>Insert</button>
+            </div>
         </div>
     `,
     data() {
