@@ -26,8 +26,8 @@ Vue.component('itemsaver', {
                 @itemInserted="itemInserted('country')"
                 :sourceItem="destinationSelect.country">
             </countryInsert>
-            <div class="d-flex mb-3">
-                <h5 class="ms-1 fw-bold flex-fill">Item</h5>
+            <div class="d-flex mb-3 p-1">
+                <h1 class="ms-1 fw-bold flex-fill">Item</h1>
                 <button class="btn mt-0 pt-0 px-0" @click="$emit('insertCanceled')">
                     <i class="bi bi-x text-danger"></i>
                 </button>
