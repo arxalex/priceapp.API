@@ -4,6 +4,8 @@ Vue.component('Items', {
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
+                @insert="inserted(true)"
+                @insertCanceled="inserted(false)"
                 v-if="itemsaverModel.saveActive"></itemsaver>
             <div v-if="!itemsaverModel.saveActive && loaded">
                 <h1>Prepare items</h1>
@@ -137,6 +139,12 @@ Vue.component('Items', {
                 saveActive: false,
                 originalLabels: null
             }
+        },
+        inserted: function(status) {
+            if(status){
+
+            }
+            this.itemsaverModel.saveActive = false;
         }
     },
     watch: {

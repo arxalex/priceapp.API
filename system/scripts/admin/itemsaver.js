@@ -27,6 +27,12 @@ Vue.component('itemsaver', {
                 :sourceItem="destinationSelect.country">
             </countryInsert>
             <table class="table word-break">
+                <div class="d-flex mb-3">
+                    <h5 class="ms-1 fw-bold flex-fill">Item</h5>
+                    <button class="btn mt-0 pt-0 px-0" @click="$emit("insertCanceled")">
+                        <i class="bi bi-x text-danger"></i>
+                    </button>
+                </div>
                 <tbody>
                     <tr>
                         <th>
@@ -224,9 +230,18 @@ Vue.component('itemsaver', {
                             </button>
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            <span>Price factor (Dest. price / source price):</span>
+                        </th>
+                        <td class="input-group" colspan="2">
+                            <input class="form-control" v-model="itemLink.factor">
+                        </td>
+                    </tr>
                 </tbody>
             </table>
-            <button class="btn btn-primary" v-on:click='$emit("insert")'></button>
+            <div class="input-group mb-3">
+            <button class="btn btn-primary w-100" v-on:click='insert'>Insert</button>
         </div>
     `,
     data() {
@@ -237,6 +252,12 @@ Vue.component('itemsaver', {
                 brand: false,
                 consist: false,
                 country: false
+            },
+            itemLink: {
+                id: null,
+                itemid: null,
+                hopid: null,
+                factor: 1
             }
         }
     },
@@ -252,6 +273,9 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
+        insert: function(){
+            this.$emit("insert");
+        },
         insertItem: function (source) {
             switch (source) {
                 case "category":
