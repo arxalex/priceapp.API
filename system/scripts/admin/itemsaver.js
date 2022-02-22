@@ -332,10 +332,8 @@ Vue.component('itemsaver', {
                     label: this.originalLabels.packageLabel ?? "",
                     short: ""
                 }];
-            var itemConsistLabels = this.destinationItem.consist.length != 1 || this.destinationItem.consist[0] != -1 ?
-                (this.sourceItem.consist !== null && this.destinationItem.consist.length > 0 ?
-                    this.$labels.consists.filter(value => this.destinationItem.consist.includes(value.id)) :
-                    []) :
+            var itemConsistLabels = this.sourceItem.consist !== null && this.destinationItem.consist.length > 0 ?
+                this.$labels.consists.filter(value => this.destinationItem.consist.includes(value.id)) :
                 [{
                     id: null,
                     label: "",
