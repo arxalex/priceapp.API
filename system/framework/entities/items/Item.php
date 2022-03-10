@@ -31,7 +31,7 @@ class Item extends DefaultEntity
         ?int $package = null,
         ?float $units = null,
         ?float $term = null,
-        null | string | array $barcodes = null,
+        $barcodes = null,
         null | string | array $consist = null,
         ?float $calorie = null,
         ?float $carbohydrates = null,
