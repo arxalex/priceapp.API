@@ -159,7 +159,7 @@ class SilpoItemsGetter
             $silpoItem->package,
             $silpoItem->url,
             $silpoItem->country,
-            $silpoItem->id
+            $silpoItem->inshopid
         );
         $result = new stdClass();
         $result->item = $commonItem;
