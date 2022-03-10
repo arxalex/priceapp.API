@@ -322,6 +322,13 @@ Vue.component('itemsaver', {
                     this.isInsertAwailible.country = false;
                     break;
             }
+        },
+        getItemsFromDb: function (url, data) {
+            return axios.post(url, data).then((response) => {
+                if (response.status == 200) {
+                    return response.data;
+                }
+            });
         }
     },
     computed: {
