@@ -17,7 +17,7 @@ class ItemLink extends DefaultEntity
         ?int $itemid = null,
         ?int $shopid = null,
         ?int $inshopid = null,
-        ?float $pricefactor = null,
+        ?float $pricefactor = null
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
