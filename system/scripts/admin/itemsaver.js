@@ -287,23 +287,37 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
-        insert: async function(method){
+        insert: async function (method) {
             const insertUrl = "../be/items/insert_items";
             var data = {
                 method: null,
                 item: this.destinationItem,
                 item_link: this.itemLink
             }
-            switch(method){
+            switch (method) {
                 case 1:
                     data.method = "InsertOrUpdateItem";
                     break;
-                case 2:    
+                case 2:
                     data.method = "LinkItem";
                     break;
             }
-            await this.getItemsFromDb(insertUrl, data);
-            this.$emit("insert");
+            var response = await this.getItemsFromDb(insertUrl, data);
+            var status = false;
+            switch (response.statusType) {
+                case 1:
+                    status = response.statusInsert;
+                    break;
+                case 2:
+                    status = response.statusUpdate;
+                    break;
+                case 3:
+                    status = response.statusLink;
+                    break;
+            }
+            if (status) {
+                this.$emit("insert");
+            }
         },
         insertItem: function (source) {
             switch (source) {
@@ -445,7 +459,7 @@ Vue.component('itemsaver', {
             }
         }
     },
-    mounted(){
+    mounted() {
         this.itemLink = {
             id: null,
             itemid: this.destinationItem.id,

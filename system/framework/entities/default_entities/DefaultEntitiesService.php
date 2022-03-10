@@ -51,7 +51,6 @@ class DefaultEntitiesService
     {
         $table = $this->tableName;
         $query = "INSERT INTO `$table` " . SqlHelper::insertObjects([$item]);
-        echo $query;
         return (new Request($query))->execute();
     }
     public function updateItemInDB($item){

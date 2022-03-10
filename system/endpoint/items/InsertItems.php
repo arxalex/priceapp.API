@@ -37,6 +37,7 @@ class InsertItems extends BaseEndpointBuilder
             $result = new stdClass();
             if ($itemModel == null || $itemLinkModel == null) {
                 $result->statusInsert = false;
+                $result->statusType = 1;
                 return $result;
             }
             if ($itemModel->id == null || $itemModel->id == "") {
@@ -72,6 +73,7 @@ class InsertItems extends BaseEndpointBuilder
                     $itemLink = $this->_itemsLinkService->getLastInsertedItem();
                     $statusInsert = $statusInsert && $this->_itemsLinkService->getItemFromDB($itemLink->id)->itemid == $item->id;
                 }
+                $result->statusType = 1;
                 $result->statusInsert = $statusInsert;
                 $result->item = $item;
             } else {
@@ -112,6 +114,7 @@ class InsertItems extends BaseEndpointBuilder
                         $statusUpdate = $statusUpdate && $this->_itemsLinkService->getItemFromDB($itemLink->id)->itemid == $item->id;
                     }
                 }
+                $result->statusType = 2;
                 $result->statusUpdate = $statusUpdate;
             }
 
@@ -140,7 +143,7 @@ class InsertItems extends BaseEndpointBuilder
             } else {
                 $statusLink = false;
             }
-
+            $result->statusType = 3;
             $result->statusLink = $statusLink;
             return $result;
         }

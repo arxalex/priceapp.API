@@ -142,7 +142,7 @@ Vue.component('Items', {
         },
         inserted: function(status) {
             if(status){
-
+                this.get_items();
             }
             this.itemsaverModel.saveActive = false;
         }
