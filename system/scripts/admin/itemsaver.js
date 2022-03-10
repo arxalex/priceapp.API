@@ -235,7 +235,7 @@ Vue.component('itemsaver', {
                             <span>Price factor (Dest. price / source price):</span>
                         </th>
                         <td colspan="2">
-                            <input class="form-control" v-model="itemLink.factor">
+                            <input class="form-control" v-model="itemLink.pricefactor">
                         </td>
                     </tr>
                 </tbody>
@@ -257,8 +257,9 @@ Vue.component('itemsaver', {
             itemLink: {
                 id: null,
                 itemid: null,
-                hopid: null,
-                factor: 1
+                shopid: null,
+                inshopid: null,
+                pricefactor: 1
             }
         }
     },
@@ -274,7 +275,14 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
-        insert: function(){
+        insert: async function(){
+            const insertUrl = "../be/items/insert_items";
+            var data = {
+                method: "InsertOrUpdateItem",
+                item: this.destinationItem,
+                item_link: this.itemLink
+            }
+            await this.getItemsFromDb(insertUrl, data);
             this.$emit("insert");
         },
         insertItem: function (source) {

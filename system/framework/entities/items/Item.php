@@ -31,13 +31,13 @@ class Item extends DefaultEntity
         ?int $package = null,
         ?float $units = null,
         ?float $term = null,
-        ?string $barcodes = null,
-        ?string $consist = null,
+        null | string | array $barcodes = null,
+        null | string | array $consist = null,
         ?float $calorie = null,
         ?float $carbohydrates = null,
         ?float $fat = null,
         ?float $proteins = null,
-        $additional = null
+        null | string | array $additional = null
     ) {
         $this->id = $id;
         $this->label = $label;
@@ -47,13 +47,13 @@ class Item extends DefaultEntity
         $this->package = $package;
         $this->units = $units;
         $this->term = $term;
-        $this->barcodes = $this->stringConvert($barcodes);
-        $this->consist = $this->stringConvert($consist);
+        $this->barcodes = $this->stringConvert($barcodes, true);
+        $this->consist = $this->stringConvert($consist, true);
         $this->calorie = $calorie;
         $this->carbohydrates = $carbohydrates;
         $this->fat = $fat;
         $this->proteins = $proteins;
-        $this->additional = is_string($additional) ? json_decode($additional) : (is_array($additional) ? $additional : null);
+        $this->additional = $this->stringConvert($additional, true);
     }
     
 }

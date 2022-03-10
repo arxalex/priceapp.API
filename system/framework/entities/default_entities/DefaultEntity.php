@@ -2,6 +2,8 @@
 
 namespace framework\entities\default_entities;
 
+use framework\database\NumericHelper;
+
 class DefaultEntity
 {
     public ?int $id;
@@ -11,9 +13,12 @@ class DefaultEntity
     ) {
         $this->id = $id;
     }
-    public function stringConvert($value){
+    public function stringConvert($value, bool $isNull = false){
+        if($isNull && ($value == null || $value == "")){
+            return null;
+        }
         if(is_numeric($value)){
-            return $value;
+            return NumericHelper::toFloat($value);
         } elseif(is_string($value)) {
             if(is_object(json_decode($value))) {
                 return json_decode($value);

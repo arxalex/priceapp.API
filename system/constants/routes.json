@@ -44,6 +44,12 @@
                                 "routeType": "default",
                                 "className": "items\\GetLabels",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "insert_items",
+                                "routeType": "default",
+                                "className": "items\\InsertItems",
+                                "contants": []
                             }
                         ]
                     },
