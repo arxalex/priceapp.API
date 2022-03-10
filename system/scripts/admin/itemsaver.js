@@ -448,10 +448,10 @@ Vue.component('itemsaver', {
     mounted(){
         this.itemLink = {
             id: null,
-            itemid = this.destinationItem.id,
-            shopid = this.originalLabels.shopId,
-            inshopid = this.originalLabels.inShopId,
-            pricefactor = 1
+            itemid: this.destinationItem.id,
+            shopid: this.originalLabels.shopId,
+            inshopid: this.originalLabels.inShopId,
+            pricefactor: 1
         }
     }
 });
