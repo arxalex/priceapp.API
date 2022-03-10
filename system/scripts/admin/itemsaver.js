@@ -289,26 +289,21 @@ Vue.component('itemsaver', {
     methods: {
         insert: async function(method){
             const insertUrl = "../be/items/insert_items";
+            var data = {
+                method: null,
+                item: this.destinationItem,
+                item_link: this.itemLink
+            }
             switch(method){
                 case 1:
-                    var data = {
-                        method: "InsertOrUpdateItem",
-                        item: this.destinationItem,
-                        item_link: this.itemLink
-                    }
-                    await this.getItemsFromDb(insertUrl, data);
-                    this.$emit("insert");
+                    data.method = "InsertOrUpdateItem";
                     break;
-                case 2:       
-                    var data = {
-                        method: "LinkItem",
-                        item: this.destinationItem,
-                        item_link: this.itemLink
-                    }
-                    await this.getItemsFromDb(insertUrl, data);
-                    this.$emit("insert");
+                case 2:    
+                    data.method = "LinkItem";
                     break;
             }
+            await this.getItemsFromDb(insertUrl, data);
+            this.$emit("insert");
         },
         insertItem: function (source) {
             switch (source) {
@@ -448,6 +443,15 @@ Vue.component('itemsaver', {
             get: function () {
                 return this.$labels.consists;
             }
+        }
+    },
+    mounted(){
+        this.itemLink = {
+            id: null,
+            itemid = this.destinationItem.id,
+            shopid = this.originalLabels.shopId,
+            inshopid = this.originalLabels.inShopId,
+            pricefactor = 1
         }
     }
 });
