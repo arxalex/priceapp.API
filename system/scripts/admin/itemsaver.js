@@ -36,6 +36,17 @@ Vue.component('itemsaver', {
                 <tbody>
                     <tr>
                         <th>
+                            <span>Id: </span>
+                        </th>
+                        <td>
+                            <span>{{ sourceItem.id }}</span>
+                        </td>
+                        <td class="input-group">
+                            <input class="form-control" v-model="destinationItem.id">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             <span>Image: </span>
                         </th>
                         <td>
@@ -241,7 +252,8 @@ Vue.component('itemsaver', {
                 </tbody>
             </table>
             <div class="input-group mb-3">
-                <button class="btn btn-primary w-100" v-on:click='insert'>Insert</button>
+                <button class="btn btn-primary w-100" v-on:click='insert(1)'>Insert and Link</button>
+                <button class="btn btn-primary w-100" v-on:click='insert(2)'>Link</button>
             </div>
         </div>
     `,
@@ -275,15 +287,29 @@ Vue.component('itemsaver', {
         }
     },
     methods: {
-        insert: async function(){
-            const insertUrl = "../be/items/insert_items";
-            var data = {
-                method: "InsertOrUpdateItem",
-                item: this.destinationItem,
-                item_link: this.itemLink
+        insert: async function(method){
+            switch(method){
+                case 1:
+                    const insertUrl = "../be/items/insert_items";
+                    var data = {
+                        method: "InsertOrUpdateItem",
+                        item: this.destinationItem,
+                        item_link: this.itemLink
+                    }
+                    await this.getItemsFromDb(insertUrl, data);
+                    this.$emit("insert");
+                    break;
+                case 2:
+                    const insertUrl = "../be/items/insert_items";
+                    var data = {
+                        method: "LinkItem",
+                        item: this.destinationItem,
+                        item_link: this.itemLink
+                    }
+                    await this.getItemsFromDb(insertUrl, data);
+                    this.$emit("insert");
+                    break;
             }
-            await this.getItemsFromDb(insertUrl, data);
-            this.$emit("insert");
         },
         insertItem: function (source) {
             switch (source) {

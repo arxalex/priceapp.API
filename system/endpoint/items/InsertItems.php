@@ -35,15 +35,16 @@ class InsertItems extends BaseEndpointBuilder
             $itemModel = (object) $this->getParam('item');
             $itemLinkModel = (object) $this->getParam('item_link');
             $result = new stdClass();
-            if($itemModel == null || $itemLinkModel == null){
+            if ($itemModel == null || $itemLinkModel == null) {
                 $result->statusInsert = false;
                 return $result;
             }
             if ($itemModel->id == null || $itemModel->id == "") {
-                $item = new Item(null, 
-                    $itemModel->label, 
-                    $itemModel->image, 
-                    NumericHelper::toIntOrNull($itemModel->category), 
+                $item = new Item(
+                    null,
+                    $itemModel->label,
+                    $itemModel->image,
+                    NumericHelper::toIntOrNull($itemModel->category),
                     NumericHelper::toIntOrNull($itemModel->brand),
                     NumericHelper::toIntOrNull($itemModel->package),
                     NumericHelper::toFloatOrNull($itemModel->units),
@@ -55,14 +56,15 @@ class InsertItems extends BaseEndpointBuilder
                     NumericHelper::toFloatOrNull($itemModel->fat),
                     NumericHelper::toFloatOrNull($itemModel->proteins),
                     $itemModel->additional
-                ); 
+                );
                 $this->_itemsService->insertItemToDB($item);
                 $item = $this->_itemsService->getLastInsertedItem();
                 $statusInsert = $this->_itemsService->getItemFromDB($item->id)->label == $itemModel->label;
-                if($statusInsert){
-                    $itemLink = new ItemLink(null, 
-                        $item->id, 
-                        NumericHelper::toIntOrNull($itemLinkModel->shopid), 
+                if ($statusInsert) {
+                    $itemLink = new ItemLink(
+                        null,
+                        $item->id,
+                        NumericHelper::toIntOrNull($itemLinkModel->shopid),
                         NumericHelper::toIntOrNull($itemLinkModel->inshopid),
                         NumericHelper::toFloatOrNull($itemLinkModel->pricefactor)
                     );
@@ -73,10 +75,11 @@ class InsertItems extends BaseEndpointBuilder
                 $result->statusInsert = $statusInsert;
                 $result->item = $item;
             } else {
-                $item = new Item(NumericHelper::toInt($itemModel->id), 
-                    $itemModel->label, 
-                    $itemModel->image, 
-                    NumericHelper::toIntOrNull($itemModel->category), 
+                $item = new Item(
+                    NumericHelper::toInt($itemModel->id),
+                    $itemModel->label,
+                    $itemModel->image,
+                    NumericHelper::toIntOrNull($itemModel->category),
                     NumericHelper::toIntOrNull($itemModel->brand),
                     NumericHelper::toIntOrNull($itemModel->package),
                     NumericHelper::toFloatOrNull($itemModel->units),
@@ -91,9 +94,54 @@ class InsertItems extends BaseEndpointBuilder
                 );
                 $this->_itemsService->updateItemInDB($item);
                 $statusUpdate = $this->_itemsService->getItemFromDB($item->id)->label == $item->label;
+                if ($statusUpdate) {
+                    $itemLinks = $this->_itemsLinkService->getItemsFromDB([
+                        "itemid" => [$itemModel->id],
+                        "shopid" => [$itemLinkModel->shopid]
+                    ]);
+                    if (count($itemLinks) <= 0) {
+                        $itemLink = new ItemLink(
+                            null,
+                            $item->id,
+                            NumericHelper::toIntOrNull($itemLinkModel->shopid),
+                            NumericHelper::toIntOrNull($itemLinkModel->inshopid),
+                            NumericHelper::toFloatOrNull($itemLinkModel->pricefactor)
+                        );
+                        $this->_itemsLinkService->insertItemToDB($itemLink);
+                        $itemLink = $this->_itemsLinkService->getLastInsertedItem();
+                        $statusUpdate = $statusUpdate && $this->_itemsLinkService->getItemFromDB($itemLink->id)->itemid == $item->id;
+                    }
+                }
                 $result->statusUpdate = $statusUpdate;
             }
 
+            return $result;
+        } elseif ($this->getParam('method') == "LinkItem") {
+            $itemModel = (object) $this->getParam('item');
+            $itemLinkModel = (object) $this->getParam('item_link');
+            $result = new stdClass();
+            $statusLink = null;
+
+            $itemLinks = $this->_itemsLinkService->getItemsFromDB([
+                "itemid" => [$itemModel->id],
+                "shopid" => [$itemLinkModel->shopid]
+            ]);
+            if (count($itemLinks) <= 0) {
+                $itemLink = new ItemLink(
+                    null,
+                    $itemModel->id,
+                    NumericHelper::toIntOrNull($itemLinkModel->shopid),
+                    NumericHelper::toIntOrNull($itemLinkModel->inshopid),
+                    NumericHelper::toFloatOrNull($itemLinkModel->pricefactor)
+                );
+                $this->_itemsLinkService->insertItemToDB($itemLink);
+                $itemLink = $this->_itemsLinkService->getLastInsertedItem();
+                $statusLink = $this->_itemsLinkService->getItemFromDB($itemLink->id)->itemid == $itemModel->id;
+            } else {
+                $statusLink = false;
+            }
+
+            $result->statusLink = $statusLink;
             return $result;
         }
     }
