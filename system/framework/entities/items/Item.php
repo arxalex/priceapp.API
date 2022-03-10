@@ -32,12 +32,12 @@ class Item extends DefaultEntity
         ?float $units = null,
         ?float $term = null,
         $barcodes = null,
-        null | string | array $consist = null,
+        $consist = null,
         ?float $calorie = null,
         ?float $carbohydrates = null,
         ?float $fat = null,
         ?float $proteins = null,
-        null | string | array $additional = null
+        $additional = null
     ) {
         $this->id = $id;
         $this->label = $label;
