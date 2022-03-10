@@ -288,9 +288,9 @@ Vue.component('itemsaver', {
     },
     methods: {
         insert: async function(method){
+            const insertUrl = "../be/items/insert_items";
             switch(method){
                 case 1:
-                    const insertUrl = "../be/items/insert_items";
                     var data = {
                         method: "InsertOrUpdateItem",
                         item: this.destinationItem,
@@ -299,8 +299,7 @@ Vue.component('itemsaver', {
                     await this.getItemsFromDb(insertUrl, data);
                     this.$emit("insert");
                     break;
-                case 2:
-                    const insertUrl = "../be/items/insert_items";
+                case 2:       
                     var data = {
                         method: "LinkItem",
                         item: this.destinationItem,
