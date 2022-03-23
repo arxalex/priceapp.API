@@ -35,6 +35,7 @@ $namespaces = [
     'framework\entities\prices',
     'framework\entities\prices_history',
     'framework\entities\shops',
+    'framework\entities\users',
     'framework\routing',
     //'framework\shops',
     'framework\shops\atb',
