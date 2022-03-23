@@ -111,4 +111,8 @@ class DefaultEntitiesService
         }
         return $result;
     }
+    public function deleteItem($item) : bool
+    {
+        return true;
+    }
 }

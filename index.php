@@ -35,6 +35,7 @@ $namespaces = [
     'framework\entities\prices',
     'framework\entities\prices_history',
     'framework\entities\shops',
+    'framework\entities\tokens',
     'framework\entities\users',
     'framework\routing',
     //'framework\shops',
@@ -44,6 +45,7 @@ $namespaces = [
     //'render',
     'render\admin',
     'render\defaultBuild',
+    'render\login',
     'render\main',
 ];
 

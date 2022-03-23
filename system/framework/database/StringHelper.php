@@ -4,6 +4,16 @@ namespace framework\database;
 
 class StringHelper
 {
+    public static function generateRsndomString(int $length = 6): string
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
     public static function quotesReplacer(string $str): string
     {
         return str_replace(
@@ -27,7 +37,7 @@ class StringHelper
     {
         return preg_replace('~[^\p{Cyrillic}a-z0-9_\s-]+~ui', '', $str);
     }
-    public static function rateItemsByKeywords(string $label, array $items) : array
+    public static function rateItemsByKeywords(string $label, array $items): array
     {
         $labelArr = self::nameToKeywords(self::stringCleaner($label));
         $rates = [];
@@ -72,7 +82,8 @@ class StringHelper
         }
         return $rates;
     }
-    public static function stringContains($haystack, $needle){
+    public static function stringContains($haystack, $needle)
+    {
         return strpos($haystack, $needle) === false ? false : true;
     }
 }

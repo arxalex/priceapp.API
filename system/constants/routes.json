@@ -18,6 +18,12 @@
                 ]
             },
             {
+                "routeName": "login",
+                "routeType": "default",
+                "className": "login\\Login",
+                "contants": []
+            },
+            {
                 "routeName": "be",
                 "routeType": "default",
                 "className": "",

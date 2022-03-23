@@ -10,17 +10,20 @@ class User extends DefaultEntity
     public ?string $username;
     public ?string $email;
     public ?string $password;
+    public ?int $role;
 
     public function __construct(
         ?int $id = null,
         ?string $username = null,
         ?string $email = null,
-        ?string $password = null
+        ?string $password = null,
+        ?int $role = null
     ) {
         $this->id = $id;
         $this->username = $username;
         $this->email = $email;
         $this->password = $password;
+        $this->role = $role;
     }
     
 }

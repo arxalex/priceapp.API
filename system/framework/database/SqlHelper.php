@@ -94,6 +94,7 @@ class SqlHelper
     {
         $result = "(";
         foreach ($values as $value) {
+            $value = self::mysql_escape_mimic($value);
             $result .= "$value, ";
         }
         $result = substr($result, 0, -2) . ")";
