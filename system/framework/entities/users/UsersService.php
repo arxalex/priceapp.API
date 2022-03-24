@@ -21,6 +21,7 @@ class UsersService extends DefaultEntitiesService
     {
         if (!empty($cookies)) {
             if (isset($cookies['userid'])) {
+                error_log($cookies['userid']);
                 $user = $this->getItemFromDB($cookies['userid']);
                 if ($user->role == 9) {
                     return true;

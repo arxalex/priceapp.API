@@ -27,7 +27,12 @@ class Routing
                 $externalParams = [];
 
                 $cookie = [];
-                if(isset($_COOKIE["userid"]) && isset($_COOKIE["token"]) && isset($_COOKIE["token_expires"])){
+                if(isset($_COOKIE["userid"]) 
+                    && isset($_COOKIE["token"]) 
+                    && isset($_COOKIE["token_expires"])
+                    && $_COOKIE["userid"] != null
+                    && $_COOKIE["token"] != null
+                    && $_COOKIE["token_expires"] != null){
                     $tokenService = new TokensService();
                     $userid = $_COOKIE["userid"];
                     $token = $_COOKIE["token"];
