@@ -9,11 +9,12 @@ class Main extends BaseRenderBuilder
     public function defaultParams()
     {   
         return [
-            
+            'cookie' => []
         ];
     }
     public function build()
     {
+        echo var_dump($this->getParam('cookie'));
         return '
         <div>
         
