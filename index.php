@@ -5,6 +5,7 @@ use framework\routing\Routing;
 const FOLDER_NAME = "system";
 
 $uri_string = $_SERVER['REQUEST_URI'];
+echo $uri_string;
 $uri = explode("/", $uri_string);
 
 require_once("SplClassLoader.php");
