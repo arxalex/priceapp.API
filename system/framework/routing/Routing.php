@@ -43,9 +43,9 @@ class Routing
                             $token = $newToken->token;
                             $expires = $newToken->expires;
 
-                            setcookie("userid", $userid, time() + 2592000);
-                            setcookie("token", $token, $expires);
-                            setcookie("token_expires", $expires, $expires);
+                            setcookie("userid", $userid, time() + 2592000, '/');
+                            setcookie("token", $token, $expires, '/');
+                            setcookie("token_expires", $expires, $expires, '/');
                         }
                         $cookie['userid'] = $userid;
                         $cookie['token'] = $token;
@@ -56,9 +56,6 @@ class Routing
                 }
 
                 $externalParams['cookie'] = $cookie;
-
-                echo var_dump($cookie);
-                echo var_dump($_COOKIE);
 
                 $header = new Header();
                 $footer = new Footer();

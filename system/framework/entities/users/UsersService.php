@@ -106,9 +106,9 @@ class UsersService extends DefaultEntitiesService
 
         $token = $this->_tokensService->createToken($user->id);
 
-        setcookie("userid", $token->userid, time() + 2592000);
-        setcookie("token", $token->token, $token->expires);
-        setcookie("token_expires", $token->expires, $token->expires);
+        setcookie("userid", $token->userid, time() + 2592000, '/');
+        setcookie("token", $token->token, $token->expires, '/');
+        setcookie("token_expires", $token->expires, $token->expires, '/');
 
         return $user->role;
     }
