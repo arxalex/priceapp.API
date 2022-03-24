@@ -33,18 +33,6 @@ class Routing
                     $token = $_COOKIE["token"];
                     $expires = $_COOKIE["token_expires"];
 
-                    echo $userid;
-                    echo '<br>';
-                    echo $token;
-                    echo '<br>';
-                    echo $expires;
-                    echo '<br>';
-                    echo $userid >= 0;
-                    echo '<br>';
-                    echo $expires >= time();
-                    echo '<br>';
-                    echo count_chars($token);
-
                     $isValid = $tokenService->isTokenValid($userid, $token, $expires);
 
                     if($isValid) {
