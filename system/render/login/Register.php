@@ -4,13 +4,13 @@ namespace render\login;
 
 use render\defaultBuild\BaseRenderBuilder;
 
-class Login extends BaseRenderBuilder
+class Register extends BaseRenderBuilder
 {
     public function getExternalParams()
     {
         return [
             'scripts' => [
-                '<script src="/system/scripts/login/login.js"></script>'
+                '<script src="/system/scripts/login/register.js"></script>'
             ]
         ];
     }
@@ -26,6 +26,6 @@ class Login extends BaseRenderBuilder
             header("Location: /", true);
             die();
         }
-        return '<login></login>';
+        return '<register></register>';
     }
 }

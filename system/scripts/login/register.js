@@ -1,10 +1,14 @@
-Vue.component('Login', {
+Vue.component('Register', {
     template: `
         <div>
-            <form action="/login/validate">
+            <form action="/register/validate">
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" class="form-control" id="username" aria-describedby="usernameHelp" name="username">
+                </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" aria-describedby="emailHelp" name="email">
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>

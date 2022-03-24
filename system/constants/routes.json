@@ -18,6 +18,19 @@
                 ]
             },
             {
+                "routeName": "register",
+                "routeType": "default",
+                "className": "login\\Register",
+                "contants": [
+                    {
+                        "routeName": "validate",
+                        "routeType": "default",
+                        "className": "login\\ValidateRegister",
+                        "contants": []
+                    }
+                ]
+            },
+            {
                 "routeName": "login",
                 "routeType": "default",
                 "className": "login\\Login",
@@ -29,6 +42,12 @@
                         "contants": []
                     }
                 ]
+            },
+            {
+                "routeName": "logout",
+                "routeType": "default",
+                "className": "login\\Logout",
+                "contants": []
             },
             {
                 "routeName": "be",

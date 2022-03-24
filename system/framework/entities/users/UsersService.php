@@ -29,7 +29,19 @@ class UsersService extends DefaultEntitiesService
         }
         return false;
     }
-    public function unavaliableRedirect($cookies) : void
+    public function isLoggedInUser(array $cookies) : bool
+    {
+        if (!empty($cookies)) {
+            if (isset($cookies['userid'])) {
+                $user = $this->getItemFromDB($cookies['userid']);
+                if (in_array($user->role, [1,2,3,4,5,6,7,8,9])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public function unavaliableRedirect(array $cookies) : void
     {
         if (!$this->isAdmin($cookies)) {
             header("Location: /login", true);
@@ -37,7 +49,7 @@ class UsersService extends DefaultEntitiesService
         }
     }
     
-    public function unavaliableRequest($cookies) : void
+    public function unavaliableRequest(array $cookies) : void
     {
         if (!$this->isAdmin($cookies)) {
             http_response_code(403);
@@ -45,18 +57,48 @@ class UsersService extends DefaultEntitiesService
         }
     }
 
+    public function isAbleToRegister(string $username, string $email) : bool
+    {
+        $usersFromDB = $this->getItemsFromDB([
+            'username' => [ $username ]
+        ]);
+        if(!empty($usersFromDB)){
+            return false;
+        }
+        $usersFromDB = $this->getItemsFromDB([
+            'username' => [ $username ]
+        ]);
+        if(!empty($usersFromDB)){
+            return false;
+        }
+        return true;
+    }
+
+    public function registerUser(string $username, string $email, string $password) : bool
+    {
+        if(!$this->isAbleToRegister($username, $email)){
+            return false;
+        }
+
+        $user = new User(null, $username, $email, password_hash($password, PASSWORD_DEFAULT), null);
+
+        $this->insertItemToDB($user);
+
+        return true;
+    }
+
     public function validateUser(string $username, string $password) : int
     {
-        $userFromDB = $this->getItemsFromDB([
+        $usersFromDB = $this->getItemsFromDB([
             'username' => [ $username ],
             'password' => [ password_hash($password, PASSWORD_DEFAULT) ]
         ]);
-        if(count($userFromDB) != 1){
+        if(count($usersFromDB) != 1){
             header("Location: /login", true);
             die();
         } 
 
-        $user = $userFromDB[0];
+        $user = $usersFromDB[0];
 
         if(!password_verify($password, $user->password)){
             http_response_code(403);
