@@ -91,9 +91,7 @@ class UsersService extends DefaultEntitiesService
     {
         $usersFromDB = $this->getItemsFromDB([
             'username' => [ $username ],
-            'password' => [ password_hash($password, PASSWORD_DEFAULT) ]
         ]);
-        error_log(password_hash($password, PASSWORD_DEFAULT));
         if(count($usersFromDB) != 1){
             header("Location: /login", true);
             die();
