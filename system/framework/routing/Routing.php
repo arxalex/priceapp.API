@@ -53,12 +53,16 @@ class Routing
                         $cookie['userid'] = $userid;
                         $cookie['token'] = $token;
                         $cookie['token_expires'] = $expires;
+
+                        echo "this";
                     } else {
                         http_response_code(403);
                     }
                 }
 
                 $externalParams['cookie'] = $cookie;
+
+                echo var_dump($cookie);
 
                 $header = new Header();
                 $footer = new Footer();
