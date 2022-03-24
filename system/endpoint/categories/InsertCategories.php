@@ -24,11 +24,13 @@ class InsertCategories extends BaseEndpointBuilder
         return [
             'category' => null,
             'category_link' => null,
-            'method' => "InsertToCategoriesAndUpdateLink"
+            'method' => "InsertToCategoriesAndUpdateLink",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if($this->getParam('method') == "InsertToCategoriesAndUpdateLink"){
             $categoryModel = (object) $this->getParam('category');
             $categoryLinkModel = (object) $this->getParam('category_link');

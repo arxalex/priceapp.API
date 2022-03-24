@@ -17,11 +17,13 @@ class GetCountries extends BaseEndpointBuilder
     {
         return [
             'method' => "GetCountryByLabel",
-            'label' => ""
+            'label' => "",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetCountryByLabel") {
             $label = $this->getParam('label');
             return $this->_countriesService->getCountry($label);

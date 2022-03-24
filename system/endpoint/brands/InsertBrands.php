@@ -19,11 +19,13 @@ class InsertBrands extends BaseEndpointBuilder
     {
         return [
             'brand' => null,
-            'method' => "InsertOrUpdateBrand"
+            'method' => "InsertOrUpdateBrand",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "InsertOrUpdateBrand") {
             $brandModel = (object) $this->getParam('brand');
             $result = new stdClass();

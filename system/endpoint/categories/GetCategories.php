@@ -22,11 +22,13 @@ class GetCategories extends BaseEndpointBuilder
         return [
             'source' => 0,
             'method' => "GetCategoryFromSource",
-            'label' => ""
+            'label' => "",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetCategoryFromSource") {
             if ($this->getParam('source') === 0) {
                 return [];

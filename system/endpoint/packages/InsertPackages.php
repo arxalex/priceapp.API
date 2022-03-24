@@ -19,11 +19,13 @@ class InsertPackages extends BaseEndpointBuilder
     {
         return [
             'package' => null,
-            'method' => "InsertOrUpdatePackage"
+            'method' => "InsertOrUpdatePackage",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "InsertOrUpdatePackage") {
             $packageModel = (object) $this->getParam('package');
             $result = new stdClass();

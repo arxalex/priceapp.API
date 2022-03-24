@@ -19,11 +19,13 @@ class InsertCountries extends BaseEndpointBuilder
     {
         return [
             'country' => null,
-            'method' => "InsertOrUpdateCountry"
+            'method' => "InsertOrUpdateCountry",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "InsertOrUpdateCountry") {
             $countryModel = (object) $this->getParam('country');
             $result = new stdClass();

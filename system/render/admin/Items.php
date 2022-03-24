@@ -22,7 +22,8 @@ class Items extends BaseRenderBuilder
             ],
             'links' => [
                 '<link href="/system/style/admin/items.css" rel="stylesheet">'
-            ]
+            ],
+            'cookie' => []
         ];
     }
     public function defaultParams()
@@ -31,7 +32,7 @@ class Items extends BaseRenderBuilder
     }
     public function build()
     {
-
+        $this->_usersService->unavaliableRedirect($this->getParam('cookie'));
         return '<items></items>';
     }
 }

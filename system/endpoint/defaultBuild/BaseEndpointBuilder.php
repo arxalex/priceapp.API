@@ -2,9 +2,12 @@
 
 namespace endpoint\defaultBuild;
 
+use framework\entities\users\UsersService;
+
 class BaseEndpointBuilder
 {
     private array $params;
+    protected UsersService $_usersService;
 
     /**
      * Create object of endpoint
@@ -12,6 +15,7 @@ class BaseEndpointBuilder
     public function __construct()
     {
         $this->params = array();
+        $this->_usersService = new UsersService();
     }
 
     /**

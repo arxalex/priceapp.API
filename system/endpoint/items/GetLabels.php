@@ -34,11 +34,13 @@ class GetLabels extends BaseEndpointBuilder
         return [
             'labelIds' => [],
             'method' => "GetForOneItem",
-            'labelIdArrays' => null
+            'labelIdArrays' => null,
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetForOneItem") {
             $labelIds = $this->getParam("labelIds");
             if (count($labelIds) < 1) {

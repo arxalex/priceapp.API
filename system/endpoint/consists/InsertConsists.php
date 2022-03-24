@@ -19,11 +19,13 @@ class InsertConsists extends BaseEndpointBuilder
     {
         return [
             'consist' => null,
-            'method' => "InsertOrUpdateConsist"
+            'method' => "InsertOrUpdateConsist",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "InsertOrUpdateConsist") {
             $consistModel = (object) $this->getParam('consist');
             $result = new stdClass();

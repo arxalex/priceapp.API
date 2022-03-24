@@ -17,11 +17,13 @@ class GetConsists extends BaseEndpointBuilder
     {
         return [
             'method' => "GetConsistByLabel",
-            'label' => ""
+            'label' => "",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetConsistByLabel") {
             $label = $this->getParam('label');
             return $this->_consistsService->getConsist($label);

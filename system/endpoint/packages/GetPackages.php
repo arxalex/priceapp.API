@@ -17,11 +17,13 @@ class GetPackages extends BaseEndpointBuilder
     {
         return [
             'method' => "GetPackageByLabel",
-            'label' => ""
+            'label' => "",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetPackageByLabel") {
             $label = $this->getParam('label');
             return $this->_packagesService->getPackage($label);

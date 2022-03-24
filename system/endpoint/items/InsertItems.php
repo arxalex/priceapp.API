@@ -26,11 +26,13 @@ class InsertItems extends BaseEndpointBuilder
         return [
             'item' => null,
             'item_link' => null,
-            'method' => "InsertOrUpdateItem"
+            'method' => "InsertOrUpdateItem",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "InsertOrUpdateItem") {
             $itemModel = (object) $this->getParam('item');
             $itemLinkModel = (object) $this->getParam('item_link');

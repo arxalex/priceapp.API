@@ -17,11 +17,13 @@ class GetBrands extends BaseEndpointBuilder
     {
         return [
             'method' => "GetBrandByLabel",
-            'label' => ""
+            'label' => "",
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('method') == "GetBrandByLabel") {
             $label = $this->getParam('label');
             return $this->_brandsService->getBrand($label);

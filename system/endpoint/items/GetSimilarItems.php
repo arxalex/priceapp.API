@@ -19,10 +19,12 @@ class GetSimilarItems extends BaseEndpointBuilder
     {
         return [
             'itemLabels' => [],
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         $labels = $this->getParam('itemLabels');
         
         if(count($labels) < 1){

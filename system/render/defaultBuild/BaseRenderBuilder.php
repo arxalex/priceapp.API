@@ -2,9 +2,12 @@
 
 namespace render\defaultBuild;
 
+use framework\entities\users\UsersService;
+
 class BaseRenderBuilder
 {
     private array $params;
+    protected UsersService $_usersService;
 
     /**
      * Create object of block
@@ -12,6 +15,7 @@ class BaseRenderBuilder
     public function __construct()
     {
         $this->params = array();
+        $this->_usersService = new UsersService();
     }
 
     /**

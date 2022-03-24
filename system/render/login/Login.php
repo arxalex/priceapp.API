@@ -2,25 +2,28 @@
 
 namespace render\login;
 
-use framework\entities\users\UsersService;
 use render\defaultBuild\BaseRenderBuilder;
 
 class Login extends BaseRenderBuilder
 {
-    private UsersService $_usersService;
-    public function __construct()
-    {
-        parent::__construct();
-        $this->_usersService = new UsersService();
-    }
     public function defaultParams()
     {
         return [
-            
+            'scripts' => [
+                '<script src="/system/scripts/login/login.js"></script>',
+            ],
+            'links' => [
+                '<link href="/system/style/login/login.css" rel="stylesheet">'
+            ],
+            'cookie' => []
         ];
     }
     public function build()
     {
-        return "<div>hi</div>";
+        if($this->_usersService->isAdmin($this->getParam('cookie'))){
+            header("Location: /admin", true);
+            die();
+        }
+        return '<login></login>';
     }
 }

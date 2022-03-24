@@ -26,11 +26,13 @@ class GetItems extends BaseEndpointBuilder
             'name' => null,
             'category' => null,
             'from' => 0,
-            'to' => 25
+            'to' => 25,
+            'cookie' => []
         ];
     }
     public function build()
     {
+        $this->_usersService->unavaliableRequest($this->getParam('cookie'));
         if ($this->getParam('source') === 0) {
             if ($this->getParam('method') == 'byId') {
                 return $this->_itemsService->getItemFromDB($this->getParam('id'));

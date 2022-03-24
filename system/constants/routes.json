@@ -21,7 +21,14 @@
                 "routeName": "login",
                 "routeType": "default",
                 "className": "login\\Login",
-                "contants": []
+                "contants": [
+                    {
+                        "routeName": "validate",
+                        "routeType": "default",
+                        "className": "login\\Validate",
+                        "contants": []
+                    }
+                ]
             },
             {
                 "routeName": "be",
