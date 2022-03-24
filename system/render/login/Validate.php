@@ -14,7 +14,7 @@ class Validate extends BaseRenderBuilder
     }
     public function build()
     {
-        $role = $this->_usersService->validateUser($_POST['username'], $_POST['password']);
+        $role = $this->_usersService->validateUser($_GET['username'], $_GET['password']);
         if($role == 9){
             header("Location: /admin", true);
             die();
