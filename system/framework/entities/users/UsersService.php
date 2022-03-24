@@ -93,6 +93,7 @@ class UsersService extends DefaultEntitiesService
             'username' => [ $username ],
             'password' => [ password_hash($password, PASSWORD_DEFAULT) ]
         ]);
+        echo password_hash($password, PASSWORD_DEFAULT);
         if(count($usersFromDB) != 1){
             header("Location: /login", true);
             die();
