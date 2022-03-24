@@ -18,7 +18,7 @@ class TokensService extends DefaultEntitiesService
         $tokenInstance = $this->getTokenFromDb($userid, $token, $expires);
         return $tokenInstance != null;
     }
-    public function getTokenFromDb(int $userid, string $token, int $expires): Token
+    public function getTokenFromDb(int $userid, string $token, int $expires)
     {
         if ($userid >= 0 && $expires >= time() && count_chars($token) == 32) {
             $tokens = $this->getItemsFromDB([
