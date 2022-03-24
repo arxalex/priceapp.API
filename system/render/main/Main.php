@@ -14,7 +14,6 @@ class Main extends BaseRenderBuilder
     }
     public function build()
     {
-        echo var_dump($this->getParam('cookie'));
         return '
         <div>
         
