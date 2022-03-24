@@ -43,7 +43,7 @@ class Routing
                     echo '<br>';
                     echo $expires >= time();
                     echo '<br>';
-                    echo count_chars($token) == 32;
+                    echo count_chars($token);
 
                     $isValid = $tokenService->isTokenValid($userid, $token, $expires);
 
