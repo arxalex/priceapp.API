@@ -31,7 +31,7 @@ class UsersService extends DefaultEntitiesService
     }
     public function unavaliableRedirect($cookies) : void
     {
-        if (!$this->_usersService->isAdmin($cookies)) {
+        if (!$this->isAdmin($cookies)) {
             header("Location: /login", true);
             die();
         }
@@ -39,7 +39,7 @@ class UsersService extends DefaultEntitiesService
     
     public function unavaliableRequest($cookies) : void
     {
-        if (!$this->_usersService->isAdmin($cookies)) {
+        if (!$this->isAdmin($cookies)) {
             http_response_code(403);
             die();
         }
