@@ -6,15 +6,20 @@ use render\defaultBuild\BaseRenderBuilder;
 
 class Login extends BaseRenderBuilder
 {
-    public function defaultParams()
+    public function getExternalParams()
     {
         return [
             'scripts' => [
-                '<script src="/system/scripts/login/login.js"></script>',
+                '<script src="/system/scripts/login/login.js"></script>'
             ],
             'links' => [
                 '<link href="/system/style/login/login.css" rel="stylesheet">'
             ],
+        ];
+    }
+    public function defaultParams()
+    {
+        return [
             'cookie' => []
         ];
     }

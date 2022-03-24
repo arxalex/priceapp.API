@@ -22,13 +22,14 @@ class Items extends BaseRenderBuilder
             ],
             'links' => [
                 '<link href="/system/style/admin/items.css" rel="stylesheet">'
-            ],
-            'cookie' => []
+            ]
         ];
     }
     public function defaultParams()
     {
-        return [];
+        return [
+            'cookie' => []
+        ];
     }
     public function build()
     {
