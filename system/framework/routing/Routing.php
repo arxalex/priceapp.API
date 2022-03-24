@@ -29,10 +29,7 @@ class Routing
                 $cookie = [];
                 if(isset($_COOKIE["userid"]) 
                     && isset($_COOKIE["token"]) 
-                    && isset($_COOKIE["token_expires"])
-                    && $_COOKIE["userid"] != null
-                    && $_COOKIE["token"] != null
-                    && $_COOKIE["token_expires"] != null){
+                    && isset($_COOKIE["token_expires"])){
                     $tokenService = new TokensService();
                     $userid = $_COOKIE["userid"];
                     $token = $_COOKIE["token"];
