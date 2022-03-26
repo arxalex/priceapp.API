@@ -22,10 +22,7 @@ class AccountChange extends BaseRenderBuilder
     }
     public function build()
     {
-        if(!$this->_usersService->isLoggedInUser($this->getParam('cookie'))){
-            header("Location: /login", true);
-            die();
-        }
+        $this->_usersService->unavaliableRedirect($this->getParam('cookie'), 1);
         return '<account_change></account_change>';
     }
 }

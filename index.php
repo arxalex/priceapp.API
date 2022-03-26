@@ -13,6 +13,7 @@ $namespaces = [
     //'endpoint',
     'endpoint\defaultBuild',
     'endpoint\items',
+    'endpoint\login',
     'endpoint\categories',
     'endpoint\packages',
     'endpoint\brands',

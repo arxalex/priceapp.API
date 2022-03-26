@@ -55,4 +55,12 @@ class TokensService extends DefaultEntitiesService
 
         return $tokenInstance;
     }
+    public function deleteToken(int $userid, string $token, int $expires) : bool
+    {
+        if($this->isTokenValid($userid, $token, $expires)){
+            $oldToken = $this->getTokenFromDb($userid, $token, $expires);
+            return $this->deleteItem($oldToken);
+        }
+        return false;
+    }
 }

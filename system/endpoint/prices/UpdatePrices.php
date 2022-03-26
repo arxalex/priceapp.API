@@ -12,6 +12,7 @@ use framework\entities\prices_history\PricesHistoryService;
 use framework\shops\silpo\SilpoItemsGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
+use stdClass;
 
 class UpdatePrices extends BaseEndpointBuilder
 {
@@ -35,6 +36,7 @@ class UpdatePrices extends BaseEndpointBuilder
     }
     public function build()
     {
+        $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
         $dateToday = date("Y-m-d");
@@ -68,6 +70,8 @@ class UpdatePrices extends BaseEndpointBuilder
             $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday));
         }
 
-        return json_encode(["status" => true]);
+        $result->statusUpdate = true;
+
+        return $result;
     }
 }

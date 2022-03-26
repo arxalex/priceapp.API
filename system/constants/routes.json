@@ -205,6 +205,30 @@
                                 "contants": []
                             }
                         ]
+                    },
+                    {
+                        "routeName": "login",
+                        "routeType": "default",
+                        "className": "login\\Login",
+                        "contants": []
+                    },
+                    {
+                        "routeName": "logout",
+                        "routeType": "default",
+                        "className": "login\\Logout",
+                        "contants": []
+                    },
+                    {
+                        "routeName": "register",
+                        "routeType": "default",
+                        "className": "login\\Register",
+                        "contants": []
+                    },
+                    {
+                        "routeName": "change_account",
+                        "routeType": "default",
+                        "className": "login\\ChangeAccount",
+                        "contants": []
                     }
                 ]
             }

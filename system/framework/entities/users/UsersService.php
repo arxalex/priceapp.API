@@ -44,7 +44,7 @@ class UsersService extends DefaultEntitiesService
     public function unavaliableRedirect(array $cookies, int $role = 9): void
     {
         if (!$this->hasPermission($cookies, $role)) {
-            header("Location: /login", true);
+            http_response_code(403);
             die();
         }
     }
@@ -93,7 +93,7 @@ class UsersService extends DefaultEntitiesService
             'username' => [$username],
         ]);
         if (count($usersFromDB) != 1) {
-            header("Location: /login", true);
+            http_response_code(403);
             die();
         }
 
@@ -106,6 +106,9 @@ class UsersService extends DefaultEntitiesService
 
         $token = $this->_tokensService->createToken($user->id);
 
+        unset($_COOKIE["userid"]);
+        unset($_COOKIE["token"]);
+        unset($_COOKIE["token_expires"]);
         setcookie("userid", $token->userid, time() + 2592000, '/');
         setcookie("token", $token->token, $token->expires, '/');
         setcookie("token_expires", $token->expires, $token->expires, '/');
@@ -113,20 +116,19 @@ class UsersService extends DefaultEntitiesService
         return $user->role;
     }
 
-    public function changePassword(array $cookies, string $oldPassword, string $newPassword) : bool
+    public function changePassword(array $cookies, string $oldPassword, string $newPassword): bool
     {
-        if(!$this->isLoggedInUser($cookies)){
+        if (!$this->isLoggedInUser($cookies)) {
             return false;
         }
 
-        if(!$this->_tokensService->isTokenValid($cookies['userid'], $cookies['token'], $cookies['token_expires']))
-        {
+        if (!$this->_tokensService->isTokenValid($cookies['userid'], $cookies['token'], $cookies['token_expires'])) {
             return false;
         }
 
         $user = $this->getItemFromDB($cookies['userid']);
 
-        if(!password_verify($oldPassword, $user->password)){
+        if (!password_verify($oldPassword, $user->password)) {
             return false;
         }
 
@@ -134,11 +136,40 @@ class UsersService extends DefaultEntitiesService
 
         $this->updateItemInDB($user);
 
-        if(!password_verify($newPassword, $user->password)){
+        $token = $this->_tokensService->reValidToken($cookies['userid'], $cookies['token'], $cookies['token_expires']);
+
+        if($token == null){
             return false;
         }
 
-        $this->_tokensService->reValidToken($cookies['userid'], $cookies['token'], $cookies['token_expires']);
+        unset($_COOKIE["userid"]);
+        unset($_COOKIE["token"]);
+        unset($_COOKIE["token_expires"]);
+        setcookie("userid", $token->userid, time() + 2592000, '/');
+        setcookie("token", $token->token, $token->expires, '/');
+        setcookie("token_expires", $token->expires, $token->expires, '/');
+
+        return true;
+    }
+
+    public function logoutUser(array $cookies): bool
+    {
+        if (!$this->_tokensService->isTokenValid($cookies['userid'], $cookies['token'], $cookies['token_expires'])) {
+            return false;
+        }
+
+        $status = $this->_tokensService->deleteToken($cookies['userid'], $cookies['token'], $cookies['token_expires']);
+
+        if(!$status){
+            return false;
+        }
+
+        unset($_COOKIE["userid"]);
+        unset($_COOKIE["token"]);
+        unset($_COOKIE["token_expires"]);
+        setcookie("userid", null, -1, '/');
+        setcookie("token", null, -1, '/');
+        setcookie("token_expires", null, -1, '/');
 
         return true;
     }

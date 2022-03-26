@@ -14,6 +14,14 @@ class Validate extends BaseRenderBuilder
     }
     public function build()
     {
+        if($_GET['username'] == "" || $_GET['password'] == ""){
+            http_response_code(403);
+            die();
+        }
+        if($this->_usersService->isLoggedInUser($this->getParam('cookie'))){
+            header("Location: /", true);
+            die();
+        }
         $role = $this->_usersService->validateUser($_GET['username'], $_GET['password']);
         if($role == 9){
             header("Location: /admin", true);
