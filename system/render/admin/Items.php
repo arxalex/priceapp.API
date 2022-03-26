@@ -33,7 +33,7 @@ class Items extends BaseRenderBuilder
     }
     public function build()
     {
-        $this->_usersService->unavaliableRedirect($this->getParam('cookie'));
+        $this->_usersService->unavaliableRedirect($this->getParam('cookie'), 9);
         return '<items></items>';
     }
 }

@@ -31,6 +31,19 @@
                 ]
             },
             {
+                "routeName": "account_change",
+                "routeType": "default",
+                "className": "login\\AccountChange",
+                "contants": [
+                    {
+                        "routeName": "validate",
+                        "routeType": "default",
+                        "className": "login\\ValidateChange",
+                        "contants": []
+                    }
+                ]
+            },
+            {
                 "routeName": "login",
                 "routeType": "default",
                 "className": "login\\Login",

@@ -17,66 +17,66 @@ class UsersService extends DefaultEntitiesService
         $this->tableName = "pa_users";
         $this->_tokensService = new TokensService();
     }
-    public function isAdmin(array $cookies) : bool
+    public function hasPermission(array $cookies, int $role = 9): bool
     {
         if (!empty($cookies)) {
             if (isset($cookies['userid'])) {
                 $user = $this->getItemFromDB($cookies['userid']);
-                if ($user->role == 9) {
+                if ($user->role >= $role) {
                     return true;
                 }
             }
         }
         return false;
     }
-    public function isLoggedInUser(array $cookies) : bool
+    public function isLoggedInUser(array $cookies): bool
     {
         if (!empty($cookies)) {
             if (isset($cookies['userid'])) {
                 $user = $this->getItemFromDB($cookies['userid']);
-                if (in_array($user->role, [1,2,3,4,5,6,7,8,9])) {
+                if (in_array($user->role, [1, 2, 3, 4, 5, 6, 7, 8, 9])) {
                     return true;
                 }
             }
         }
         return false;
     }
-    public function unavaliableRedirect(array $cookies) : void
+    public function unavaliableRedirect(array $cookies, int $role = 9): void
     {
-        if (!$this->isAdmin($cookies)) {
+        if (!$this->hasPermission($cookies, $role)) {
             header("Location: /login", true);
             die();
         }
     }
-    
-    public function unavaliableRequest(array $cookies) : void
+
+    public function unavaliableRequest(array $cookies, int $role = 9): void
     {
-        if (!$this->isAdmin($cookies)) {
+        if (!$this->hasPermission($cookies, $role)) {
             http_response_code(403);
             die();
         }
     }
 
-    public function isAbleToRegister(string $username, string $email) : bool
+    public function isAbleToRegister(string $username, string $email): bool
     {
         $usersFromDB = $this->getItemsFromDB([
-            'username' => [ $username ]
+            'username' => [$username]
         ]);
-        if(!empty($usersFromDB)){
+        if (!empty($usersFromDB)) {
             return false;
         }
         $usersFromDB = $this->getItemsFromDB([
-            'username' => [ $username ]
+            'username' => [$username]
         ]);
-        if(!empty($usersFromDB)){
+        if (!empty($usersFromDB)) {
             return false;
         }
         return true;
     }
 
-    public function registerUser(string $username, string $email, string $password) : bool
+    public function registerUser(string $username, string $email, string $password): bool
     {
-        if(!$this->isAbleToRegister($username, $email)){
+        if (!$this->isAbleToRegister($username, $email)) {
             return false;
         }
 
@@ -87,19 +87,19 @@ class UsersService extends DefaultEntitiesService
         return true;
     }
 
-    public function validateUser(string $username, string $password) : int
+    public function validateUser(string $username, string $password): int
     {
         $usersFromDB = $this->getItemsFromDB([
-            'username' => [ $username ],
+            'username' => [$username],
         ]);
-        if(count($usersFromDB) != 1){
+        if (count($usersFromDB) != 1) {
             header("Location: /login", true);
             die();
-        } 
+        }
 
         $user = $usersFromDB[0];
 
-        if(!password_verify($password, $user->password)){
+        if (!password_verify($password, $user->password)) {
             http_response_code(403);
             die();
         }
@@ -113,4 +113,33 @@ class UsersService extends DefaultEntitiesService
         return $user->role;
     }
 
+    public function changePassword(array $cookies, string $oldPassword, string $newPassword) : bool
+    {
+        if(!$this->isLoggedInUser($cookies)){
+            return false;
+        }
+
+        if(!$this->_tokensService->isTokenValid($cookies['userid'], $cookies['token'], $cookies['token_expires']))
+        {
+            return false;
+        }
+
+        $user = $this->getItemFromDB($cookies['userid']);
+
+        if(!password_verify($oldPassword, $user->password)){
+            return false;
+        }
+
+        $user->password = password_hash($newPassword, PASSWORD_DEFAULT);
+
+        $this->updateItemInDB($user);
+
+        if(!password_verify($newPassword, $user->password)){
+            return false;
+        }
+
+        $this->_tokensService->reValidToken($cookies['userid'], $cookies['token'], $cookies['token_expires']);
+
+        return true;
+    }
 }

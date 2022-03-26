@@ -29,6 +29,7 @@ $namespaces = [
     'framework\entities\consists',
     'framework\entities\countries',
     'framework\entities\default_entities',
+    'framework\entities\ipaddresses',
     'framework\entities\items',
     'framework\entities\items_link',
     'framework\entities\packages',
