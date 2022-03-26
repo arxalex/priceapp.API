@@ -1,4 +1,4 @@
-Vue.component('accountChange', {
+Vue.component('account_change', {
     template: `
         <div>
             <form action="/account_change/validate">

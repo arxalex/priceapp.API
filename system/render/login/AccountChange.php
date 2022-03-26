@@ -26,6 +26,6 @@ class AccountChange extends BaseRenderBuilder
             header("Location: /login", true);
             die();
         }
-        return '<accountChange></accountChange>';
+        return '<account_change></account_change>';
     }
 }
