@@ -6,6 +6,14 @@ use render\defaultBuild\BaseRenderBuilder;
 
 class Admin extends BaseRenderBuilder
 {
+    public function getExternalParams()
+    {
+        return [
+            'scripts' => [
+                '<script src="/system/scripts/admin/admin.js"></script>'
+            ]
+        ];
+    }
     public function defaultParams()
     {
         return [
@@ -16,9 +24,6 @@ class Admin extends BaseRenderBuilder
     {
         $this->_usersService->unavaliableRedirect($this->getParam('cookie'), 9);
 
-        return '
-        <div class="container">
-            <a class="btn btn-primary" href="/admin/items">Add items</a>
-        </div>';
+        return '<admin></admin>';
     }
 }

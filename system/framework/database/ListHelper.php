@@ -26,4 +26,25 @@ class ListHelper
         }
         return $result;
     }
-}
+    public static function isObjectinArray(object $needle, array $haystack, array $fieldNames) : bool
+    {
+        $result = false;
+
+        foreach($haystack as $value){
+            $preResult = true;
+            foreach($fieldNames as $field){
+                if($value->$field != $needle->$field){
+                    $preResult = false;
+                    break;
+                }
+            }
+            
+            if($preResult == true){
+                $result = true;
+                break;
+            }
+        }
+
+        return $result;
+    }
+} 

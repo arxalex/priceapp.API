@@ -2,7 +2,6 @@
 
 namespace framework\entities\prices_history;
 
-use DateTime;
 use framework\entities\default_entities\DefaultEntity;
 
 class PriceHistory extends DefaultEntity
@@ -11,14 +10,14 @@ class PriceHistory extends DefaultEntity
     public ?int $itemid;
     public ?int $shopid;
     public ?float $price;
-    public ?DateTime $date;
+    public ?string $date;
 
     public function __construct(
         ?int $id = null,
         ?int $itemid = null,
         ?int $shopid = null,
         ?float $price = null,
-        ?DateTime $date = null
+        ?string $date = null
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
