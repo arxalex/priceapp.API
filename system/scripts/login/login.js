@@ -1,4 +1,4 @@
-Vue.component('Login', {
+Vue.component('login', {
     template: `
         <div>
             <form action="/login/validate">

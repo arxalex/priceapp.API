@@ -10,7 +10,7 @@ class AccountChange extends BaseRenderBuilder
     {
         return [
             'scripts' => [
-                '<script src="/system/scripts/login/account_change.js"></script>'
+                '<script src="/system/scripts/login/accountChange.js"></script>'
             ]
         ];
     }

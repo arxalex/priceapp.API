@@ -1,4 +1,4 @@
-Vue.component('Register', {
+Vue.component('register', {
     template: `
         <div>
             <form action="/register/validate">
