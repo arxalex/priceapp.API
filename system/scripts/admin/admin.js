@@ -2,7 +2,7 @@ Vue.component('admin', {
     template: `
         <div class="container">
             <a class="btn btn-primary" href="/admin/items">Add items</a>
-            <button class="btn btn-primary" :disabled="isUpdateingPrices">Get prices</button>
+            <button class="btn btn-primary" @click="updatePrices" :disabled="isUpdateingPrices">Get prices</button>
         </div>
     `,
     data() {
