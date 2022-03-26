@@ -8,7 +8,7 @@ class PricesHistoryService extends DefaultEntitiesService
 {
     public function __construct()
     {
-        $this->className = self::ENTITIES_NAMESPACE . "prices_history\\PricesHistory";
+        $this->className = self::ENTITIES_NAMESPACE . "prices_history\\PriceHistory";
         $this->tableName = "pa_prices_history";
     }
 }
