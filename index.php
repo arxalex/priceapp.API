@@ -18,6 +18,7 @@ $namespaces = [
     'endpoint\brands',
     'endpoint\countries',
     'endpoint\consists',
+    'endpoint\prices',
     //'framework',
     //'framework\core',
     'framework\core\constants',

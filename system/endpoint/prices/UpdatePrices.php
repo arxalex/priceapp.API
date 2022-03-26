@@ -2,7 +2,6 @@
 
 namespace endpoint\prices;
 
-use DateTime;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
 use framework\database\NumericHelper;
@@ -13,19 +12,16 @@ use framework\entities\prices_history\PricesHistoryService;
 use framework\shops\silpo\SilpoItemsGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
-use stdClass;
 
 class UpdatePrices extends BaseEndpointBuilder
 {
     private PricesService $_pricesService;
-    private ItemsService $_itemsService;
     private ItemsLinkService $_itemsLinkService;
     private PricesHistoryService $_pricesHistoryService;
     private SilpoItemsGetter $_silpoItemsGetter;
     public function __construct()
     {
         $this->_pricesService = new PricesService();
-        $this->_itemsService = new ItemsService();
         $this->_itemsLinkService = new ItemsLinkService();
         $this->_pricesHistoryService = new PricesHistoryService();
         $this->_silpoItemsGetter = new SilpoItemsGetter();
