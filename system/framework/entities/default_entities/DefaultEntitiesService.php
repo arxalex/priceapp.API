@@ -47,13 +47,14 @@ class DefaultEntitiesService
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
         return $response;
     }
-    public function insertItemToDB($item)
+    public function insertItemToDB($item) : bool
     {
         $table = $this->tableName;
         $query = "INSERT INTO `$table` " . SqlHelper::insertObjects([$item]);
         return (new Request($query))->execute();
     }
-    public function updateItemInDB($item){
+    public function updateItemInDB($item) : bool
+    {
         $table = $this->tableName;
         $query = "UPDATE `$table`
         SET " . SqlHelper::updateObject($item)
@@ -113,6 +114,10 @@ class DefaultEntitiesService
     }
     public function deleteItem($item) : bool
     {
-        return true;
+        $table = $this->tableName;
+        $query = "DELETE FROM `$table` WHERE " . SqlHelper::whereCreate([
+            'id' => [$item->id]
+        ]);
+        return (new Request($query))->execute();
     }
 }

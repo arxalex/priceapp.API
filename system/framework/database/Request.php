@@ -23,9 +23,9 @@ class Request
         );
         $this->statement = $this->connection->prepare($query);
     }
-    public function execute()
+    public function execute() : bool
     {
-        $this->statement->execute();
+        return $this->statement->execute();
     }
     public function fetch($method = PDO::FETCH_ASSOC){
         return $this->statement->fetch($method);

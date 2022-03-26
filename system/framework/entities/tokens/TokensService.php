@@ -38,8 +38,7 @@ class TokensService extends DefaultEntitiesService
     public function reValidToken(int $userid, string $token, int $expires): Token
     {
         if($this->isTokenValid($userid, $token, $expires)){
-            $oldToken = $this->getTokenFromDb($userid, $token, $expires);
-            if($this->deleteItem($oldToken)){
+            if($this->deleteToken($userid, $token, $expires)){
                 return $this->createToken($userid);
             }
         }
