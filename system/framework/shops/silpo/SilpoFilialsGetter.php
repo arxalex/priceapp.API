@@ -20,14 +20,13 @@ class SilpoFilialsGetter
     {
         $url = 'https://api.sm.silpo.ua/api/2.0/exec/FZGlobal/';
         $data = json_encode([
-            'data' => [],
             'method' => 'GetFilials'
         ]);
 
         $options = [
             'http' => [
-                'header' => "Authorization: ".$token."\r\n". 
-                            "Content-Type: application/json;charset=UTF-8\r\n",
+                'header' => ["authorization: $token\r\n", 
+                            "Content-Type: application/json;charset=UTF-8\r\n"],
                 'method'  => 'POST',
                 'content' => $data
             ]
