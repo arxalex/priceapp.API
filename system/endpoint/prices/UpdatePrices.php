@@ -48,6 +48,7 @@ class UpdatePrices extends BaseEndpointBuilder
     }
     public function build()
     {
+        set_time_limit(12000);
         $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
@@ -91,7 +92,7 @@ class UpdatePrices extends BaseEndpointBuilder
             $map[$shop] = $sortedPreMap;
         }
         
-        $filials = $this->_filialsService->getItemsFromDB();
+        /*$filials = $this->_filialsService->getItemsFromDB();
         foreach ($filials as $filial) {
             $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
             $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filial->id]]);
@@ -131,7 +132,7 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filial->id));
             }
-        }
+        }*/
 
         $result->statusUpdate = true;
 
