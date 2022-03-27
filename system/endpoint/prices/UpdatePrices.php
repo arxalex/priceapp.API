@@ -45,6 +45,7 @@ class UpdatePrices extends BaseEndpointBuilder
 
         $itemsLinks = $this->_itemsLinkService->getItemsFromDB();
 
+        $i = 0;
         $filials = $this->_filialsService->getItemsFromDB();
         foreach ($filials as $filial) {
             $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
@@ -54,12 +55,18 @@ class UpdatePrices extends BaseEndpointBuilder
                     continue;
                 }
 
+                if($i > 1000){
+                    sleep(120);
+                    $i = 0;
+                }
+
                 $price = null;
 
                 if ($item->shopid == 1) {
                     $priceAndQuantity = $this->_silpoPricesGetter->getItemPriceAndQuantity($item->inshopid, $filial->inshopid);
                     $price = $priceAndQuantity->price * NumericHelper::toFloat($item->pricefactor);
                     $quantity = $priceAndQuantity->quantity / NumericHelper::toFloat($item->pricefactor);
+                    $i++;
                 }
 
                 if (ListHelper::isObjectinArray($item, $prices, ["itemid", "shopid"])) {
