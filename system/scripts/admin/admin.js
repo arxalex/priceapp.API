@@ -15,9 +15,18 @@ Vue.component('admin', {
     methods: {
         updatePrices: async function () {
             const url = "../be/prices/update_prices";
-            var data = {};
-            this.isUpdateingPrices = true;
-            await this.getItemsFromDb(url, data);
+            var end = false;
+            var page = 0;
+            while (!end) {
+                var data = {
+                    from: page * 20 + 1,
+                    to: page * 20 + 20
+                };
+                page++;
+                this.isUpdateingPrices = true;
+                var status = await this.getItemsFromDb(url, data);
+                end = !status.statusUpdate;
+            }
             this.isUpdateingPrices = false;
         },
         updateFilials: async function () {

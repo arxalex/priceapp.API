@@ -43,43 +43,47 @@ class UpdatePrices extends BaseEndpointBuilder
     public function defaultParams()
     {
         return [
-            'cookie' => []
+            'cookie' => [],
+            'from' => 1,
+            'to' => 20
         ];
     }
     public function build()
     {
-        set_time_limit(12000);
+        $from = $this->getParam('from');
+        $to = $this->getParam('to');
+        set_time_limit(1200);
         $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
         $dateToday = date("Y-m-d");
         $shops = [1];
         $map = [];
-        foreach($shops as $shop){
+        foreach ($shops as $shop) {
             $preMap = [];
             $categoryIds = [];
             $itemsLinks = $this->_itemsLinkService->getItemsFromDB(['shopid' => [$shop]]);
-            foreach($itemsLinks as $item){
+            foreach ($itemsLinks as $item) {
                 $categoryid = $this->_itemsService->getItemFromDB($item->itemid)->category;
                 $category = $this->_categoriesService->getItemFromDB($categoryid);
-                while($category->parent != null){
+                while ($category->parent != null) {
                     $category = $this->_categoriesService->getItemFromDB($category->parent);
                 }
                 $preMap[] = [
                     'item' => $item,
                     'baseCategory' => $category->id
                 ];
-                if(!in_array($category->id, $categoryIds)){
+                if (!in_array($category->id, $categoryIds)) {
                     $categoryIds[] = $category->id;
                 }
             }
-            
+
             $sortedPreMap = [];
 
-            foreach($categoryIds as $categoryId){
+            foreach ($categoryIds as $categoryId) {
                 $preSortedPreMap = [];
-                foreach($preMap as $preMapValue) {
-                    if($preMapValue['baseCategory'] == $categoryId){
+                foreach ($preMap as $preMapValue) {
+                    if ($preMapValue['baseCategory'] == $categoryId) {
                         $preSortedPreMap[] = $preMapValue['item'];
                     }
                 }
@@ -91,8 +95,16 @@ class UpdatePrices extends BaseEndpointBuilder
 
             $map[$shop] = $sortedPreMap;
         }
-        
-        /*$filials = $this->_filialsService->getItemsFromDB();
+        $ids = [];
+        for ($i = $from; $i++; $i <= $to) {
+            $ids[] = $i;
+        }
+        $filials = $this->_filialsService->getItemsFromDB(["id" => $ids]);
+        if (empty($filials)) {
+            $result->statusUpdate = false;
+
+            return $result;
+        }
         foreach ($filials as $filial) {
             $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
             $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filial->id]]);
@@ -106,7 +118,7 @@ class UpdatePrices extends BaseEndpointBuilder
                 $pricesAndQuantities = [];
                 if ($item->shopid == 1) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
-                    if(empty($pricesAndQuantities[$baseCategoryId])){
+                    if (empty($pricesAndQuantities[$baseCategoryId])) {
                         $pricesAndQuantities[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory($this->_categoriesLinkService->getItemsFromDB([
                                 'categoryid' => [$baseCategoryId]
@@ -132,25 +144,25 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filial->id));
             }
-        }*/
+        }
 
         $result->statusUpdate = true;
 
         return $result;
     }
-    private function getBaseCategoryFromMap(object $item, array $map) : int
+    private function getBaseCategoryFromMap(object $item, array $map): int
     {
-        foreach($map as $value){
-            if(ListHelper::isObjectinArray($item, $value['items'], ['id'])){
+        foreach ($map as $value) {
+            if (ListHelper::isObjectinArray($item, $value['items'], ['id'])) {
                 return $value['categoryid'];
             }
         }
         return -1;
     }
-    private function getPAQObject(int $inshopid, array $PAQs) : PriceAndQuantitySilpo
+    private function getPAQObject(int $inshopid, array $PAQs): PriceAndQuantitySilpo
     {
-        foreach($PAQs as $value){
-            if($value->inshopid == $inshopid){
+        foreach ($PAQs as $value) {
+            if ($value->inshopid == $inshopid) {
                 return $value;
             }
         }
