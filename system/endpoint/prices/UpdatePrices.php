@@ -96,7 +96,7 @@ class UpdatePrices extends BaseEndpointBuilder
             $map[$shop] = $sortedPreMap;
         }
         $ids = [];
-        for ($i = $from; $i++; $i <= $to) {
+        for ($i = $from; $i <= $to; $i++) {
             $ids[] = $i;
         }
         $filials = $this->_filialsService->getItemsFromDB(["id" => $ids]);
