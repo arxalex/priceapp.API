@@ -11,7 +11,7 @@ class SilpoPricesGetter
         $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
         $data = json_encode([
             'data' => [
-                'silpoFilialId' => $silpoFilialId,
+                'filialId' => $silpoFilialId,
                 "skuid" => $inshopid
             ],
             'method' => 'GetDetailedCatalogItem'

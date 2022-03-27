@@ -19,7 +19,7 @@ class PriceHistory extends DefaultEntity
         ?int $shopid = null,
         ?float $price = null,
         ?string $date = null,
-        ?int $filialid = null,
+        ?int $filialid = null
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
