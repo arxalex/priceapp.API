@@ -50,6 +50,7 @@ class UpdatePrices extends BaseEndpointBuilder
     }
     public function build()
     {
+        $start = time();
         $from = $this->getParam('from');
         $to = $this->getParam('to');
         ini_set('max_execution_time', 0);
@@ -122,7 +123,6 @@ class UpdatePrices extends BaseEndpointBuilder
         foreach ($filials as $filial) {
             $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filial->id]]);
             $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filial->id]]);
-
             $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filial->shopid]]);
 
             $PAQs = [];
@@ -168,6 +168,7 @@ class UpdatePrices extends BaseEndpointBuilder
         }
 
         $result->statusUpdate = true;
+        $result->executionTime = time() - $start;
 
         return $result;
     }
