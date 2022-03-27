@@ -26,7 +26,8 @@ class SilpoFilialsGetter
 
         $options = [
             'http' => [
-                'header'  => "authorization: $token; Content-Type: application/json;charset=UTF-8\r\n",
+                'header' => "Authorization: ".$token."\r\n". 
+                            "Content-Type: application/json;charset=UTF-8\r\n",
                 'method'  => 'POST',
                 'content' => $data
             ]
