@@ -106,12 +106,10 @@ class UpdatePrices extends BaseEndpointBuilder
             return $result;
         }
 
-        echo var_dump($map);
-        echo "<br/>";
-
         foreach ($filials as $filial) {
             $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
             $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filial->id]]);
+            $PAQs = [];
             foreach ($itemsLinks as $item) {
                 if (ListHelper::isObjectinArray($item, $pricesHistory, ["itemid", "shopid"])) {
                     continue;
@@ -119,7 +117,6 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 $price = null;
 
-                $PAQs = [];
                 if ($item->shopid == 1) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
                     if ($PAQs[$baseCategoryId] == null) {
@@ -130,8 +127,6 @@ class UpdatePrices extends BaseEndpointBuilder
                                 ])[0]->categoryshopid,
                                 $filial->inshopid
                             );
-                        echo $baseCategoryId;
-                        echo "<br>";
                     }
                     $PAQObject = $this->getPAQObject($item->inshopid, $PAQs[$baseCategoryId]);
                     $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
