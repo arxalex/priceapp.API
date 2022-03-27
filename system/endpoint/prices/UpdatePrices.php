@@ -52,7 +52,7 @@ class UpdatePrices extends BaseEndpointBuilder
     {
         $from = $this->getParam('from');
         $to = $this->getParam('to');
-        set_time_limit(1200);
+        error_log(set_time_limit(1200));
         $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
