@@ -11,19 +11,22 @@ class PriceHistory extends DefaultEntity
     public ?int $shopid;
     public ?float $price;
     public ?string $date;
+    public ?int $filialid;
 
     public function __construct(
         ?int $id = null,
         ?int $itemid = null,
         ?int $shopid = null,
         ?float $price = null,
-        ?string $date = null
+        ?string $date = null,
+        ?int $filialid = null,
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
         $this->shopid = $shopid;
         $this->price = $price;
         $this->date = $date;
+        $this->filialid = $filialid;
     }
     
 }

@@ -207,6 +207,19 @@
                         ]
                     },
                     {
+                        "routeName": "filials",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_filials",
+                                "routeType": "default",
+                                "className": "filials\\GetFilials",
+                                "contants": []
+                            }
+                        ]
+                    },
+                    {
                         "routeName": "login",
                         "routeType": "default",
                         "className": "login\\Login",

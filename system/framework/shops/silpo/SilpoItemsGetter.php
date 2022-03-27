@@ -172,30 +172,6 @@ class SilpoItemsGetter
     {
         return $cal != null ? str_replace(",", ".", explode("/", $cal, 2)[0]) : null;
     }
-    public function getItemPrice(int $inshopid, int $fillialId = 2043) : float
-    {
-        $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
-        $data = json_encode([
-            'data' => [
-                'filialId' => $fillialId,
-                "skuid" => $inshopid
-            ],
-            'method' => 'GetDetailedCatalogItem'
-        ]);
-
-        $options = [
-            'http' => [
-                'header'  => "Content-Type: application/json;charset=UTF-8\r\n",
-                'method'  => 'POST',
-                'content' => $data
-            ]
-        ];
-        $context  = stream_context_create($options);
-        $result = json_decode(file_get_contents($url, false, $context));
-
-        $shopItemPrice = $result->item->price;
-        return NumericHelper::toFloat($shopItemPrice);
-    }
 }
 class SilpoOriginalItemLabelsViewModel{
     public ?string $categoryLabel;
