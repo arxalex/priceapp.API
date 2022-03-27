@@ -44,15 +44,16 @@ class UpdatePrices extends BaseEndpointBuilder
     {
         return [
             'cookie' => [],
-            'from' => 1,
-            'to' => 20
+            'from' => 0,
+            'to' => 0
         ];
     }
     public function build()
     {
         $from = $this->getParam('from');
         $to = $this->getParam('to');
-        set_time_limit(1200);
+        ini_set('max_execution_time', 0);
+        set_time_limit(0);
         $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
@@ -95,11 +96,14 @@ class UpdatePrices extends BaseEndpointBuilder
 
             $map[$shop] = $sortedPreMap;
         }
-        $ids = [];
-        for ($i = $from; $i <= $to; $i++) {
-            $ids[] = $i;
+        if ($from != 0 && $to != 0) {
+            $ids = [];
+            for ($i = $from; $i <= $to; $i++) {
+                $ids[] = $i;
+            }
+            $filials = $this->_filialsService->getItemsFromDB(["id" => $ids]);
         }
-        $filials = $this->_filialsService->getItemsFromDB(["id" => $ids]);
+        $filials = $this->_filialsService->getItemsFromDB();
         if (empty($filials)) {
             $result->statusUpdate = false;
 
@@ -132,7 +136,7 @@ class UpdatePrices extends BaseEndpointBuilder
                     $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 }
-                
+
 
                 if (ListHelper::isObjectinArray($item, $prices, ["itemid", "shopid"])) {
                     $priceObject = ($this->_pricesService->getItemsFromDB([
