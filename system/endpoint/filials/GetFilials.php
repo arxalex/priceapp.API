@@ -4,13 +4,10 @@ namespace endpoint\items;
 
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
-use framework\entities\items\ItemsService;
-use framework\database\StringHelper;
 use framework\entities\filials\FilialsService;
 use framework\shops\silpo\SilpoFilialsGetter;
-use framework\shops\silpo\SilpoItemsGetter;
 
-class GetItems extends BaseEndpointBuilder
+class GetFilials extends BaseEndpointBuilder
 {
     private FilialsService $_filialsService;
     private SilpoFilialsGetter $_silpoFilialsGetter;
