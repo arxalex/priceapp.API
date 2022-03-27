@@ -68,4 +68,46 @@ class ListHelper
 
         return $result;
     }
+    public static function getMultipleByFields(array $haystack, array $fields) : array
+    {
+        $result = [];
+
+        foreach($haystack as $value){
+            $preResult = true;
+            foreach($fields as $key => $field){
+                if(!in_array($value->$key, $field)){
+                    $preResult = false;
+                    break;
+                }
+            }
+            
+            if($preResult == true){
+                $result[] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    public static function getOneByFields(array $haystack, array $fields) : ?object
+    {
+        $result = null;
+
+        foreach($haystack as $value){
+            $preResult = true;
+            foreach($fields as $key => $field){
+                if($value->$key != $field){
+                    $preResult = false;
+                    break;
+                }
+            }
+            
+            if($preResult == true){
+                $result = $value;
+                break;
+            }
+        }
+
+        return $result;
+    }
 } 

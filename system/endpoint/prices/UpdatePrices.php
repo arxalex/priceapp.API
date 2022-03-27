@@ -58,17 +58,25 @@ class UpdatePrices extends BaseEndpointBuilder
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
         $dateToday = date("Y-m-d");
+
+        $categoriesFromDB = $this->_categoriesService->getItemsFromDB();
+        $categoriesLinksFromDB = $this->_categoriesLinkService->getItemsFromDB();
+        $itemsLinksFromDB = $this->_itemsLinkService->getItemsFromDB();
+        $itemsFromDB = $this->_itemsService->getItemsFromDB();
+        $pricesFromDB = $this->_pricesService->getItemsFromDB();
+        $pricesHistoryFromDB = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday]]);
+
         $shops = [1];
         $map = [];
         foreach ($shops as $shop) {
             $preMap = [];
             $categoryIds = [];
-            $itemsLinks = $this->_itemsLinkService->getItemsFromDB(['shopid' => [$shop]]);
-            foreach ($itemsLinks as $item) {
-                $categoryid = $this->_itemsService->getItemFromDB($item->itemid)->category;
-                $category = $this->_categoriesService->getItemFromDB($categoryid);
+            $itemsLinksInShop = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$shop]]);
+            foreach ($itemsLinksInShop as $item) {
+                $categoryid = ListHelper::getOneByFields($itemsFromDB, ['id' => $item->itemid])->category;
+                $category = ListHelper::getOneByFields($categoriesFromDB, ['id' => $categoryid]);
                 while ($category->parent != null) {
-                    $category = $this->_categoriesService->getItemFromDB($category->parent);
+                    $category = ListHelper::getOneByFields($categoriesFromDB, ['id' => $category->parent]);
                 }
                 $preMap[] = [
                     'item' => $item,
@@ -102,8 +110,9 @@ class UpdatePrices extends BaseEndpointBuilder
                 $ids[] = $i;
             }
             $filials = $this->_filialsService->getItemsFromDB(["id" => $ids]);
+        } else {
+            $filials = $this->_filialsService->getItemsFromDB();
         }
-        $filials = $this->_filialsService->getItemsFromDB();
         if (empty($filials)) {
             $result->statusUpdate = false;
 
@@ -111,8 +120,11 @@ class UpdatePrices extends BaseEndpointBuilder
         }
 
         foreach ($filials as $filial) {
-            $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
-            $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filial->id]]);
+            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filial->id]]);
+            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filial->id]]);
+
+            $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filial->shopid]]);
+
             $PAQs = [];
             foreach ($itemsLinks as $item) {
                 if (ListHelper::isObjectinArray($item, $pricesHistory, ["itemid", "shopid"])) {
@@ -126,9 +138,9 @@ class UpdatePrices extends BaseEndpointBuilder
                     if ($PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory(
-                                $this->_categoriesLinkService->getItemsFromDB([
-                                    'categoryid' => [$baseCategoryId]
-                                ])[0]->categoryshopid,
+                                ListHelper::getOneByFields($categoriesLinksFromDB, [
+                                    'categoryid' => $baseCategoryId
+                                ])->categoryshopid,
                                 $filial->inshopid
                             );
                     }
