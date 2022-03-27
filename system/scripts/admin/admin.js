@@ -22,7 +22,9 @@ Vue.component('admin', {
         },
         updateFilials: async function () {
             const url = "../be/filials/get_filials";
-            var data = {};
+            var data = {
+                shopid: 1
+            };
             this.isUpdateingFilials = true;
             await this.getItemsFromDb(url, data);
             this.isUpdateingFilials = false;
