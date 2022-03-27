@@ -115,16 +115,19 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 $price = null;
 
-                $pricesAndQuantities = [];
+                $PAQs = [];
                 if ($item->shopid == 1) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
-                    if (empty($pricesAndQuantities[$baseCategoryId])) {
-                        $pricesAndQuantities[$baseCategoryId] = $this->_silpoPricesGetter
-                            ->getPricesAndQuantitiesByCategory($this->_categoriesLinkService->getItemsFromDB([
-                                'categoryid' => [$baseCategoryId]
-                            ])[0]->categoryshopid, $filial->inshopid);
+                    if ($PAQs[$baseCategoryId] == null) {
+                        $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
+                            ->getPricesAndQuantitiesByCategory(
+                                $this->_categoriesLinkService->getItemsFromDB([
+                                    'categoryid' => [$baseCategoryId]
+                                ])[0]->categoryshopid,
+                                $filial->inshopid
+                            );
                     }
-                    $PAQObject = $this->getPAQObject($item->inshopid, $pricesAndQuantities[$baseCategoryId]);
+                    $PAQObject = $this->getPAQObject($item->inshopid, $PAQs[$baseCategoryId]);
                     $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 }

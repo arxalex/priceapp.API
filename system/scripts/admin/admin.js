@@ -19,8 +19,8 @@ Vue.component('admin', {
             var page = 0;
             while (!end) {
                 var data = {
-                    from: page * 20 + 1,
-                    to: page * 20 + 20
+                    from: page * 5 + 1,
+                    to: page * 5 + 5
                 };
                 page++;
                 this.isUpdateingPrices = true;
