@@ -5,13 +5,17 @@ namespace endpoint\prices;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
 use framework\database\NumericHelper;
+use framework\entities\categories\CategoriesService;
+use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\filials\FilialsService;
+use framework\entities\items\ItemsService;
 use framework\entities\items_link\ItemsLinkService;
 use framework\entities\prices\PricesService;
 use framework\entities\prices_history\PricesHistoryService;
 use framework\shops\silpo\SilpoPricesGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
+use framework\shops\silpo\PriceAndQuantitySilpo;
 use stdClass;
 
 class UpdatePrices extends BaseEndpointBuilder
@@ -21,6 +25,9 @@ class UpdatePrices extends BaseEndpointBuilder
     private PricesHistoryService $_pricesHistoryService;
     private SilpoPricesGetter $_silpoPricesGetter;
     private FilialsService $_filialsService;
+    private ItemsService $_itemsService;
+    private CategoriesService $_categoriesService;
+    private CategoriesLinkService $_categoriesLinkService;
     public function __construct()
     {
         $this->_pricesService = new PricesService();
@@ -28,6 +35,9 @@ class UpdatePrices extends BaseEndpointBuilder
         $this->_pricesHistoryService = new PricesHistoryService();
         $this->_silpoPricesGetter = new SilpoPricesGetter();
         $this->_filialsService = new FilialsService();
+        $this->_itemsService = new ItemsService();
+        $this->_categoriesService = new CategoriesService();
+        $this->_categoriesLinkService = new CategoriesLinkService();
         parent::__construct();
     }
     public function defaultParams()
@@ -42,10 +52,45 @@ class UpdatePrices extends BaseEndpointBuilder
         $this->_usersService->unavaliableRequest($this->getParam('cookie'));
 
         $dateToday = date("Y-m-d");
+        $shops = [1];
+        $map = [];
+        foreach($shops as $shop){
+            $preMap = [];
+            $categoryIds = [];
+            $itemsLinks = $this->_itemsLinkService->getItemsFromDB(['shopid' => [$shop]]);
+            foreach($itemsLinks as $item){
+                $categoryid = $this->_itemsService->getItemFromDB($item->itemid)->category;
+                $category = $this->_categoriesService->getItemFromDB($categoryid);
+                while($category->parent != null){
+                    $category = $this->_categoriesService->getItemFromDB($category->parent);
+                }
+                $preMap[] = [
+                    'item' => $item,
+                    'baseCategory' => $category->id
+                ];
+                if(!in_array($category->id, $categoryIds)){
+                    $categoryIds[] = $category->id;
+                }
+            }
+            
+            $sortedPreMap = [];
 
-        $itemsLinks = $this->_itemsLinkService->getItemsFromDB();
+            foreach($categoryIds as $categoryId){
+                $preSortedPreMap = [];
+                foreach($preMap as $preMapValue) {
+                    if($preMapValue['baseCategory'] == $categoryId){
+                        $preSortedPreMap[] = $preMapValue['item'];
+                    }
+                }
+                $sortedPreMap[] = [
+                    'categoryid' => $categoryId,
+                    'items' => $preSortedPreMap
+                ];
+            }
 
-        $i = 0;
+            $map[$shop] = $sortedPreMap;
+        }
+        
         $filials = $this->_filialsService->getItemsFromDB();
         foreach ($filials as $filial) {
             $prices = $this->_pricesService->getItemsFromDB(['filialid' => [$filial->id]]);
@@ -55,18 +100,20 @@ class UpdatePrices extends BaseEndpointBuilder
                     continue;
                 }
 
-                if($i > 1000){
-                    sleep(120);
-                    $i = 0;
-                }
-
                 $price = null;
 
+                $pricesAndQuantities = [];
                 if ($item->shopid == 1) {
-                    $priceAndQuantity = $this->_silpoPricesGetter->getItemPriceAndQuantity($item->inshopid, $filial->inshopid);
-                    $price = $priceAndQuantity->price * NumericHelper::toFloat($item->pricefactor);
-                    $quantity = $priceAndQuantity->quantity / NumericHelper::toFloat($item->pricefactor);
-                    $i++;
+                    $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+                    if(empty($pricesAndQuantities[$baseCategoryId])){
+                        $pricesAndQuantities[$baseCategoryId] = $this->_silpoPricesGetter
+                            ->getPricesAndQuantitiesByCategory($this->_categoriesLinkService->getItemsFromDB([
+                                'categoryid' => [$baseCategoryId]
+                            ])[0]->categoryshopid, $filial->inshopid);
+                    }
+                    $PAQObject = $this->getPAQObject($item->inshopid, $pricesAndQuantities[$baseCategoryId]);
+                    $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
+                    $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 }
 
                 if (ListHelper::isObjectinArray($item, $prices, ["itemid", "shopid"])) {
@@ -89,5 +136,23 @@ class UpdatePrices extends BaseEndpointBuilder
         $result->statusUpdate = true;
 
         return $result;
+    }
+    private function getBaseCategoryFromMap(object $item, array $map) : int
+    {
+        foreach($map as $value){
+            if(ListHelper::isObjectinArray($item, $value['items'], ['id'])){
+                return $value['categoryid'];
+            }
+        }
+        return -1;
+    }
+    private function getPAQObject(int $inshopid, array $PAQs) : PriceAndQuantitySilpo
+    {
+        foreach($PAQs as $value){
+            if($value->inshopid == $inshopid){
+                return $value;
+            }
+        }
+        return new PriceAndQuantitySilpo($inshopid, 0, 0);
     }
 }

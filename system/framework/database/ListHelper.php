@@ -47,4 +47,25 @@ class ListHelper
 
         return $result;
     }
+    public static function numberObjectinArray(object $needle, array $haystack, array $fieldNames) : int
+    {
+        $result = -1;
+
+        foreach($haystack as $key => $value){
+            $preResult = true;
+            foreach($fieldNames as $field){
+                if($value->$field != $needle->$field){
+                    $preResult = false;
+                    break;
+                }
+            }
+            
+            if($preResult == true){
+                $result = $key;
+                break;
+            }
+        }
+
+        return $result;
+    }
 } 

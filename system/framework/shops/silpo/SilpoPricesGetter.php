@@ -35,20 +35,53 @@ class SilpoPricesGetter
 
         return $priceAndQuantity;
     }
+    public function getPricesAndQuantitiesByCategory(int $inshopcategoryid, int $silpoFilialId = 2043) : array
+    {
+        $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
+        $data = json_encode([
+            'data' => [
+                'filialId' => $silpoFilialId,
+                'From' => 0,
+                'To' => 10000,
+                'categoryId' => $inshopcategoryid
+            ],
+            'method' => 'GetSimpleCatalogItems'
+        ]);
+
+        $options = [
+            'http' => [
+                'header'  => "Content-Type: application/json;charset=UTF-8\r\n",
+                'method'  => 'POST',
+                'content' => $data
+            ]
+        ];
+        $context  = stream_context_create($options);
+        $result = json_decode(file_get_contents($url, false, $context));
+
+        $items = $result->items;
+
+        $result = [];
+        foreach($items as $item){
+            $priceAndQuantity = new PriceAndQuantitySilpo(NumericHelper::toInt($item->id), NumericHelper::toFloat($item->price), NumericHelper::toFloat($item->quantity));
+            $result[] = $priceAndQuantity;
+        }
+
+        return $result;
+    }
 }
 class PriceAndQuantitySilpo{
+    public int $inshopid;
     public float $price;
     public float $quantity;
-    public int $filialid;
 
     public function __construct(
+        int $inshopid,
         float $price,
-        float $quantity,
-        int $filialid
+        float $quantity
     )
     {
+        $this->inshopid = $inshopid;
         $this->price = $price;
         $this->quantity = $quantity;
-        $this->filialid = $filialid;
     }
 }
