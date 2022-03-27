@@ -1,6 +1,6 @@
 <?php
 
-namespace endpoint\items;
+namespace endpoint\filials;
 
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
