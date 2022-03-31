@@ -16,7 +16,8 @@ class Login extends BaseEndpointBuilder
         return [
             'cookie' => [],
             'username' => '',
-            'password' => ''
+            'password' => '',
+            'email' => ''
         ];
     }
     public function build()
@@ -28,12 +29,16 @@ class Login extends BaseEndpointBuilder
             return $result;
         }
 
-        if($this->getParam('username') == "" || $this->getParam('password') == ""){
+        if(($this->getParam('username') == "" && $this->getParam('email') == "") || $this->getParam('password') == ""){
             http_response_code(403);
             die();
         }
 
-        $role = $this->_usersService->validateUser($this->getParam('username'), $this->getParam('password'));
+        if($this->getParam('username') != "" && $this->getParam('email') == ""){
+            $role = $this->_usersService->validateUser($this->getParam('username'), $this->getParam('password'));
+        } elseif($this->getParam('username') == "" && $this->getParam('email') != "") {
+            $role = $this->_usersService->validateUserByEmail($this->getParam('email'), $this->getParam('password'));
+        }
 
         $result->statusLogin = true;
         $result->role = $role;

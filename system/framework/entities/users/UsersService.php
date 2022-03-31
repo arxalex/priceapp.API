@@ -115,6 +115,21 @@ class UsersService extends DefaultEntitiesService
 
         return $user->role;
     }
+    public function validateUserByEmail(string $email, string $password): int
+    {
+        $usersFromDB = $this->getItemsFromDB([
+            'email' => [$email],
+        ]);
+
+        if (count($usersFromDB) != 1) {
+            http_response_code(403);
+            die();
+        }
+
+        $user = $usersFromDB[0];
+
+        return $this->validateUser($user->username, $password);
+    }
 
     public function changePassword(array $cookies, string $oldPassword, string $newPassword): bool
     {
