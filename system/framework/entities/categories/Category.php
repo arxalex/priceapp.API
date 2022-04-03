@@ -10,17 +10,20 @@ class Category extends DefaultEntity
     public ?string $label;
     public ?int $parent;
     public ?int $isFilter;
+    public ?string $image;
 
     public function __construct(
         ?int $id = null,
         ?string $label = null,
         ?int $parent = null,
-        ?int $isFilter = null
+        ?int $isFilter = null,
+        ?string $image = null
     ) {
         $this->id = $id;
         $this->label = $label;
         $this->parent = $parent;
         $this->isFilter = $isFilter;
+        $this->image = $image;
     }
     
 }
