@@ -148,6 +148,10 @@ class SqlHelper
                 $query .= "$key in ";
                 $query .= self::arrayInString($value);
                 $query .= " AND ";
+            } elseif($value[0] == NULL && count($value) == 1) {
+                $query .= "$key in ";
+                $query .= self::arrayInString($value);
+                $query .= " AND ";
             }
         }
         $query = substr($query, 0, -5);
