@@ -149,8 +149,7 @@ class SqlHelper
                 $query .= self::arrayInString($value);
                 $query .= " AND ";
             } elseif($value[0] == NULL && count($value) == 1) {
-                $query .= "$key in ";
-                $query .= self::arrayInString($value);
+                $query .= "$key is NULL";
                 $query .= " AND ";
             }
         }
