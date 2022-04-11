@@ -126,10 +126,11 @@ class CategoriesService extends DefaultEntitiesService
         $resultByLevel[$i] = [ 0 => $parentId ];
         do{
             echo var_dump($i);
+            $i++;
             $resultByLevel[$i] = ListHelper::getColumn($this->getItemsFromDB([
                 'parent' => $resultByLevel[$i - 1]
             ]), 'id');
-            $i++;
+            
         } while(count($resultByLevel[$i - 1]) > 0);
 
         echo var_dump($resultByLevel);
