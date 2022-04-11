@@ -58,8 +58,6 @@ class GetItems extends BaseEndpointBuilder
                 $to = $this->getParam('to');
                 $limit = $to - $from;
 
-                echo var_dump($categories);
-
                 $items = $this->_itemsService->getItemsFromDB([
                     'category' => $categories
                 ], $from, $limit);
