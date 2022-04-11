@@ -7,7 +7,7 @@ use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
 use framework\entities\categories\CategoriesService;
 use framework\shops\silpo\SilpoItemsGetter;
-use framework\viewModels\ItemViewModel;
+use viewModels\ItemViewModel;
 
 class GetItems extends BaseEndpointBuilder
 {

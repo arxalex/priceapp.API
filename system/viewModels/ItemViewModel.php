@@ -1,6 +1,6 @@
 <?php
 
-namespace framework\viewModels;
+namespace viewModels;
 
 use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
