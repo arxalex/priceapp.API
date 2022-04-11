@@ -52,6 +52,7 @@ $namespaces = [
     'render\defaultBuild',
     'render\login',
     'render\main',
+    'viewModels'
 ];
 
 foreach($namespaces as $value){

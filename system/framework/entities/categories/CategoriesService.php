@@ -2,6 +2,7 @@
 
 namespace framework\entities\categories;
 
+use framework\database\ListHelper;
 use framework\database\StringHelper;
 use framework\entities\default_entities\DefaultEntitiesService;
 use framework\entities\categories\Category;
@@ -114,6 +115,27 @@ class CategoriesService extends DefaultEntitiesService
                 }
             }
         }
+        return $result;
+    }
+
+    public function getCategoriesByParent(int $parentId) : array
+    {
+        $resultByLevel = [];
+        $i = 0;
+        $resultByLevel[$i] = [$parentId];
+        do{
+            $resultByLevel[$i] = ListHelper::getColumn($this->getItemsFromDB([
+                'parent' => $resultByLevel[$i - 1]
+            ]), 'id');
+            $i++;
+        } while(count($resultByLevel[$i - 1]) > 0);
+
+        $result = [];
+
+        foreach($resultByLevel as $value){
+            array_merge($result, $value);
+        }
+
         return $result;
     }
 }
