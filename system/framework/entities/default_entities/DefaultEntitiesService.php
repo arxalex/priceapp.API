@@ -33,7 +33,7 @@ class DefaultEntitiesService
         $response = $connection->fetchObject($this->className);
         return $response;
     }
-    public function getItemsFromDB(array $where = []): array
+    public function getItemsFromDB(array $where = [], ?int $offset = null, ?int $limit = null): array
     {
         $table = $this->tableName;
         if (count($where) != 0) {
@@ -42,6 +42,11 @@ class DefaultEntitiesService
         } else {
             $query = "select * from `$table`";
         }
+
+        if($offset !== null && $limit !== null){
+            $query .= " LIMIT $limit OFFSET $offset";
+        }
+
         $connection = new Request($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);

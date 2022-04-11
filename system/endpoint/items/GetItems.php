@@ -53,9 +53,14 @@ class GetItems extends BaseEndpointBuilder
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             } elseif ($this->getParam('method') == 'viewModelByCategory' && $this->getParam('category') != 0) {
                 $categories = $this->_categoriesService->getCategoriesByParent($this->getParam('category'));
+
+                $from = $this->getParam('from');
+                $to = $this->getParam('to');
+                $limit = $to - $from;
+
                 $items = $this->_itemsService->getItemsFromDB([
                     'category' => $categories
-                ]);
+                ], $from, $limit);
 
                 $result = [];
 
