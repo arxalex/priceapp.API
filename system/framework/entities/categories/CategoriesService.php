@@ -120,10 +120,12 @@ class CategoriesService extends DefaultEntitiesService
 
     public function getCategoriesByParent(int $parentId) : array
     {
+        echo var_dump($parentId);
         $resultByLevel = [];
         $i = 0;
-        $resultByLevel[$i] = [ $parentId ];
+        $resultByLevel[$i] = [ 0 => $parentId ];
         do{
+            echo var_dump($i);
             $resultByLevel[$i] = ListHelper::getColumn($this->getItemsFromDB([
                 'parent' => $resultByLevel[$i - 1]
             ]), 'id');
