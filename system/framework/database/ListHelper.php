@@ -6,6 +6,47 @@ use stdClass;
 
 class ListHelper
 {
+    public static function deleteLowerThen(array $numbers, float $limit, bool $equalOk = true) : array
+    {
+        $result = [];
+        if($equalOk){
+            foreach($numbers as $number){
+                if($number >= $limit){
+                    $result[] = $number;
+                }
+            }
+        } else {
+            foreach($numbers as $number){
+                if($number > $limit){
+                    $result[] = $number;
+                }
+            }
+        }
+        return $result;
+
+    }
+    public static function getMin(array $numbers) : float
+    {
+        if(count($numbers) < 1){
+            return;
+        }
+        $max = $numbers[0];
+        foreach($numbers as $number){
+            $max = $max < $number ? $max : $number;
+        }
+        return $max;
+    }
+    public static function getMax(array $numbers) : float
+    {
+        if(count($numbers) < 1){
+            return;
+        }
+        $max = $numbers[0];
+        foreach($numbers as $number){
+            $max = $max > $number ? $max : $number;
+        }
+        return $max;
+    }
     public static function getColumn(array $objects, string $key) : array
     {
         $result = [];

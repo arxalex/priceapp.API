@@ -2,16 +2,19 @@
 
 namespace viewModels;
 
+use framework\database\ListHelper;
 use framework\entities\brands\BrandsService;
 use framework\entities\categories\CategoriesService;
 use framework\entities\items\Item;
 use framework\entities\packages\PackagesService;
+use framework\entities\prices\PricesService;
 
 class ItemViewModel
 {
     private CategoriesService $_categoriesService;
     private BrandsService $_brandsService;
     private PackagesService $_packagesService;
+    private PricesService $_pricesService;
 
     public ?int $id;
     public ?string $label;
@@ -31,6 +34,8 @@ class ItemViewModel
     public ?float $fat;
     public ?float $proteins;
     public $additional;
+    public ?float $priceMin;
+    public ?float $priceMax;
 
     public function __construct(
         Item $item
@@ -38,6 +43,7 @@ class ItemViewModel
         $this->_categoriesService = new CategoriesService();
         $this->_brandsService = new BrandsService();
         $this->_packagesService = new PackagesService();
+        $this->_pricesService = new PricesService();
         $categoryLabel = $this->_categoriesService->getItemFromDB($item->category)->label;
         $brandLabel = $this->_brandsService->getItemFromDB($item->brand)->label;
         $package = $this->_packagesService->getItemFromDB($item->package);
@@ -61,6 +67,9 @@ class ItemViewModel
         $this->fat = $item->fat;
         $this->proteins = $item->proteins;
         $this->additional = $item->additional;
+        $prices = ListHelper::deleteLowerThen(ListHelper::getColumn($this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]), 'price'), 0, false);
+        $this->priceMin = ListHelper::getMin($prices);
+        $this->priceMax = ListHelper::getMax($prices);
     }
     
 }

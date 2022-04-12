@@ -10,6 +10,8 @@ $uri = explode("/", $uri_string);
 require_once("SplClassLoader.php");
 
 $namespaces = [
+    //'businessLogic',
+    'businessLogic\items',
     //'endpoint',
     'endpoint\brands',
     'endpoint\categories',

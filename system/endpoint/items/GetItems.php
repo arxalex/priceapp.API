@@ -2,24 +2,23 @@
 
 namespace endpoint\items;
 
+use businessLogic\items\ItemsWebService;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
-use framework\entities\categories\CategoriesService;
 use framework\shops\silpo\SilpoItemsGetter;
-use viewModels\ItemViewModel;
 
 class GetItems extends BaseEndpointBuilder
 {
     private ItemsService $_itemsService;
     private SilpoItemsGetter $_silpoItemsGetter;
-    private CategoriesService $_categoriesService;
+    private ItemsWebService $_itemsWebService;
     public function __construct()
     {
         parent::__construct();
         $this->_itemsService = new ItemsService();
         $this->_silpoItemsGetter = new SilpoItemsGetter();
-        $this->_categoriesService = new CategoriesService();
+        $this->_itemsWebService = new ItemsWebService();
     }
     public function defaultParams()
     {
@@ -52,21 +51,7 @@ class GetItems extends BaseEndpointBuilder
                 $rate = StringHelper::rateItemsByKeywords($label, array_column($result, 'label'));
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             } elseif ($this->getParam('method') == 'viewModelByCategory' && $this->getParam('category') != 0) {
-                $categories = $this->_categoriesService->getCategoriesByParent($this->getParam('category'));
-
-                $from = $this->getParam('from');
-                $to = $this->getParam('to');
-                $limit = $to - $from;
-
-                $items = $this->_itemsService->getItemsFromDB([
-                    'category' => $categories
-                ], $from, $limit);
-
-                $result = [];
-
-                foreach($items as $item){
-                    $result[] = new ItemViewModel($item);
-                }
+                $result = $this->_itemsWebService->getItemViewModelsByCategory($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
 
                 return $result;
             }
