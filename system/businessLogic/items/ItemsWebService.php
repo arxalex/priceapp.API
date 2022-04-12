@@ -17,7 +17,7 @@ class ItemsWebService
         $this->_categoriesService = new CategoriesService();
     }
 
-    public function getItemViewModelsByCategory(int $category, int $from, int $to)
+    public function getItemViewModelsByCategory(int $category, int $from, int $to) : array
     {
         $categories = $this->_categoriesService->getCategoriesByParent($category);
 
@@ -32,5 +32,7 @@ class ItemsWebService
         foreach ($items as $item) {
             $result[] = new ItemViewModel($item);
         }
+
+        return $result;
     }
 }
