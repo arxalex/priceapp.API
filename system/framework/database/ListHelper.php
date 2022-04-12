@@ -28,7 +28,7 @@ class ListHelper
     public static function getMin(array $numbers) : float
     {
         if(count($numbers) < 1){
-            return;
+            return false;
         }
         $max = $numbers[0];
         foreach($numbers as $number){
