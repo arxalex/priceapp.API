@@ -39,7 +39,7 @@ class ListHelper
     public static function getMax(array $numbers) : float
     {
         if(count($numbers) < 1){
-            return;
+            return false;
         }
         $max = $numbers[0];
         foreach($numbers as $number){
