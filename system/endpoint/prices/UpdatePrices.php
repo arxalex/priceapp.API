@@ -120,10 +120,23 @@ class UpdatePrices extends BaseEndpointBuilder
             return $result;
         }
 
-        foreach ($filials as $filial) {
-            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filial->id]]);
-            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filial->id]]);
-            $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filial->shopid]]);
+        $timeToRollback = true;
+
+        for($i = 0; $i < count($filials); $i++) {
+            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filials[$i]->id]]);
+            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
+            $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filials[$i]->shopid]]);
+
+            if(count($pricesHistory) > 0){
+                continue;
+            } else {
+                if($timeToRollback){
+                    if($i > 0){
+                        $i--;
+                    }
+                    $timeToRollback = false;
+                }
+            }
 
             $PAQs = [];
             foreach ($itemsLinks as $item) {
@@ -141,7 +154,7 @@ class UpdatePrices extends BaseEndpointBuilder
                                 ListHelper::getOneByFields($categoriesLinksFromDB, [
                                     'categoryid' => $baseCategoryId
                                 ])->categoryshopid,
-                                $filial->inshopid
+                                $filials[$i]->inshopid
                             );
                     }
                     $PAQObject = $this->getPAQObject($item->inshopid, $PAQs[$baseCategoryId]);
@@ -154,7 +167,7 @@ class UpdatePrices extends BaseEndpointBuilder
                     $priceObject = ($this->_pricesService->getItemsFromDB([
                         "itemid" => [$item->itemid],
                         "shopid" => [$item->shopid],
-                        "filialid" => [$filial->id]
+                        "filialid" => [$filials[$i]->id]
                     ]))[0];
                     $priceObject->price = $price;
                     $priceObject->quantity = $quantity;
@@ -168,14 +181,14 @@ class UpdatePrices extends BaseEndpointBuilder
                     if ($price <= 0 || $quantity <= 0) {
                         continue;
                     } else {
-                        $this->_pricesService->insertItemToDB(new Price(null, $item->itemid, $item->shopid, $price, $filial->id, $quantity));
+                        $this->_pricesService->insertItemToDB(new Price(null, $item->itemid, $item->shopid, $price, $filials[$i]->id, $quantity));
                     }
                 }
 
                 if ($price <= 0 || $quantity <= 0) {
                     continue;
                 } else {
-                    $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filial->id));
+                    $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filials[$i]->id));
                 }
             }
         }
