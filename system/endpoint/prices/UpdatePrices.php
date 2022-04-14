@@ -123,9 +123,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $timeToRollback = true;
 
         for($i = 0; $i < count($filials); $i++) {
-            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filials[$i]->id]]);
             $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
-            $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filials[$i]->shopid]]);
 
             if(count($pricesHistory) > 0){
                 continue;
@@ -137,6 +135,8 @@ class UpdatePrices extends BaseEndpointBuilder
                     $timeToRollback = false;
                 }
             }
+            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filials[$i]->id]]);
+            $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filials[$i]->shopid]]);
 
             $PAQs = [];
             foreach ($itemsLinks as $item) {
