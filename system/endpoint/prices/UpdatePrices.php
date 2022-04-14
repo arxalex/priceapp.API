@@ -120,21 +120,18 @@ class UpdatePrices extends BaseEndpointBuilder
             return $result;
         }
 
-        $timeToRollback = true;
+        $lastPoint = 0;
 
         for($i = 0; $i < count($filials); $i++) {
             $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
 
             if(count($pricesHistory) > 0){
-                continue;
-            } else {
-                if($timeToRollback){
-                    if($i > 0){
-                        $i--;
-                    }
-                    $timeToRollback = false;
-                }
+                $lastPoint = $i;
             }
+        }
+
+        for($i = $lastPoint; $i < count($filials); $i++) {
+            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
             $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filials[$i]->id]]);
             $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filials[$i]->shopid]]);
 
