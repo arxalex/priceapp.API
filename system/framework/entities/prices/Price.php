@@ -12,6 +12,7 @@ class Price extends DefaultEntity
     public ?float $price;
     public ?int $filialid;
     public ?float $quantity;
+    public ?float $pricefactor;
 
     public function __construct(
         ?int $id = null,
@@ -19,7 +20,8 @@ class Price extends DefaultEntity
         ?int $shopid = null,
         ?float $price = null,
         ?int $filialid = null,
-        ?float $quantity = null
+        ?float $quantity = null,
+        ?float $pricefactor = null
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
@@ -27,6 +29,7 @@ class Price extends DefaultEntity
         $this->price = $price;
         $this->filialid = $filialid;
         $this->quantity = $quantity;
+        $this->pricefactor = $pricefactor;
     }
     
 }

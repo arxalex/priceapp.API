@@ -79,6 +79,12 @@
                                 "contants": []
                             },
                             {
+                                "routeName": "get_item",
+                                "routeType": "default",
+                                "className": "items\\GetItem",
+                                "contants": []
+                            },
+                            {
                                 "routeName": "get_similar_items",
                                 "routeType": "default",
                                 "className": "items\\GetSimilarItems",
@@ -202,6 +208,12 @@
                                 "routeName": "update_prices",
                                 "routeType": "default",
                                 "className": "prices\\UpdatePrices",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "analize_prices",
+                                "routeType": "default",
+                                "className": "prices\\AnalizePrices",
                                 "contants": []
                             }
                         ]

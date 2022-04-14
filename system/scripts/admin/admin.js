@@ -4,12 +4,14 @@ Vue.component('admin', {
             <a class="btn btn-primary" href="/admin/items">Add items</a>
             <button class="btn btn-primary" @click="updatePrices" :disabled="isUpdateingPrices">Get prices</button>
             <button class="btn btn-primary" @click="updateFilials" :disabled="isUpdateingFilials">Get filials</button>
+            <button class="btn btn-primary" @click="analizePrices" :disabled="isAnalizingPrices">Analize and refactor prices</button>
         </div>
     `,
     data() {
         return {
             isUpdateingPrices: false,
-            isUpdateingFilials: false
+            isUpdateingFilials: false,
+            isAnalizingPrices: false
         }
     },
     methods: {
@@ -37,6 +39,15 @@ Vue.component('admin', {
             this.isUpdateingFilials = true;
             await this.getItemsFromDb(url, data);
             this.isUpdateingFilials = false;
+        },
+        analizePrices: async function () {
+            const url = "../be/prices/analize_prices";
+            var data = {
+                method: "fix10x"
+            };
+            this.isAnalizingPrices = true;
+            await this.getItemsFromDb(url, data);
+            this.isAnalizingPrices = false;
         },
         getItemsFromDb: function (url, data) {
             return axios.post(url, data).then((response) => {

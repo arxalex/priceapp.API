@@ -67,7 +67,12 @@ class ItemViewModel
         $this->fat = $item->fat;
         $this->proteins = $item->proteins;
         $this->additional = $item->additional;
-        $prices = ListHelper::deleteLowerThen(ListHelper::getColumn($this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]), 'price'), 0, false);
+        $pricesFromDb = $this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]);
+        $pricesFiltered = [];
+        foreach($pricesFromDb as $priceFromDb){
+            $pricesFiltered[] = $priceFromDb->pricefactor != null ? $priceFromDb->price * $priceFromDb->pricefactor : $priceFromDb->price;
+        }
+        $prices = ListHelper::deleteLowerThen($pricesFiltered, 0, false);
         $this->priceMin = ListHelper::getMin($prices);
         $this->priceMax = ListHelper::getMax($prices);
     }

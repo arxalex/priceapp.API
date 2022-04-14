@@ -35,4 +35,9 @@ class ItemsWebService
 
         return $result;
     }
+
+    public function getItemViewModelById(int $id) : ItemViewModel
+    {
+        return new ItemViewModel($this->_itemsService->getItemFromDB($id));
+    }
 }

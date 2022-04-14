@@ -158,6 +158,10 @@ class UpdatePrices extends BaseEndpointBuilder
                     ]))[0];
                     $priceObject->price = $price;
                     $priceObject->quantity = $quantity;
+                    if($price <= 0 || $quantity <= 0){
+                        $this->_pricesService->deleteItem($priceObject);
+                        continue;
+                    }
                     $this->_pricesService->updateItemInDB($priceObject);
                 } else {
                     $this->_pricesService->insertItemToDB(new Price(null, $item->itemid, $item->shopid, $price, $filial->id, $quantity));
