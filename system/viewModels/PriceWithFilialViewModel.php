@@ -33,6 +33,7 @@ class PriceWithFilialViewModel
 
         $shop = $this->_shopsService->getItemFromDB($filial->shopid);
         if ($shop == null) {
+            $this->price = null;
             return;
         }
         $prices = $this->_pricesService->getItemsFromDB([
@@ -41,6 +42,7 @@ class PriceWithFilialViewModel
             'filialid' => [$filial->id]
         ]);
         if (count($prices) != 1) {
+            $this->price = null;
             return;
         }
         $this->shopLabel = $shop->label;
