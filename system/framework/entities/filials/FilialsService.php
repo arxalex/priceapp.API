@@ -35,7 +35,7 @@ class FilialsService extends DefaultEntitiesService
         $result = [];
 
         foreach ($response as $value) {
-            if (RadiansHelper::getLength($xCord, $yCord, $value->xCord, $value->yCord) <= $radius) {
+            if (RadiansHelper::getLength($xCord, $yCord, $value->xcord, $value->ycord) <= $radius) {
                 $result[] = $value;
             }
         }
