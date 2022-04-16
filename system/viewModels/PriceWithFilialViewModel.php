@@ -56,7 +56,7 @@ class PriceWithFilialViewModel
         $this->yCord = $filial->ycord;
         $this->itemId = $itemId;
         $price = $prices[0]->price;
-        $this->price = $price->price * $price->pricefactor;
+        $this->price = $price->pricefactor != null ? $price->price * $price->pricefactor : $price->price;
         $this->quantity = $price->quantity;
     }
 }
