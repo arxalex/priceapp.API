@@ -3,15 +3,18 @@
 namespace endpoint\items;
 
 use businessLogic\items\ItemsWebService;
+use businessLogic\prices\PricesWebService;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 
 class GetItem extends BaseEndpointBuilder
 {
     private ItemsWebService $_itemsWebService;
+    private PricesWebService $_pricesWebService;
     public function __construct()
     {
         parent::__construct();
         $this->_itemsWebService = new ItemsWebService();
+        $this->_pricesWebService = new PricesWebService();
     }
     public function defaultParams()
     {
@@ -19,6 +22,9 @@ class GetItem extends BaseEndpointBuilder
             'id' => null,
             'method' => 'viewModelById',
             'source' => 0,
+            'xCord' => null,
+            'yCord' => null,
+            'radius' => null,
             'cookie' => []
         ];
     }
@@ -30,6 +36,19 @@ class GetItem extends BaseEndpointBuilder
                 $result = $this->_itemsWebService->getItemViewModelById($this->getParam('id'));
 
                 return $result;
+            } elseif (
+                $this->getParam('method') == 'pricesAndFiialsViewModelById'
+                && $this->getParam('id') != null
+                && $this->getParam('xCord') != null
+                && $this->getParam('yCord') != null
+                && $this->getParam('radius') != null
+            ) {
+                return $this->_pricesWebService->getPricesWithFilialsViewModelByItemIdAndCord(
+                    $this->getParam('id'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
             }
         }
     }

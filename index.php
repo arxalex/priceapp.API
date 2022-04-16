@@ -12,6 +12,7 @@ require_once("SplClassLoader.php");
 $namespaces = [
     //'businessLogic',
     'businessLogic\items',
+    'businessLogic\prices',
     //'endpoint',
     'endpoint\brands',
     'endpoint\categories',
@@ -49,6 +50,7 @@ $namespaces = [
     'framework\shops\atb',
     'framework\shops\silpo',
     'framework\shops\common',
+    'framework\utils',
     //'render',
     'render\admin',
     'render\defaultBuild',
