@@ -18,8 +18,11 @@ class PricesWebService
     {
         $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
         $result = [];
+        echo var_dump($filials);
         foreach ($filials as $filial) {
             $model = new PriceWithFilialViewModel($id, $filial);
+            echo var_dump($model);
+
             if ($model->price > 0) {
                 $result[] = $model;
             }
