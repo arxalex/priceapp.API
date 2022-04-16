@@ -71,7 +71,7 @@ class SilpoFilialsGetter
             1,
             $filialSilpo->filialId,
             $filialSilpo->cityName,
-            $filialSilpo->regionName != "НЕ ВСТАНОВЛЕНИЙ" ? $filialSilpo->regionName : "Киъвська обл.",
+            $filialSilpo->regionName != "НЕ ВСТАНОВЛЕНИЙ" ? $filialSilpo->regionName : "Київська обл.",
             $filialSilpo->streetName,
             $filialSilpo->houseNumber,
             NumericHelper::toFloat($filialSilpo->xCoord),

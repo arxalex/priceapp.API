@@ -37,7 +37,7 @@ class GetItem extends BaseEndpointBuilder
 
                 return $result;
             } elseif (
-                $this->getParam('method') == 'pricesAndFiialsViewModelById'
+                $this->getParam('method') == 'pricesAndFilialsViewModelById'
                 && $this->getParam('id') != null
                 && $this->getParam('xCord') != null
                 && $this->getParam('yCord') != null
