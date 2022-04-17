@@ -54,15 +54,19 @@ class GetItems extends BaseEndpointBuilder
                 $rate = StringHelper::rateItemsByKeywords($label, array_column($result, 'label'));
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             } elseif ($this->getParam('method') == 'viewModelByCategory' && $this->getParam('category') != 0) {
-                $result = $this->_itemsWebService->getItemViewModelsByCategory(
+                return $this->_itemsWebService->getItemViewModelsByCategory(
                     $this->getParam('category'),
                     $this->getParam('from'),
                     $this->getParam('to')
                 );
-
-                return $result;
-            } elseif ($this->getParam('method') == 'viewModelByCategoryAndLocation' && $this->getParam('category') != 0) {
-                $result = $this->_itemsWebService->getItemViewModelsByCategory(
+            } elseif (
+                $this->getParam('method') == 'viewModelByCategoryAndLocation'
+                && $this->getParam('category') != 0
+                && $this->getParam('xCord') != null
+                && $this->getParam('yCord') != null
+                && $this->getParam('radius') != null
+            ) {
+                return $this->_itemsWebService->getItemViewModelsByCategory(
                     $this->getParam('category'),
                     $this->getParam('from'),
                     $this->getParam('to'),
@@ -70,8 +74,6 @@ class GetItems extends BaseEndpointBuilder
                     $this->getParam('yCord'),
                     $this->getParam('radius')
                 );
-                
-                return $result;
             }
         } elseif ($this->getParam('source') === 1) {
             $this->_usersService->unavaliableRequest($this->getParam('cookie'));

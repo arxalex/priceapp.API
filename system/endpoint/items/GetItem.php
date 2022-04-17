@@ -33,9 +33,7 @@ class GetItem extends BaseEndpointBuilder
         $this->_usersService->unavaliableRequest($this->getParam('cookie'), 1);
         if ($this->getParam('source') === 0) {
             if ($this->getParam('method') == 'viewModelById' && $this->getParam('id') != null) {
-                $result = $this->_itemsWebService->getItemViewModelById($this->getParam('id'));
-
-                return $result;
+                return $this->_itemsWebService->getItemViewModelById($this->getParam('id'));
             } elseif (
                 $this->getParam('method') == 'pricesAndFilialsViewModelById'
                 && $this->getParam('id') != null
@@ -44,6 +42,19 @@ class GetItem extends BaseEndpointBuilder
                 && $this->getParam('radius') != null
             ) {
                 return $this->_pricesWebService->getPricesWithFilialsViewModelByItemIdAndCord(
+                    $this->getParam('id'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
+            } elseif (
+                $this->getParam('method') == 'pricesAndFilialsViewModelById'
+                && $this->getParam('id') != null
+                && $this->getParam('xCord') != null
+                && $this->getParam('yCord') != null
+                && $this->getParam('radius') != null
+            ) {
+                return $this->_itemsWebService->getItemViewModelById(
                     $this->getParam('id'),
                     $this->getParam('xCord'),
                     $this->getParam('yCord'),

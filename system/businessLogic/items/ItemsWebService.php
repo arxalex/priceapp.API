@@ -38,10 +38,10 @@ class ItemsWebService
 
         $result = [];
 
-        if($xCord === null || $yCord === null || $radius === null){
+        if ($xCord === null || $yCord === null || $radius === null) {
             foreach ($items as $item) {
                 $preResult = new ItemViewModel($item);
-                if($preResult->priceMin !== null && $preResult->priceMax !== null){
+                if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
                     $result[] = $preResult;
                 }
             }
@@ -49,7 +49,7 @@ class ItemsWebService
             $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
             foreach ($items as $item) {
                 $preResult = new ItemViewModel($item, $filials);
-                if($preResult->priceMin !== null && $preResult->priceMax !== null){
+                if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
                     $result[] = $preResult;
                 }
             }
@@ -58,8 +58,17 @@ class ItemsWebService
         return $result;
     }
 
-    public function getItemViewModelById(int $id): ItemViewModel
-    {
-        return new ItemViewModel($this->_itemsService->getItemFromDB($id));
+    public function getItemViewModelById(
+        int $id,
+        ?float $xCord = null,
+        ?float $yCord = null,
+        ?float $radius = null
+    ): ItemViewModel {
+        if ($xCord === null || $yCord === null || $radius === null) {
+            return new ItemViewModel($this->_itemsService->getItemFromDB($id));
+        } else {
+            $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
+            return new ItemViewModel($this->_itemsService->getItemFromDB($id), $filials);
+        }
     }
 }
