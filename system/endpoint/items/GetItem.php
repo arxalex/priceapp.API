@@ -48,7 +48,7 @@ class GetItem extends BaseEndpointBuilder
                     $this->getParam('radius')
                 );
             } elseif (
-                $this->getParam('method') == 'pricesAndFilialsViewModelById'
+                $this->getParam('method') == 'viewModelByIdAndLocation'
                 && $this->getParam('id') != null
                 && $this->getParam('xCord') != null
                 && $this->getParam('yCord') != null
