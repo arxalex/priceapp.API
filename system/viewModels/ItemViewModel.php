@@ -38,7 +38,8 @@ class ItemViewModel
     public ?float $priceMax;
 
     public function __construct(
-        Item $item
+        Item $item,
+        ?array $fillials = null
     ) {
         $this->_categoriesService = new CategoriesService();
         $this->_brandsService = new BrandsService();
@@ -67,14 +68,32 @@ class ItemViewModel
         $this->fat = $item->fat;
         $this->proteins = $item->proteins;
         $this->additional = $item->additional;
-        $pricesFromDb = $this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]);
-        $pricesFiltered = [];
-        foreach($pricesFromDb as $priceFromDb){
-            $pricesFiltered[] = $priceFromDb->pricefactor != null ? $priceFromDb->price * $priceFromDb->pricefactor : $priceFromDb->price;
+        if ($fillials == null) {
+            $pricesFromDb = $this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]);
+        } elseif (count($fillials) > 0) {
+            $pricesFromDb = $this->_pricesService->getItemsFromDB([
+                'itemid' => [$item->id],
+                'filialid' => ListHelper::getColumn($fillials, 'id')
+            ]);
+        } elseif (count($fillials) == 0) {
+            $pricesFromDb = [];
         }
-        $prices = ListHelper::deleteLowerThen($pricesFiltered, 0, false);
-        $this->priceMin = ListHelper::getMin($prices);
-        $this->priceMax = ListHelper::getMax($prices);
+        $pricesFiltered = [];
+        if ($pricesFromDb !== null && count($pricesFromDb) > 0) {
+            foreach ($pricesFromDb as $priceFromDb) {
+                $pricesFiltered[] = $priceFromDb->pricefactor != null ? $priceFromDb->price * $priceFromDb->pricefactor : $priceFromDb->price;
+            }
+            $prices = ListHelper::deleteLowerThen($pricesFiltered, 0, false);
+            if (count($prices) > 0) {
+                $this->priceMin = ListHelper::getMin($prices);
+                $this->priceMax = ListHelper::getMax($prices);
+            } else {
+                $this->priceMin = null;
+                $this->priceMax = null;
+            }
+        } else {
+            $this->priceMin = null;
+            $this->priceMax = null;
+        }
     }
-    
 }

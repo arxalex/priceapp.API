@@ -30,6 +30,9 @@ class GetItems extends BaseEndpointBuilder
             'category' => null,
             'from' => 0,
             'to' => 25,
+            'xCord' => null,
+            'yCord' => null,
+            'radius' => null,
             'cookie' => []
         ];
     }
@@ -51,15 +54,30 @@ class GetItems extends BaseEndpointBuilder
                 $rate = StringHelper::rateItemsByKeywords($label, array_column($result, 'label'));
                 return $this->_itemsService->orderItemsByRate($result, $rate, 5);
             } elseif ($this->getParam('method') == 'viewModelByCategory' && $this->getParam('category') != 0) {
-                $result = $this->_itemsWebService->getItemViewModelsByCategory($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
+                $result = $this->_itemsWebService->getItemViewModelsByCategory(
+                    $this->getParam('category'),
+                    $this->getParam('from'),
+                    $this->getParam('to')
+                );
 
                 return $result;
+            } elseif ($this->getParam('method') == 'viewModelByCategoryAndLocation' && $this->getParam('category') != 0) {
+                $result = $this->_itemsWebService->getItemViewModelsByCategory(
+                    $this->getParam('category'),
+                    $this->getParam('from'),
+                    $this->getParam('to'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
+                
+                return $result;
             }
-        } elseif($this->getParam('source') === 1){
+        } elseif ($this->getParam('source') === 1) {
             $this->_usersService->unavaliableRequest($this->getParam('cookie'));
             $silpoItemsModels = $this->_silpoItemsGetter->get($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
             $items = [];
-            foreach($silpoItemsModels as $silpoItemModel){
+            foreach ($silpoItemsModels as $silpoItemModel) {
                 $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);
             }
             return $items;

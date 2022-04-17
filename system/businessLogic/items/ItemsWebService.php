@@ -17,8 +17,14 @@ class ItemsWebService
         $this->_categoriesService = new CategoriesService();
     }
 
-    public function getItemViewModelsByCategory(int $category, int $from, int $to) : array
-    {
+    public function getItemViewModelsByCategory(
+        int $category,
+        int $from,
+        int $to,
+        ?float $xCord = null,
+        ?float $yCord = null,
+        ?float $radius = null
+    ): array {
         $categories = $this->_categoriesService->getCategoriesByParent($category);
 
         $limit = $to - $from;
@@ -29,14 +35,27 @@ class ItemsWebService
 
         $result = [];
 
-        foreach ($items as $item) {
-            $result[] = new ItemViewModel($item);
+        if($xCord === null || $yCord === null || $radius === null){
+            foreach ($items as $item) {
+                $preResult = new ItemViewModel($item);
+                if($preResult->priceMin !== null && $preResult->priceMax !== null){
+                    $result[] = $preResult;
+                }
+            }
+        } else {
+            $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
+            foreach ($items as $item) {
+                $preResult = new ItemViewModel($item, $filials);
+                if($preResult->priceMin !== null && $preResult->priceMax !== null){
+                    $result[] = $preResult;
+                }
+            }
         }
 
         return $result;
     }
 
-    public function getItemViewModelById(int $id) : ItemViewModel
+    public function getItemViewModelById(int $id): ItemViewModel
     {
         return new ItemViewModel($this->_itemsService->getItemFromDB($id));
     }
