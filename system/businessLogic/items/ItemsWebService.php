@@ -4,17 +4,20 @@ namespace businessLogic\items;
 
 use viewModels\ItemViewModel;
 use framework\entities\categories\CategoriesService;
+use framework\entities\filials\FilialsService;
 use framework\entities\items\ItemsService;
 
 class ItemsWebService
 {
     private ItemsService $_itemsService;
     private CategoriesService $_categoriesService;
+    private FilialsService $_filialsService;
 
     public function __construct()
     {
         $this->_itemsService = new ItemsService();
         $this->_categoriesService = new CategoriesService();
+        $this->_filialsService = new FilialsService();
     }
 
     public function getItemViewModelsByCategory(
