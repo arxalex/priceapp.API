@@ -61,7 +61,7 @@ class BaseRenderBuilder
      */
     public function getParam($key)
     {
-        return $this->params[$key];
+        return array_key_exists($key, $this->params) ? $this->params[$key] : null;
     }
 
     /**
@@ -92,7 +92,7 @@ class BaseRenderBuilder
 
         $externalParamsToAdd = [];
         foreach ($defaultParams as $key => $value) {
-            if ($externalParams[$key] != null) {
+            if (array_key_exists($key, $externalParams) && $externalParams[$key] != null) {
                 $externalParamsToAdd[$key] = $externalParams[$key];
             }
         }
