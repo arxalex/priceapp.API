@@ -123,7 +123,7 @@ class SqlHelper
         $result = "(";
         foreach ($values as $value) {
             $value = self::mysql_escape_mimic($value);
-            $result .= "$key LIKE '%$value%' OR ";
+            $result .= "`$key` LIKE '%$value%' OR ";
         }
         $result = substr($result, 0, -4) . ")";
         return $result;
@@ -136,21 +136,23 @@ class SqlHelper
     {
         $query = "";
         foreach ($where as $key => $value) {
-            if (is_numeric($value[0])) {
-                $query .= "$key in ";
-                $query .= self::arrayInNumeric($value);
-                $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5) == "_like") {
-                $key = substr($key, 0, -5);
-                $query .= self::arrayLikeString($key, $value);
-                $query .= " AND ";
-            } elseif (is_string($value[0]) && substr($key, -5) != "_like") {
-                $query .= "$key in ";
-                $query .= self::arrayInString($value);
-                $query .= " AND ";
-            } elseif($value[0] == NULL && count($value) == 1) {
-                $query .= "$key is NULL";
-                $query .= " AND ";
+            if (array_key_exists(0, $value)) {
+                if (is_numeric($value[0])) {
+                    $query .= "`$key` in ";
+                    $query .= self::arrayInNumeric($value);
+                    $query .= " AND ";
+                } elseif (is_string($value[0]) && substr($key, -5) == "_like") {
+                    $key = substr($key, 0, -5);
+                    $query .= self::arrayLikeString($key, $value);
+                    $query .= " AND ";
+                } elseif (is_string($value[0]) && substr($key, -5) != "_like") {
+                    $query .= "`$key` in ";
+                    $query .= self::arrayInString($value);
+                    $query .= " AND ";
+                } elseif ($value[0] == NULL && count($value) == 1) {
+                    $query .= "`$key` is NULL";
+                    $query .= " AND ";
+                }
             }
         }
         $query = substr($query, 0, -5);

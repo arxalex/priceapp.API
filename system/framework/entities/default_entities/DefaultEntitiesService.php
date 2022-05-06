@@ -25,7 +25,8 @@ class DefaultEntitiesService
         $response = $connection->fetchObject($this->className);
         return $response;
     }
-    public function getLastInsertedItem(){
+    public function getLastInsertedItem()
+    {
         $table = $this->tableName;
         $query = "SELECT * FROM `$table` ORDER BY `id` DESC LIMIT 1";
         $connection = new Request($query);
@@ -38,12 +39,17 @@ class DefaultEntitiesService
         $table = $this->tableName;
         if (count($where) != 0) {
             $whereQuery = SqlHelper::whereCreate($where);
-            $query = "select * from `$table` where $whereQuery";
+
+            if ($whereQuery != "") {
+                $query = "select * from `$table` where $whereQuery";
+            } else {
+                return [];
+            }
         } else {
             $query = "select * from `$table`";
         }
 
-        if($offset !== null && $limit !== null){
+        if ($offset !== null && $limit !== null) {
             $query .= " LIMIT $limit OFFSET $offset";
         }
 
@@ -52,35 +58,35 @@ class DefaultEntitiesService
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
         return $response;
     }
-    public function insertItemToDB($item) : bool
+    public function insertItemToDB($item): bool
     {
         $table = $this->tableName;
         $query = "INSERT INTO `$table` " . SqlHelper::insertObjects([$item]);
         return (new Request($query))->execute();
     }
-    public function updateItemInDB($item) : bool
+    public function updateItemInDB($item): bool
     {
         $table = $this->tableName;
         $query = "UPDATE `$table`
         SET " . SqlHelper::updateObject($item)
-        . "WHERE " . SqlHelper::whereCreate([
-            'id' => [$item->id]
-        ]);
+            . " WHERE " . SqlHelper::whereCreate([
+                'id' => [$item->id]
+            ]);            
         return (new Request($query))->execute();
     }
-    public function orderItemsByRate(array $items, array $rates, int $max = null) : array
+    public function orderItemsByRate(array $items, array $rates, int $max = null): array
     {
         $count = count($rates);
-        if($count <= 1){
+        if ($count <= 1) {
             return $items;
         }
 
-        for($i = 1; $i < $count; $i++) {
+        for ($i = 1; $i < $count; $i++) {
             $tempRate = $rates[$i];
             $tempItem = $items[$i];
             $j = $i - 1;
 
-            while(isset($rates[$j]) && $rates[$j] < $tempRate){
+            while (isset($rates[$j]) && $rates[$j] < $tempRate) {
                 $rates[$j + 1] = $rates[$j];
                 $rates[$j] = $tempRate;
                 $items[$j + 1] = $items[$j];
@@ -88,36 +94,39 @@ class DefaultEntitiesService
                 $j--;
             }
         }
-        if($max === null){
+        if ($max === null) {
             return $items;
         }
         $result = [];
-        for($i = 0; $i < $max && $items[$i] != null; $i++) {
+
+        $max = min($max, count($items));
+
+        for ($i = 0; $i < $max; $i++) {
             $result[] = $items[$i];
         }
         return $result;
     }
-    public function getColumn(array $objects, string $key) : array
+    public function getColumn(array $objects, string $key): array
     {
         $result = [];
-        foreach($objects as $object){
+        foreach ($objects as $object) {
             $result[] = $object->$key;
         }
         return $result;
     }
-    public function getColumns(array $objects, array $keys) : array
+    public function getColumns(array $objects, array $keys): array
     {
         $result = [];
-        foreach($objects as $object){
+        foreach ($objects as $object) {
             $temp = new stdClass();
-            foreach($keys as $key){
+            foreach ($keys as $key) {
                 $temp->$key = $object->$key;
             }
             $result[] = $temp;
         }
         return $result;
     }
-    public function deleteItem($item) : bool
+    public function deleteItem($item): bool
     {
         $table = $this->tableName;
         $query = "DELETE FROM `$table` WHERE " . SqlHelper::whereCreate([

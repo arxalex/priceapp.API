@@ -33,6 +33,9 @@ class AnalizePrices extends BaseEndpointBuilder
             $items = $this->_itemsService->getItemsFromDB();
             foreach($items as $item){
                 $prices = $this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]);
+                if(count($prices) < 1){
+                    continue;
+                }
                 $priceSum = 0;
                 $i = 0;
 

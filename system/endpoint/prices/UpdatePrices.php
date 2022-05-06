@@ -145,7 +145,7 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 if ($item->shopid == 1) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
-                    if ($PAQs[$baseCategoryId] == null) {
+                    if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory(
                                 ListHelper::getOneByFields($categoriesLinksFromDB, [

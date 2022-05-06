@@ -15,7 +15,7 @@ class CategoriesService extends DefaultEntitiesService
         $this->tableName = "pa_categories";
     }
 
-    public function getCategoryByName(string $str, ?Category $base = null) : Category
+    public function getCategoryByName(string $str, ?Category $base = null): Category
     {
         $str = mb_strtolower($str, 'UTF-8');
         $categories = $this->getItemsFromDB();
@@ -84,7 +84,7 @@ class CategoriesService extends DefaultEntitiesService
         }
     }
 
-    public function filterCategories(array $categories, Category $parent) : array
+    public function filterCategories(array $categories, Category $parent): array
     {
         $result = array();
         foreach ($categories as $category) {
@@ -118,22 +118,21 @@ class CategoriesService extends DefaultEntitiesService
         return $result;
     }
 
-    public function getCategoriesByParent(int $parentId) : array
+    public function getCategoriesByParent(int $parentId): array
     {
         $resultByLevel = [];
         $i = 0;
-        $resultByLevel[$i] = [ 0 => $parentId ];
-        do{
+        $resultByLevel[$i] = [0 => $parentId];
+        do {
             $i++;
             $resultByLevel[$i] = ListHelper::getColumn($this->getItemsFromDB([
                 'parent' => $resultByLevel[$i - 1]
             ]), 'id');
-            
-        } while(count($resultByLevel[$i - 1]) > 0);
-        
+        } while (count($resultByLevel[$i - 1]) > 0);
+
         $result = [];
 
-        foreach($resultByLevel as $value){
+        foreach ($resultByLevel as $value) {
             $result = array_merge($result, $value);
         }
 
