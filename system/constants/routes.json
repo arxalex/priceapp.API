@@ -232,6 +232,19 @@
                         ]
                     },
                     {
+                        "routeName": "shops",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_shops",
+                                "routeType": "default",
+                                "className": "shops\\GetShops",
+                                "contants": []
+                            }
+                        ]
+                    },
+                    {
                         "routeName": "login",
                         "routeType": "default",
                         "className": "login\\Login",
