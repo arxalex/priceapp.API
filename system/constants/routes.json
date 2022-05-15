@@ -101,6 +101,12 @@
                                 "routeType": "default",
                                 "className": "items\\InsertItems",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "get_shopping_list",
+                                "routeType": "default",
+                                "className": "items\\GetShoppingList",
+                                "contants": []
                             }
                         ]
                     },
