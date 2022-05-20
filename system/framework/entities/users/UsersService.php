@@ -188,4 +188,12 @@ class UsersService extends DefaultEntitiesService
 
         return true;
     }
+
+    public function getUserInfoByCookie(array $cookies) : User
+    {
+        $user = $this->getItemFromDB($cookies['userid']);
+        $user->password = "";
+
+        return $user;
+    }
 }

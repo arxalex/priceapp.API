@@ -251,6 +251,19 @@
                         ]
                     },
                     {
+                        "routeName": "user",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "get_user_info",
+                                "routeType": "default",
+                                "className": "user\\GetUserInfo",
+                                "contants": []
+                            }
+                        ]
+                    },
+                    {
                         "routeName": "login",
                         "routeType": "default",
                         "className": "login\\Login",
