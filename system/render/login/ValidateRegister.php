@@ -31,7 +31,7 @@ class ValidateRegister extends BaseRenderBuilder
         $registered = $this->_usersService->registerUser($username, $email, $password);
 
         if($registered){
-            header("Location: /login", true);
+            header("Location: /register/confirm_email", true);
             die();
         } else {
             header("Location: /register", true);

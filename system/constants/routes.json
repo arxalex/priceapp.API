@@ -27,6 +27,12 @@
                         "routeType": "default",
                         "className": "login\\ValidateRegister",
                         "contants": []
+                    },
+                    {
+                        "routeName": "confirm_email",
+                        "routeType": "default",
+                        "className": "login\\ConfirmRegister",
+                        "contants": []
                     }
                 ]
             },

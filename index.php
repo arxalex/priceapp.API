@@ -34,6 +34,7 @@ $namespaces = [
     'framework\entities\brands',
     'framework\entities\categories',
     'framework\entities\categories_link',
+    'framework\entities\confirm_email',
     'framework\entities\consists',
     'framework\entities\countries',
     'framework\entities\default_entities',
