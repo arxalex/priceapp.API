@@ -40,11 +40,10 @@ class Header extends BaseRenderBuilder
 
                     <div class="mx-auto text-center d-block">
                         <a class="navbar-brand col-12 me-0" href="./">'.
-                            //'<img class="d-inline-block align-text-top" height="30px" src="secret-santa.svg">'.
                             '<span class="small">PriceApp</span>
                         </a>
                         <span class="d-inline small">by</span>
-                        <a href="../">
+                        <a href="https://arxalex.co/">
                             <img class="d-inline" height="25px" src="../../../arxlogo.svg">
                         </a>
                     </div>
