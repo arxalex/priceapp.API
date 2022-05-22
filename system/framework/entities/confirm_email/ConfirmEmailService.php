@@ -55,8 +55,8 @@ class ConfirmEmailService extends DefaultEntitiesService
             <a href='https://priceapp.arxalex.co'><img src='https://priceapp.arxalex.co/public_resources/icons/priceapp_icon.svg' width='100' height='100'/></a><br>
             <a href='mailto:info@arxalex.co'>info@arxalex.co</p>
         ";
-        $headers =  'From: info@arxalex.co' . "\r\n" .
-            'Reply-To: info@arxalex.co' . "\r\n" .
+        $headers =  'From: PriceApp <info@arxalex.co>' . "\r\n" .
+            'Reply-To: PriceApp <info@arxalex.co>' . "\r\n" .
             'X-Mailer: PHP/' . phpversion() . "\r\n" .
             'MIME-Version: 1.0' . "\r\n" .
             'Content-type: text/html; charset=utf-8' . "\r\n";
