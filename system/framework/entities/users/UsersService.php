@@ -104,6 +104,11 @@ class UsersService extends DefaultEntitiesService
             die();
         }
 
+        if($user->role < 1){
+            http_response_code(403);
+            die();
+        }
+
         $token = $this->_tokensService->createToken($user->id);
 
         unset($_COOKIE["userid"]);
