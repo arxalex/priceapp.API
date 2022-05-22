@@ -4,7 +4,7 @@ namespace render\login;
 
 use render\defaultBuild\BaseRenderBuilder;
 
-class ValidateRegister extends BaseRenderBuilder
+class ConfirmRegister extends BaseRenderBuilder
 {
     public function defaultParams()
     {

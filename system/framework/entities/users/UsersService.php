@@ -84,7 +84,7 @@ class UsersService extends DefaultEntitiesService
         $user = new User(null, $username, $email, password_hash($password, PASSWORD_DEFAULT), null);
 
         $this->insertItemToDB($user);
-        $user = $this->getItemsFromDB(["username" => $username])[0];
+        $user = $this->getItemsFromDB(["username" => [$username]])[0];
         $this->_confirmEmailService->createToken($user->id, $email);
 
         return true;
