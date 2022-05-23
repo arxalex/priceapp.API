@@ -6,6 +6,7 @@ use viewModels\ItemViewModel;
 use framework\entities\categories\CategoriesService;
 use framework\entities\filials\FilialsService;
 use framework\entities\items\ItemsService;
+use framework\database\StringHelper;
 
 class ItemsWebService
 {
@@ -70,5 +71,50 @@ class ItemsWebService
             $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
             return new ItemViewModel($this->_itemsService->getItemFromDB($id), $filials);
         }
+    }
+
+    public function getItemViewModelsBySearch(
+        string $search,
+        int $from,
+        int $to,
+        ?float $xCord = null,
+        ?float $yCord = null,
+        ?float $radius = null
+    ): array {
+        $labelArr = StringHelper::nameToKeywords($search);
+        $itemsFromDB = $this->_itemsService->getItemsFromDB([
+            'label_like' => $labelArr
+        ]);
+
+        $rates = StringHelper::rateItemsByKeywords($search, array_column($itemsFromDB, 'label'));
+
+        $itemsNotTrimmed = $this->_itemsService->orderItemsByRate($itemsFromDB, $rates);
+
+        $items = [];
+
+        for ($i = $from; $i < $to && $i < count($itemsNotTrimmed); $i++) {
+            $items[] = $itemsNotTrimmed[$i];
+        }
+
+        $result = [];
+
+        if ($xCord === null || $yCord === null || $radius === null) {
+            foreach ($items as $item) {
+                $preResult = new ItemViewModel($item);
+                if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
+                    $result[] = $preResult;
+                }
+            }
+        } else {
+            $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
+            foreach ($items as $item) {
+                $preResult = new ItemViewModel($item, $filials);
+                if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
+                    $result[] = $preResult;
+                }
+            }
+        }
+
+        return $result;
     }
 }

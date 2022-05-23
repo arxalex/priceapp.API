@@ -33,6 +33,7 @@ class GetItems extends BaseEndpointBuilder
             'xCord' => null,
             'yCord' => null,
             'radius' => null,
+            'search' => null,
             'cookie' => []
         ];
     }
@@ -68,6 +69,27 @@ class GetItems extends BaseEndpointBuilder
             ) {
                 return $this->_itemsWebService->getItemViewModelsByCategory(
                     $this->getParam('category'),
+                    $this->getParam('from'),
+                    $this->getParam('to'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
+            } elseif ($this->getParam('method') == 'viewModelBySearch' && $this->getParam('search') != "") {
+                return $this->_itemsWebService->getItemViewModelsBySearch(
+                    $this->getParam('search'),
+                    $this->getParam('from'),
+                    $this->getParam('to')
+                );
+            } elseif (
+                $this->getParam('method') == 'viewModelBySearchAndLocation'
+                && $this->getParam('search') != ""
+                && $this->getParam('xCord') != null
+                && $this->getParam('yCord') != null
+                && $this->getParam('radius') != null
+            ) {
+                return $this->_itemsWebService->getItemViewModelsBySearch(
+                    $this->getParam('search'),
                     $this->getParam('from'),
                     $this->getParam('to'),
                     $this->getParam('xCord'),
