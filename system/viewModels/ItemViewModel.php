@@ -68,7 +68,7 @@ class ItemViewModel
         $this->fat = $item->fat;
         $this->proteins = $item->proteins;
         $this->additional = $item->additional;
-        if ($fillials == null) {
+        if ($fillials === null) {
             $pricesFromDb = $this->_pricesService->getItemsFromDB(['itemid' => [$item->id]]);
         } elseif (count($fillials) > 0) {
             $pricesFromDb = $this->_pricesService->getItemsFromDB([
