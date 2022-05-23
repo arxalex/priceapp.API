@@ -31,7 +31,14 @@ class StringHelper
     {
         $nameStr = StringHelper::quotesReplacer($str);
         $nameStrWoQ = str_replace('"', '', $nameStr);
-        return explode(' ', $nameStrWoQ);
+        $preResult = explode(' ', $nameStrWoQ);
+        $result = [];
+        foreach ($preResult as $value) {
+            if ($value != null && $value != "") {
+                $result[] = $value;
+            }
+        }
+        return $result;
     }
     public static function stringCleaner($str): string
     {

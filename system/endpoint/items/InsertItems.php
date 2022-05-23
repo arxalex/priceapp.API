@@ -131,7 +131,7 @@ class InsertItems extends BaseEndpointBuilder
                 "itemid" => [$itemModel->id],
                 "shopid" => [$itemLinkModel->shopid]
             ]);
-            if (count($itemLinks) <= 0) {
+            if (count($itemLinks) <= 2) {
                 $itemLink = new ItemLink(
                     null,
                     $itemModel->id,
