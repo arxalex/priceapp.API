@@ -48,7 +48,7 @@ class ConfirmEmailService extends DefaultEntitiesService
             <h1>Вітаємо!</h1>
             <p>Нещодавно ви зареєструвались на сайті <a href='https://priceapp.arxalex.co'>priceapp.arxalex.co</a></p>
             <p>Для завершення реєстрації необхідно підтвердити адресу електронної пошти. Для цього перейдіть за посиланням: <a href='$link'>$link</a></p>
-            <p>Якщо цей лист надійшов до вас помилково, будь-ласка, напишіть на <a href='mailto:info@arxalex.co'>info@arxalex.co</p>
+            <p>Якщо цей лист надійшов до вас помилково, будь-ласка, напишіть на <a href='mailto:info@arxalex.co'>info@arxalex.co</a></p>
             <p>Дякуємо та бажаємо гарного дня!</p>
             <p>З повагою,<br>
             <a href='https://priceapp.arxalex.co'>PriceApp</a><br>
