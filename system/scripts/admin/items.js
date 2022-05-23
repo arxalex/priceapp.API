@@ -107,6 +107,7 @@ Vue.component('Items', {
         },
         get_prev: function () {
             if (this.page.from >= 25 && !this.page.isPrevDisabled) {
+                this.isNextDisabled = false;
                 this.page.from -= 25;
                 this.page.to -= 25;
                 this.get_items();
@@ -117,6 +118,7 @@ Vue.component('Items', {
         },
         get_next: function () {
             if (this.page.to <= 9975 && !this.page.isNextDisabled) {
+                this.page.isPrevDisabled = false;
                 this.page.from += 25;
                 this.page.to += 25;
                 this.get_items();
