@@ -52,8 +52,8 @@ class ConfirmEmailService extends DefaultEntitiesService
             <p>Дякуємо та бажаємо гарного дня!</p>
             <p>З повагою,<br>
             <a href='https://priceapp.arxalex.co'>PriceApp</a><br>
-            <a href='https://priceapp.arxalex.co'><img src='https://priceapp.arxalex.co/public_resources/icons/priceapp_icon.svg' width='100' height='100'/></a><br>
-            <a href='mailto:info@arxalex.co'>info@arxalex.co</p>
+            <a href='https://priceapp.arxalex.co'><img src='https://priceapp.arxalex.co/public_resources/icons/priceapp_icon.png' width='100' height='100'/></a><br>
+            <a href='mailto:info@arxalex.co'>info@arxalex.co</a></p>
         ";
         $headers =  'From: PriceApp <info@arxalex.co>' . "\r\n" .
             'Reply-To: PriceApp <info@arxalex.co>' . "\r\n" .
