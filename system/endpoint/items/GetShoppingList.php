@@ -4,6 +4,7 @@ namespace endpoint\items;
 
 use businessLogic\prices\PricesWebService;
 use endpoint\defaultBuild\BaseEndpointBuilder;
+use stdClass;
 
 class GetShoppingList extends BaseEndpointBuilder
 {
@@ -26,6 +27,7 @@ class GetShoppingList extends BaseEndpointBuilder
     }
     public function build()
     {
+        $result = new stdClass();
         $this->_usersService->unavaliableRequest($this->getParam('cookie'), 1);
         if (
             $this->getParam('xCord') != null
@@ -33,12 +35,14 @@ class GetShoppingList extends BaseEndpointBuilder
             && $this->getParam('radius') != null
         ) {
             if ($this->getParam('method') == "multipleLowest") {
-                return $this->_pricesWebService->getShoppingListMultipleLowest(
+                $result->shoppingList = $this->_pricesWebService->getShoppingListMultipleLowest(
                     $this->getParam('items'),
                     $this->getParam('xCord'),
                     $this->getParam('yCord'),
                     $this->getParam('radius')
                 );
+                $result->economy = 0;
+                return $result;
             }
         }
     }

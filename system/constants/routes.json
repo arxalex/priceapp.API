@@ -292,6 +292,12 @@
                         "routeType": "default",
                         "className": "login\\ChangeAccount",
                         "contants": []
+                    },
+                    {
+                        "routeName": "check_version",
+                        "routeType": "default",
+                        "className": "version\\CheckVersion",
+                        "contants": []
                     }
                 ]
             }
