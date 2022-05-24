@@ -98,7 +98,7 @@ class StringHelper
         $strArr = str_split($str);
         $allowed = '0123456789abcdefghijklmnopqrstuvwxyz_.';
         foreach($strArr as $character){
-            if(!str_contains($allowed, $character)){
+            if(!self::stringContains($allowed, $character)){
                 return false;
                 break;
             }
