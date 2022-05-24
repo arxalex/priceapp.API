@@ -2,6 +2,7 @@
 
 namespace framework\entities\users;
 
+use framework\database\StringHelper;
 use framework\entities\confirm_email\ConfirmEmailService;
 use framework\entities\default_entities\DefaultEntitiesService;
 use framework\entities\tokens\TokensService;
@@ -60,6 +61,12 @@ class UsersService extends DefaultEntitiesService
 
     public function isAbleToRegister(string $username, string $email): bool
     {
+        if (!StringHelper::latinValidate($username)) {
+            return false;
+        }
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
         $usersFromDB = $this->getItemsFromDB([
             'username' => [$username]
         ]);
@@ -67,7 +74,7 @@ class UsersService extends DefaultEntitiesService
             return false;
         }
         $usersFromDB = $this->getItemsFromDB([
-            'username' => [$username]
+            'email' => [$email]
         ]);
         if (!empty($usersFromDB)) {
             return false;
