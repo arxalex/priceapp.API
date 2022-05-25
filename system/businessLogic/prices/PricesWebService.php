@@ -60,7 +60,7 @@ class PricesWebService
                 }
             }
             if (count($lowestModel) > 0) {
-                $preResult[] = $lowestModel;
+                $preResult[array_values($lowestModel)[0]->itemId] = $lowestModel;
             }
         }
 
@@ -83,23 +83,48 @@ class PricesWebService
 
         $result = [];
 
-        for ($i = 1; $i <= $totalCicles; $i++) {
-            $filialsCombination = $this->getNPairsOfFilials($i, $filialsAfter);
+        if ($totalFilials < 50) {
+            for ($i = 1; $i <= $totalCicles; $i++) {
+                $filialsCombination = $this->getNPairsOfFilials($i, $filialsAfter);
 
-            foreach ($filialsCombination as $combiantion) {
-                $final = [];
-                $preResultCopy = $preResult;
-                foreach ($combiantion as $filialId) {
-                    foreach ($preResultCopy as $key => $itemsCopy) {
-                        if (array_key_exists($filialId, $itemsCopy)) {
-                            $final[] = $itemsCopy[$filialId];
-                            unset($preResultCopy[$key]);
+                foreach ($filialsCombination as $combiantion) {
+                    $final = [];
+                    $preResultCopy = $preResult;
+                    foreach ($combiantion as $filialId) {
+                        foreach ($preResultCopy as $key => $itemsCopy) {
+                            if (array_key_exists($filialId, $itemsCopy)) {
+                                $final[] = $itemsCopy[$filialId];
+                                unset($preResultCopy[$key]);
+                            }
                         }
                     }
+                    if (count($preResultCopy) == 0) {
+                        $result = $final;
+                        break 2;
+                    }
                 }
-                if (count($preResultCopy) == 0) {
-                    $result = $final;
-                    break 2;
+            }
+        } else {
+            $preResult;
+            while(count($preResult) > 0){
+                $maxItems = 0;
+                
+                foreach($preResultFilials as $key => $preResultFilial){
+                    if(count($preResultFilial) > $maxItems){
+                        $maxItems = count($preResultFilial);
+                        $maxFilial = $preResultFilial;
+                    }
+                }
+                foreach($maxFilial as $key => $item){
+                    unset($preResult[$key]);
+                    $result[] = $item;
+                }
+                foreach($preResultFilials as $key => $preResultFilial){
+                    foreach($maxFilial as $key2 => $item){
+                        if(array_key_exists($key2, $preResultFilial)){
+                            unset($preResultFilials[$key][$key2]);
+                        }
+                    }
                 }
             }
         }
