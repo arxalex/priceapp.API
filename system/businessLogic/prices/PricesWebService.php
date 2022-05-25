@@ -39,7 +39,7 @@ class PricesWebService
         $preResultFilials = [];
         foreach ($items as $item) {
             $item = (object) $item;
-            $lowestModel = null;
+            $lowestModel = [];
             $lowestPrice = -1;
             foreach ($filials as $filial) {
                 $model = new PriceWithFilialViewModel($item->itemId, $filial);
