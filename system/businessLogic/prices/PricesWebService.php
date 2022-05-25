@@ -45,12 +45,17 @@ class PricesWebService
                 $model = new PriceWithFilialViewModel($item->itemId, $filial);
 
                 if ($lowestPrice == -1 && $model->price > 0) {
+                    $lowestModel = [];
                     $lowestPrice = $model->price;
                     $lowestModel[$model->filialId] = $model;
                     continue;
                 }
-                if ($model->price > 0 && $model->price <= $lowestPrice) {
+                if ($model->price > 0 && $model->price < $lowestPrice) {
+                    $lowestModel = [];
                     $lowestPrice = $model->price;
+                    $lowestModel[$model->filialId] = $model;
+                }
+                if ($model->price > 0 && $model->price == $lowestPrice) {
                     $lowestModel[$model->filialId] = $model;
                 }
             }
