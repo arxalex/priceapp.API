@@ -62,7 +62,7 @@ class SilpoFilialsGetter
         */
         $result = json_decode($response);
 
-        return $result->filials;
+        return $result->filials != null ? $result->filials : [];
     }
     public function convertFilial(object $filialSilpo): Filial
     {
