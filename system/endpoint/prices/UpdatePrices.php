@@ -71,7 +71,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $pricesFromDB = $this->_pricesService->getItemsFromDB();
         $pricesHistoryFromDB = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday]]);
 
-        $shops = [1];
+        $shops = [1, 2];
         $map = [];
         foreach ($shops as $shop) {
             $preMap = [];
