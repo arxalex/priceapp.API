@@ -1,6 +1,6 @@
 <?php
 
-namespace framework\shops\silpo;
+namespace framework\shops\fora;
 
 use framework\database\ListHelper;
 use framework\database\NumericHelper;
@@ -11,10 +11,10 @@ use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\countries\CountriesService;
 use framework\entities\items_link\ItemsLinkService;
 use framework\entities\packages\PackagesService;
-use framework\shops\silpo\SilpoItemModel;
+use framework\shops\fora\ForaItemModel;
 use stdClass;
 
-class SilpoItemsGetter
+class ForaItemsGetter
 {
     private CategoriesService $_categoriesService;
     private CategoriesLinkService $_categoriesLinkService;
@@ -32,7 +32,7 @@ class SilpoItemsGetter
         $this->_countriesService = new CountriesService();
         $this->_itemsLinkService = new ItemsLinkService();
     }
-    public function get(int $categotyId, int $from = 0, int $to = 25, int $fillialId = 2043): array
+    public function get(int $categotyId, int $from = 0, int $to = 25, int $fillialId = 310): array
     {
         $url = 'https://api.catalog.ecom.silpo.ua/api/2.0/exec/EcomCatalogGlobal';
         $data = json_encode([
@@ -56,7 +56,7 @@ class SilpoItemsGetter
         $result = json_decode(file_get_contents($url, false, $context));
         $inTableItems = ListHelper::getColumn($this->_itemsLinkService->getItemsFromDB([
             'inshopid' => ListHelper::getColumn($result->items, 'id'),
-            'shopid' => [1]
+            'shopid' => [2]
         ]), 'inshopid');
         $handledResult = $result->items;
         if (count($inTableItems) > 0) {
@@ -84,7 +84,7 @@ class SilpoItemsGetter
                 $package = "пляшка ПЕТ";
                 $units = NumericHelper::toFloatOrNull(substr($value->unit, 0, -2), true);
             }
-            $items[] = new SilpoItemModel(
+            $items[] = new ForaItemModel(
                 $value->id,
                 $value->name,
                 $value->mainImage,
@@ -98,7 +98,7 @@ class SilpoItemsGetter
                 NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'fats'), true),
                 NumericHelper::toFloatOrNull($this->getShopItemParam($value, 'proteins'), true),
                 $this->getShopItemParam($value, 'country'),
-                "https://shop.silpo.ua/product/" . $value->slug
+                "https://shop.fora.ua/product/" . $value->slug
             );
         }
         return $items;
@@ -124,48 +124,48 @@ class SilpoItemsGetter
             }
         }
     }
-    public function convertFromSilpoToCommonModel(SilpoItemModel $silpoItem)
+    public function convertFromForaToCommonModel(ForaItemModel $foraItem)
     {
         $baseCategoryLinks = $this->_categoriesLinkService->getItemsFromDB([
-            'categoryshopid' => [$silpoItem->shopcategoryid],
-            'shopid' => 1
+            'categoryshopid' => [$foraItem->shopcategoryid],
+            'shopid' => [2]
         ]);
         $baseCategoryLink = count($baseCategoryLinks) > 0 ? $baseCategoryLinks[0] : null;
         $baseCategoryId = $baseCategoryLink !== null ? $baseCategoryLink->categoryid : null;
 
         $baseCategory = $baseCategoryId !== null ? $this->_categoriesService->getItemFromDB($baseCategoryId) : null;
-        $category = $this->_categoriesService->getCategoryByName($silpoItem->label, $baseCategory);
-        $brand = $this->_brandService->getBrand($silpoItem->brand);
-        $package = $this->_packageService->getPackage($silpoItem->package);
-        $country = $this->_countriesService->getCountry($silpoItem->country);
+        $category = $this->_categoriesService->getCategoryByName($foraItem->label, $baseCategory);
+        $brand = $this->_brandService->getBrand($foraItem->brand);
+        $package = $this->_packageService->getPackage($foraItem->package);
+        $country = $this->_countriesService->getCountry($foraItem->country);
         $commonItem = new Item(
             null,
-            $silpoItem->label,
-            $silpoItem->image,
+            $foraItem->label,
+            $foraItem->image,
             $category->id,
             $brand->id,
             $package->id,
-            $silpoItem->units,
+            $foraItem->units,
             null,
             null,
             null,
-            $silpoItem->calorie,
-            $silpoItem->carbohydrates,
-            $silpoItem->fat,
-            $silpoItem->proteins,
+            $foraItem->calorie,
+            $foraItem->carbohydrates,
+            $foraItem->fat,
+            $foraItem->proteins,
             [
                 'country' => $country->id,
-                'alcohol' => $silpoItem->alcohol
+                'alcohol' => $foraItem->alcohol
             ]
         );
-        $originalLabels = new SilpoOriginalItemLabelsViewModel(
+        $originalLabels = new ForaOriginalItemLabelsViewModel(
             $baseCategoryLink !== null ? $baseCategoryLink->shopcategorylabel : null,
-            $silpoItem->brand,
-            $silpoItem->package,
-            $silpoItem->url,
-            $silpoItem->country,
-            $silpoItem->inshopid,
-            1
+            $foraItem->brand,
+            $foraItem->package,
+            $foraItem->url,
+            $foraItem->country,
+            $foraItem->inshopid,
+            2
         );
         $result = new stdClass();
         $result->item = $commonItem;
@@ -178,7 +178,7 @@ class SilpoItemsGetter
         return $cal != null ? str_replace(",", ".", explode("/", $cal, 2)[0]) : null;
     }
 }
-class SilpoOriginalItemLabelsViewModel{
+class ForaOriginalItemLabelsViewModel{
     public ?string $categoryLabel;
     public ?string $brandLabel;
     public ?string $packageLabel;

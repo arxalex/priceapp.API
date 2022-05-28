@@ -132,6 +132,12 @@
                                 "routeType": "default",
                                 "className": "categories\\InsertCategories",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "get_and_insert_categories_to_db",
+                                "routeType": "default",
+                                "className": "categories\\GetCategoriesFromShopAndInsertToDB",
+                                "contants": []
                             }
                         ]
                     },

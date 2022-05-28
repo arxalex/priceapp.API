@@ -6,16 +6,20 @@ use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
 use framework\entities\filials\FilialsService;
 use framework\shops\silpo\SilpoFilialsGetter;
+use framework\shops\fora\ForaFilialsGetter;
 
 class GetFilials extends BaseEndpointBuilder
 {
     private FilialsService $_filialsService;
     private SilpoFilialsGetter $_silpoFilialsGetter;
+    private ForaFilialsGetter $_foraFilialsGetter;
+
     public function __construct()
     {
         parent::__construct();
         $this->_filialsService = new FilialsService();
         $this->_silpoFilialsGetter = new SilpoFilialsGetter();
+        $this->_foraFilialsGetter = new ForaFilialsGetter();
     }
     public function defaultParams()
     {
@@ -43,6 +47,22 @@ class GetFilials extends BaseEndpointBuilder
                 $filials = [];
                 foreach ($silpoFilialModels as $model) {
                     $filial_temp = $this->_silpoFilialsGetter->convertFilial($model);
+                    if (!ListHelper::isObjectinArray($filial_temp, $filialsInDb, ["inshopid"])) {
+                        $this->_filialsService->insertItemToDB($filial_temp);
+                        $filials[] = $filial_temp;
+                    }
+                }
+
+                return true;
+            } 
+        } elseif ($this->getParam('source') === 2) {
+            $this->_usersService->unavaliableRequest($this->getParam('cookie'));
+            if ($this->getParam('shopid') === 2) {
+                $filialsInDb = $this->_filialsService->getItemsFromDB(['shopid' => [2]]);
+                $foraFilialModels = $this->_foraFilialsGetter->getFilials();
+                $filials = [];
+                foreach ($foraFilialModels as $model) {
+                    $filial_temp = $this->_foraFilialsGetter->convertFilial($model);
                     if (!ListHelper::isObjectinArray($filial_temp, $filialsInDb, ["inshopid"])) {
                         $this->_filialsService->insertItemToDB($filial_temp);
                         $filials[] = $filial_temp;

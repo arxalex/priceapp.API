@@ -55,7 +55,7 @@ class InsertItems extends BaseEndpointBuilder
                     $itemModel->barcodes,
                     $itemModel->consist,
                     NumericHelper::toFloatOrNull($itemModel->calorie),
-                    NumericHelper::toFloatOrNull($itemModel->carbonhydrates),
+                    NumericHelper::toFloatOrNull($itemModel->carbohydrates),
                     NumericHelper::toFloatOrNull($itemModel->fat),
                     NumericHelper::toFloatOrNull($itemModel->proteins),
                     $itemModel->additional
@@ -91,7 +91,7 @@ class InsertItems extends BaseEndpointBuilder
                     $itemModel->barcodes,
                     $itemModel->consist,
                     NumericHelper::toFloatOrNull($itemModel->calorie),
-                    NumericHelper::toFloatOrNull($itemModel->carbonhydrates),
+                    NumericHelper::toFloatOrNull($itemModel->carbohydrates),
                     NumericHelper::toFloatOrNull($itemModel->fat),
                     NumericHelper::toFloatOrNull($itemModel->proteins),
                     $itemModel->additional

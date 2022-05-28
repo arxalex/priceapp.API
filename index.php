@@ -53,6 +53,7 @@ $namespaces = [
     'framework\routing',
     //'framework\shops',
     'framework\shops\atb',
+    'framework\shops\fora',
     'framework\shops\silpo',
     'framework\shops\common',
     'framework\utils',

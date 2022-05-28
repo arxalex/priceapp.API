@@ -5,13 +5,15 @@ Vue.component('admin', {
             <button class="btn btn-primary" @click="updatePrices" :disabled="isUpdateingPrices">Get prices</button>
             <button class="btn btn-primary" @click="updateFilials" :disabled="isUpdateingFilials">Get filials</button>
             <button class="btn btn-primary" @click="analizePrices" :disabled="isAnalizingPrices">Analize and refactor prices</button>
+            <button class="btn btn-primary" @click="getAndInserCategories" :disabled="isInsertingCategories">Get categories from shops and insert to db</button>
         </div>
     `,
     data() {
         return {
             isUpdateingPrices: false,
             isUpdateingFilials: false,
-            isAnalizingPrices: false
+            isAnalizingPrices: false,
+            isInsertingCategories: false
         }
     },
     methods: {
@@ -33,13 +35,27 @@ Vue.component('admin', {
         },
         updateFilials: async function () {
             const url = "../be/filials/get_filials";
-            var data = {
-                source: 1,
-                shopid: 1
-            };
-            this.isUpdateingFilials = true;
-            await this.getItemsFromDb(url, data);
-            this.isUpdateingFilials = false;
+            for (var i = 1; i <= 2; i++) {
+                var data = {
+                    source: i,
+                    shopid: i
+                };
+                this.isUpdateingFilials = true;
+                await this.getItemsFromDb(url, data);
+                this.isUpdateingFilials = false;
+            }
+        },
+        getAndInserCategories: async function () {
+            const url = "../be/categories/get_and_insert_categories_to_db";
+            for (var i = 1; i <= 2; i++) {
+                var data = {
+                    source: i,
+                    method: "GetCategoryFromSourceAndInsert"
+                };
+                this.isInsertingCategories = true;
+                await this.getItemsFromDb(url, data);
+                this.isInsertingCategories = false;
+            }
         },
         analizePrices: async function () {
             const url = "../be/prices/analize_prices";

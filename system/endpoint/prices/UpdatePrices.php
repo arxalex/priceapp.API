@@ -13,9 +13,11 @@ use framework\entities\items_link\ItemsLinkService;
 use framework\entities\prices\PricesService;
 use framework\entities\prices_history\PricesHistoryService;
 use framework\shops\silpo\SilpoPricesGetter;
+use framework\shops\fora\ForaPricesGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
 use framework\shops\silpo\PriceAndQuantitySilpo;
+use framework\shops\fora\PriceAndQuantityFora;
 use stdClass;
 
 class UpdatePrices extends BaseEndpointBuilder
@@ -24,6 +26,7 @@ class UpdatePrices extends BaseEndpointBuilder
     private ItemsLinkService $_itemsLinkService;
     private PricesHistoryService $_pricesHistoryService;
     private SilpoPricesGetter $_silpoPricesGetter;
+    private ForaPricesGetter $_foraPricesGetter;
     private FilialsService $_filialsService;
     private ItemsService $_itemsService;
     private CategoriesService $_categoriesService;
@@ -34,6 +37,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $this->_itemsLinkService = new ItemsLinkService();
         $this->_pricesHistoryService = new PricesHistoryService();
         $this->_silpoPricesGetter = new SilpoPricesGetter();
+        $this->_foraPricesGetter = new ForaPricesGetter();
         $this->_filialsService = new FilialsService();
         $this->_itemsService = new ItemsService();
         $this->_categoriesService = new CategoriesService();
@@ -154,26 +158,45 @@ class UpdatePrices extends BaseEndpointBuilder
                                 $filials[$i]->inshopid
                             );
                     }
-                    $PAQObject = $this->getPAQObject($item->inshopid, $PAQs[$baseCategoryId]);
+                    $PAQObject = $this->getPAQObjectSilpo($item->inshopid, $PAQs[$baseCategoryId]);
+                    $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
+                    $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
+                } elseif ($item->shopid == 2) {
+                    $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+                    if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
+                        $PAQs[$baseCategoryId] = $this->_foraPricesGetter
+                            ->getPricesAndQuantitiesByCategory(
+                                ListHelper::getOneByFields($categoriesLinksFromDB, [
+                                    'categoryid' => $baseCategoryId
+                                ])->categoryshopid,
+                                $filials[$i]->inshopid
+                            );
+                    }
+                    $PAQObject = $this->getPAQObjectFora($item->inshopid, $PAQs[$baseCategoryId]);
                     $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 }
 
 
                 if (ListHelper::isObjectinArray($item, $prices, ["itemid", "shopid"])) {
-                    $priceObject = ($this->_pricesService->getItemsFromDB([
+                    $priceObjects = $this->_pricesService->getItemsFromDB([
                         "itemid" => [$item->itemid],
                         "shopid" => [$item->shopid],
                         "filialid" => [$filials[$i]->id]
-                    ]))[0];
-                    $priceObject->price = $price;
-                    $priceObject->quantity = $quantity;
-                    if ($price <= 0 || $quantity <= 0) {
-                        $this->_pricesService->deleteItem($priceObject);
-                        continue;
-                    } else {
-                        $this->_pricesService->updateItemInDB($priceObject);
+                    ]);
+                    if(count($priceObjects) > 0){
+                        $priceObject =  $priceObjects[0];
+                        $priceObject->price = $price;
+                        $priceObject->quantity = $quantity;
+                        if ($price <= 0 || $quantity <= 0) {
+                            $this->_pricesService->deleteItem($priceObject);
+                            continue;
+                        } else {
+                            $this->_pricesService->updateItemInDB($priceObject);
+                        }
                     }
+                    
+                    
                 } else {
                     if ($price <= 0 || $quantity <= 0) {
                         continue;
@@ -204,7 +227,7 @@ class UpdatePrices extends BaseEndpointBuilder
         }
         return -1;
     }
-    private function getPAQObject(int $inshopid, array $PAQs): PriceAndQuantitySilpo
+    private function getPAQObjectSilpo(int $inshopid, array $PAQs): PriceAndQuantitySilpo
     {
         foreach ($PAQs as $value) {
             if ($value->inshopid == $inshopid) {
@@ -212,5 +235,14 @@ class UpdatePrices extends BaseEndpointBuilder
             }
         }
         return new PriceAndQuantitySilpo($inshopid, 0, 0);
+    }
+    private function getPAQObjectFora(int $inshopid, array $PAQs): PriceAndQuantityFora
+    {
+        foreach ($PAQs as $value) {
+            if ($value->inshopid == $inshopid) {
+                return $value;
+            }
+        }
+        return new PriceAndQuantityFora($inshopid, 0, 0);
     }
 }

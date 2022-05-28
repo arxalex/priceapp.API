@@ -6,19 +6,22 @@ use businessLogic\items\ItemsWebService;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
+use framework\shops\fora\ForaItemsGetter;
 use framework\shops\silpo\SilpoItemsGetter;
 
 class GetItems extends BaseEndpointBuilder
 {
     private ItemsService $_itemsService;
     private SilpoItemsGetter $_silpoItemsGetter;
+    private ForaItemsGetter $_foraItemsGetter;
     private ItemsWebService $_itemsWebService;
     public function __construct()
     {
         parent::__construct();
         $this->_itemsService = new ItemsService();
         $this->_silpoItemsGetter = new SilpoItemsGetter();
-        $this->_itemsWebService = new ItemsWebService();
+        $this->_itemsWebService = new ItemsWebService();        
+        $this->_foraItemsGetter = new ForaItemsGetter();
     }
     public function defaultParams()
     {
@@ -103,6 +106,14 @@ class GetItems extends BaseEndpointBuilder
             $items = [];
             foreach ($silpoItemsModels as $silpoItemModel) {
                 $items[] = $this->_silpoItemsGetter->convertFromSilpoToCommonModel($silpoItemModel);
+            }
+            return $items;
+        } elseif ($this->getParam('source') === 2) {
+            $this->_usersService->unavaliableRequest($this->getParam('cookie'));
+            $foraItemsModels = $this->_foraItemsGetter->get($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
+            $items = [];
+            foreach ($foraItemsModels as $foraItemModel) {
+                $items[] = $this->_foraItemsGetter->convertFromForaToCommonModel($foraItemModel);
             }
             return $items;
         }
