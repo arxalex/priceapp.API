@@ -120,7 +120,6 @@ class UpdatePrices extends BaseEndpointBuilder
         }
         if (empty($filials)) {
             $result->statusUpdate = false;
-
             return $result;
         }
 
@@ -153,7 +152,8 @@ class UpdatePrices extends BaseEndpointBuilder
                         $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory(
                                 ListHelper::getOneByFields($categoriesLinksFromDB, [
-                                    'categoryid' => $baseCategoryId
+                                    'categoryid' => $baseCategoryId,
+                                    'shopid' => 1
                                 ])->categoryshopid,
                                 $filials[$i]->inshopid
                             );
@@ -167,7 +167,8 @@ class UpdatePrices extends BaseEndpointBuilder
                         $PAQs[$baseCategoryId] = $this->_foraPricesGetter
                             ->getPricesAndQuantitiesByCategory(
                                 ListHelper::getOneByFields($categoriesLinksFromDB, [
-                                    'categoryid' => $baseCategoryId
+                                    'categoryid' => $baseCategoryId,
+                                    'shopid' => 2
                                 ])->categoryshopid,
                                 $filials[$i]->inshopid
                             );
