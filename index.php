@@ -60,6 +60,7 @@ $namespaces = [
     //'render',
     'render\admin',
     'render\defaultBuild',
+    'render\documents',
     'render\login',
     'render\main',
     'viewModels'

@@ -18,6 +18,19 @@
                 ]
             },
             {
+                "routeName": "documents",
+                "routeType": "default",
+                "className": "main\\Main",
+                "contants": [
+                    {
+                        "routeName": "privacy",
+                        "routeType": "default",
+                        "className": "documents\\Privacy",
+                        "contants": []
+                    }
+                ]
+            },
+            {
                 "routeName": "register",
                 "routeType": "default",
                 "className": "login\\Register",
