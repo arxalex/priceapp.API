@@ -131,6 +131,32 @@ class PricesWebService
 
         return $result;
     }
+
+    public function getShoppingListEconomy(
+        array $items,
+        float $xCord,
+        float $yCord,
+        float $radius
+    ): array {
+        $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
+        $result = 0;
+        foreach ($items as $item) {
+            $item = (object) $item;
+            $highestPrice = 0;
+            foreach ($filials as $filial) {
+                $model = new PriceWithFilialViewModel($item->itemId, $filial);
+
+                if ($model->price > 0 && $model->price > $highestPrice) {
+                    $highestPrice = $model->price;
+                }
+            }
+
+            $result += $highestPrice * $item->count;
+        }
+
+        return $result;
+    }
+
     private function getNPairsOfFilials(int $n, array $filials): array
     {
         if ($n == 1) {
