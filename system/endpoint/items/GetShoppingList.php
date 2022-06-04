@@ -43,6 +43,7 @@ class GetShoppingList extends BaseEndpointBuilder
                 );
                 $result->economy = $this->_pricesWebService->getShoppingListEconomy(
                     $this->getParam('items'),
+                    $result->shoppingList,
                     $this->getParam('xCord'),
                     $this->getParam('yCord'),
                     $this->getParam('radius')

@@ -2,6 +2,7 @@
 
 namespace businessLogic\prices;
 
+use framework\database\ListHelper;
 use framework\entities\filials\FilialsService;
 use viewModels\PriceWithFilialViewModel;
 
@@ -134,12 +135,14 @@ class PricesWebService
 
     public function getShoppingListEconomy(
         array $items,
+        array $lowestPriceItems,
         float $xCord,
         float $yCord,
         float $radius
-    ): array {
+    ): float {
         $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
         $result = 0;
+        
         foreach ($items as $item) {
             $item = (object) $item;
             $highestPrice = 0;
@@ -151,7 +154,9 @@ class PricesWebService
                 }
             }
 
-            $result += $highestPrice * $item->count;
+            $lowest = ListHelper::getOneByFields($lowestPriceItems, ['itemId' => $item->itemId]);
+            
+            $result += ($highestPrice - $lowest->price) * $item->count;
         }
 
         return $result;
