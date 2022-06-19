@@ -16,6 +16,7 @@ use framework\shops\silpo\SilpoPricesGetter;
 use framework\shops\fora\ForaPricesGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
+use framework\shops\atb\AtbPricesGetter;
 use framework\shops\silpo\PriceAndQuantitySilpo;
 use framework\shops\fora\PriceAndQuantityFora;
 use stdClass;
@@ -27,6 +28,7 @@ class UpdatePrices extends BaseEndpointBuilder
     private PricesHistoryService $_pricesHistoryService;
     private SilpoPricesGetter $_silpoPricesGetter;
     private ForaPricesGetter $_foraPricesGetter;
+    private AtbPricesGetter $_atbPricesGetter;
     private FilialsService $_filialsService;
     private ItemsService $_itemsService;
     private CategoriesService $_categoriesService;
@@ -38,6 +40,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $this->_pricesHistoryService = new PricesHistoryService();
         $this->_silpoPricesGetter = new SilpoPricesGetter();
         $this->_foraPricesGetter = new ForaPricesGetter();
+        $this->_atbPricesGetter = new AtbPricesGetter();
         $this->_filialsService = new FilialsService();
         $this->_itemsService = new ItemsService();
         $this->_categoriesService = new CategoriesService();
@@ -71,7 +74,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $pricesFromDB = $this->_pricesService->getItemsFromDB();
         $pricesHistoryFromDB = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday]]);
 
-        $shops = [1, 2];
+        $shops = [1, 2, 3];
         $map = [];
         foreach ($shops as $shop) {
             $preMap = [];
@@ -169,6 +172,21 @@ class UpdatePrices extends BaseEndpointBuilder
                                 ListHelper::getOneByFields($categoriesLinksFromDB, [
                                     'categoryid' => $baseCategoryId,
                                     'shopid' => 2
+                                ])->categoryshopid,
+                                $filials[$i]->inshopid
+                            );
+                    }
+                    $PAQObject = $this->getPAQObjectFora($item->inshopid, $PAQs[$baseCategoryId]);
+                    $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
+                    $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
+                } elseif ($item->shopid == 3) {
+                    $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+                    if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
+                        $PAQs[$baseCategoryId] = $this->_atbPricesGetter
+                            ->getPricesAndQuantitiesByCategory(
+                                ListHelper::getOneByFields($categoriesLinksFromDB, [
+                                    'categoryid' => $baseCategoryId,
+                                    'shopid' => 3
                                 ])->categoryshopid,
                                 $filials[$i]->inshopid
                             );

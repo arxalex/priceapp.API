@@ -35,7 +35,7 @@ Vue.component('admin', {
         },
         updateFilials: async function () {
             const url = "../be/filials/get_filials";
-            for (var i = 1; i <= 2; i++) {
+            for (var i = 1; i <= 3; i++) {
                 var data = {
                     source: i,
                     shopid: i
@@ -47,7 +47,7 @@ Vue.component('admin', {
         },
         getAndInserCategories: async function () {
             const url = "../be/categories/get_and_insert_categories_to_db";
-            for (var i = 1; i <= 2; i++) {
+            for (var i = 1; i <= 3; i++) {
                 var data = {
                     source: i,
                     method: "GetCategoryFromSourceAndInsert"

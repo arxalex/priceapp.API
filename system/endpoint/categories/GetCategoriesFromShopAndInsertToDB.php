@@ -5,6 +5,7 @@ namespace endpoint\categories;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\categories_link\CategoriesLinkService;
 use framework\entities\categories_link\CategoryLink;
+use framework\shops\atb\AtbCategoriesGetter;
 use framework\shops\silpo\SilpoCategoriesGetter;
 use framework\shops\fora\ForaCategoriesGetter;
 use stdClass;
@@ -14,12 +15,14 @@ class GetCategoriesFromShopAndInsertToDB extends BaseEndpointBuilder
     private SilpoCategoriesGetter $_silpoCategoriesGetter;
     private CategoriesLinkService $_categoriesLinkService;
     private ForaCategoriesGetter $_foraCategoriesGetter;
+    private AtbCategoriesGetter $_atbCategoriesGetter;
 
     public function __construct()
     {
         parent::__construct();
         $this->_silpoCategoriesGetter = new SilpoCategoriesGetter();
         $this->_foraCategoriesGetter = new ForaCategoriesGetter();
+        $this->_atbCategoriesGetter = new AtbCategoriesGetter();
         $this->_categoriesLinkService = new CategoriesLinkService();
     }
     public function defaultParams()
@@ -63,6 +66,23 @@ class GetCategoriesFromShopAndInsertToDB extends BaseEndpointBuilder
                             $categoryId = ($otherCategoryLinks[0])->categoryid;
                         }
                         $this->_categoriesLinkService->insertItemToDB(new CategoryLink(null, $categoryId, 2, $category->id, $category->label));
+                        $i++;
+                    }
+                }
+                $result->count = $i;
+                $result->statusInsert = true;
+                return $result;
+            } elseif ($this->getParam('source') === 3) {
+                $i = 0;
+                $categories = $this->_atbCategoriesGetter->get();
+                foreach($categories as $category){
+                    if(count($this->_categoriesLinkService->getItemsFromDB(['shopid' => [3], 'shopcategorylabel' => [$category->label]])) <= 0){
+                        $otherCategoryLinks = $this->_categoriesLinkService->getItemsFromDB(['shopcategorylabel' => [$category->label]]);
+                        $categoryId = 0;
+                        if(count($otherCategoryLinks) == 1){
+                            $categoryId = ($otherCategoryLinks[0])->categoryid;
+                        }
+                        $this->_categoriesLinkService->insertItemToDB(new CategoryLink(null, $categoryId, 3, $category->id, $category->label));
                         $i++;
                     }
                 }

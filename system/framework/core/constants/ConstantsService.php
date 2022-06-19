@@ -7,7 +7,8 @@ class ConstantsService{
         'DB_host' => 'localhost',
         'DB_dbname' => 'arxalexc_priceapp',
         'DB_username' => 'arxalexc_priceapp',
-        'DB_password' => 'WGnxAW3SWKjkhMN'
+        'DB_password' => 'WGnxAW3SWKjkhMN',
+        'DB_dbname_proxy' => 'arxalexc_priceapp_proxy',
     ];
     public function __construct()
     {

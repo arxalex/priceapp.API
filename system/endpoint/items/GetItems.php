@@ -6,6 +6,7 @@ use businessLogic\items\ItemsWebService;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\items\ItemsService;
 use framework\database\StringHelper;
+use framework\shops\atb\AtbItemsGetter;
 use framework\shops\fora\ForaItemsGetter;
 use framework\shops\silpo\SilpoItemsGetter;
 
@@ -14,6 +15,7 @@ class GetItems extends BaseEndpointBuilder
     private ItemsService $_itemsService;
     private SilpoItemsGetter $_silpoItemsGetter;
     private ForaItemsGetter $_foraItemsGetter;
+    private AtbItemsGetter $_atbItemsGetter;
     private ItemsWebService $_itemsWebService;
     public function __construct()
     {
@@ -22,6 +24,7 @@ class GetItems extends BaseEndpointBuilder
         $this->_silpoItemsGetter = new SilpoItemsGetter();
         $this->_itemsWebService = new ItemsWebService();        
         $this->_foraItemsGetter = new ForaItemsGetter();
+        $this->_atbItemsGetter = new AtbItemsGetter();
     }
     public function defaultParams()
     {
@@ -114,6 +117,14 @@ class GetItems extends BaseEndpointBuilder
             $items = [];
             foreach ($foraItemsModels as $foraItemModel) {
                 $items[] = $this->_foraItemsGetter->convertFromForaToCommonModel($foraItemModel);
+            }
+            return $items;
+        } elseif ($this->getParam('source') === 3) {
+            $this->_usersService->unavaliableRequest($this->getParam('cookie'));
+            $atbItemsModels = $this->_atbItemsGetter->get($this->getParam('category'), $this->getParam('from'), $this->getParam('to'));
+            $items = [];
+            foreach ($atbItemsModels as $atbItemModel) {
+                $items[] = $this->_atbItemsGetter->convertFromAtbToCommonModel($atbItemModel);
             }
             return $items;
         }

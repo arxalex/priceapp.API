@@ -5,6 +5,7 @@ namespace endpoint\filials;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\database\ListHelper;
 use framework\entities\filials\FilialsService;
+use framework\shops\atb\AtbFilialsGetter;
 use framework\shops\silpo\SilpoFilialsGetter;
 use framework\shops\fora\ForaFilialsGetter;
 
@@ -13,6 +14,7 @@ class GetFilials extends BaseEndpointBuilder
     private FilialsService $_filialsService;
     private SilpoFilialsGetter $_silpoFilialsGetter;
     private ForaFilialsGetter $_foraFilialsGetter;
+    private AtbFilialsGetter $_atbFilialsGetter;
 
     public function __construct()
     {
@@ -20,6 +22,7 @@ class GetFilials extends BaseEndpointBuilder
         $this->_filialsService = new FilialsService();
         $this->_silpoFilialsGetter = new SilpoFilialsGetter();
         $this->_foraFilialsGetter = new ForaFilialsGetter();
+        $this->_atbFilialsGetter = new AtbFilialsGetter();
     }
     public function defaultParams()
     {
@@ -63,6 +66,25 @@ class GetFilials extends BaseEndpointBuilder
                 $filials = [];
                 foreach ($foraFilialModels as $model) {
                     $filial_temp = $this->_foraFilialsGetter->convertFilial($model);
+                    if (!ListHelper::isObjectinArray($filial_temp, $filialsInDb, ["inshopid"])) {
+                        $this->_filialsService->insertItemToDB($filial_temp);
+                        $filials[] = $filial_temp;
+                    }
+                }
+
+                return true;
+            }
+        } elseif ($this->getParam('source') === 3) {
+            $this->_usersService->unavaliableRequest($this->getParam('cookie'));
+            if ($this->getParam('shopid') === 3) {
+                $filialsInDb = $this->_filialsService->getItemsFromDB(['shopid' => [3]]);
+                $foraFilialModels = $this->_atbfilialsGetter->getFilials();
+                $filials = [];
+                foreach ($foraFilialModels as $model) {
+                    if($model->xcord == null || $model->ycord == null){
+                        continue;
+                    }
+                    $filial_temp = $this->_atbfilialsGetter->convertFilial($model);
                     if (!ListHelper::isObjectinArray($filial_temp, $filialsInDb, ["inshopid"])) {
                         $this->_filialsService->insertItemToDB($filial_temp);
                         $filials[] = $filial_temp;

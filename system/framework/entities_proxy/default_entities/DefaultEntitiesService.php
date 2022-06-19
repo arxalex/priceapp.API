@@ -1,16 +1,16 @@
 <?php
 
-namespace framework\entities\default_entities;
+namespace framework\entities_proxy\default_entities;
 
 use framework\database\NumericHelper;
-use framework\database\Request;
+use framework\database\RequestProxy;
 use framework\database\SqlHelper;
 use PDO;
 use stdClass;
 
 class DefaultEntitiesService
 {
-    protected const ENTITIES_NAMESPACE = "framework\\entities\\";
+    protected const ENTITIES_NAMESPACE = "framework\\entities_proxy\\";
     protected string $className;
     protected string $tableName;
 
@@ -21,7 +21,7 @@ class DefaultEntitiesService
     {
         $table = $this->tableName;
         $query = "select * from `$table` where id = $id";
-        $connection = new Request($query);
+        $connection = new RequestProxy($query);
         $connection->execute();
         $response = $connection->fetchObject($this->className);
         return $response;
@@ -30,7 +30,7 @@ class DefaultEntitiesService
     {
         $table = $this->tableName;
         $query = "SELECT * FROM `$table` ORDER BY `id` DESC LIMIT 1";
-        $connection = new Request($query);
+        $connection = new RequestProxy($query);
         $connection->execute();
         $response = $connection->fetchObject($this->className);
         return $response;
@@ -54,7 +54,7 @@ class DefaultEntitiesService
             $query .= " LIMIT $limit OFFSET $offset";
         }
 
-        $connection = new Request($query);
+        $connection = new RequestProxy($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
         return $response;
@@ -63,7 +63,7 @@ class DefaultEntitiesService
     {
         $table = $this->tableName;
         $query = "INSERT INTO `$table` " . SqlHelper::insertObjects([$item]);
-        return (new Request($query))->execute();
+        return (new RequestProxy($query))->execute();
     }
     public function updateItemInDB($item): bool
     {
@@ -73,7 +73,7 @@ class DefaultEntitiesService
             . " WHERE " . SqlHelper::whereCreate([
                 'id' => [$item->id]
             ]);            
-        return (new Request($query))->execute();
+        return (new RequestProxy($query))->execute();
     }
     public function orderItemsByRate(array $items, array $rates, int $max = null): array
     {
@@ -133,7 +133,7 @@ class DefaultEntitiesService
         $query = "DELETE FROM `$table` WHERE " . SqlHelper::whereCreate([
             'id' => [$item->id]
         ]);
-        return (new Request($query))->execute();
+        return (new RequestProxy($query))->execute();
     }
     public function count(array $where = []) : int
     {
@@ -150,7 +150,7 @@ class DefaultEntitiesService
             $query = "select count(*) from `$table`";
         }
 
-        $connection = new Request($query);
+        $connection = new RequestProxy($query);
         $connection->execute();
         $response = NumericHelper::toInt($connection->fetch()['count(*)']);
         return $response;

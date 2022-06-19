@@ -5,6 +5,7 @@ namespace endpoint\categories;
 use endpoint\defaultBuild\BaseEndpointBuilder;
 use framework\entities\categories\CategoriesService;
 use framework\entities\categories_link\CategoriesLinkService;
+use framework\shops\atb\AtbCategoriesGetter;
 use framework\shops\silpo\SilpoCategoriesGetter;
 use framework\shops\fora\ForaCategoriesGetter;
 
@@ -13,6 +14,7 @@ class GetCategories extends BaseEndpointBuilder
     private SilpoCategoriesGetter $_silpoCategoriesGetter;
     private CategoriesLinkService $_categoriesLinkService;
     private CategoriesService $_categoriesService;
+    private AtbCategoriesGetter $_atbCategoriesGetter;
     private ForaCategoriesGetter $_foraCategoriesGetter;
 
     public function __construct()
@@ -21,6 +23,7 @@ class GetCategories extends BaseEndpointBuilder
         $this->_silpoCategoriesGetter = new SilpoCategoriesGetter();
         $this->_categoriesLinkService = new CategoriesLinkService();
         $this->_categoriesService = new CategoriesService();
+        $this->_atbCategoriesGetter = new AtbCategoriesGetter();
         $this->_foraCategoriesGetter = new ForaCategoriesGetter();
     }
     public function defaultParams()
@@ -45,6 +48,9 @@ class GetCategories extends BaseEndpointBuilder
             } elseif ($this->getParam('source') === 2) {
                 $this->_usersService->unavaliableRequest($this->getParam('cookie'), 9);
                 return $this->_foraCategoriesGetter->get();
+            } elseif ($this->getParam('source') === 3) {
+                $this->_usersService->unavaliableRequest($this->getParam('cookie'), 9);
+                return $this->_atbCategoriesGetter->get();
             }
         } elseif ($this->getParam('method') == "GetCategoryLinkByLabel") {
             $this->_usersService->unavaliableRequest($this->getParam('cookie'), 9);
