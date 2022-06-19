@@ -1,0 +1,53 @@
+[
+    {
+        "routeName": "",
+        "routeType": "default",
+        "className": "",
+        "contants": [
+            {
+                "routeName": "be",
+                "routeType": "default",
+                "className": "",
+                "contants": [
+                    {
+                        "routeName": "atb",
+                        "routeType": "default",
+                        "className": "",
+                        "contants": [
+                            {
+                                "routeName": "load_products",
+                                "routeType": "default",
+                                "className": "atb\\LoadProducts",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "load_categories",
+                                "routeType": "default",
+                                "className": "atb\\LoadCategories",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "load_filials",
+                                "routeType": "default",
+                                "className": "atb\\LoadFilials",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "load_prices",
+                                "routeType": "default",
+                                "className": "atb\\LoadPrices",
+                                "contants": []
+                            }
+                        ]
+                    },
+                    {
+                        "routeName": "login",
+                        "routeType": "default",
+                        "className": "login\\Login",
+                        "contants": []
+                    }
+                ]
+            }
+        ]
+    }
+]
