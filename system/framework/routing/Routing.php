@@ -11,24 +11,6 @@ class Routing
     public static function resolveRoute(string $uri_string, $requestType)
     {
         $routeRegistrer = new RouteRegister();
-
-        if ($requestType === "GET"){
-            echo '<!DOCTYPE html>
-            <html>
-                <head>
-                    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-                    <meta http-equiv="Cache-control" content="no-cache">
-                    <meta http-equiv="Pragma" content="no-cache">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>proxy</title>
-                </head>
-                <body>
-                    <h1>Nive, you got access to proxy subdomain</h1>
-                </body>
-            </html>';
-            die();
-        }
-
         $class = $routeRegistrer->getClassByRoute($uri_string);
 
         if ($class == null) {
