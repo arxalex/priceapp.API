@@ -2,7 +2,7 @@
 
 namespace framework\entities_proxy\prices;
 
-use framework\entities\default_entities\DefaultEntity;
+use framework\entities_proxy\default_entities\DefaultEntity;
 
 class Price extends DefaultEntity
 {

@@ -2,7 +2,7 @@
 
 namespace framework\entities_proxy\items;
 
-use framework\entities\default_entities\DefaultEntity;
+use framework\entities_proxy\default_entities\DefaultEntity;
 
 class AtbItem extends DefaultEntity
 {

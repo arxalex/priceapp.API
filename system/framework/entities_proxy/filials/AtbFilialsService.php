@@ -2,8 +2,8 @@
 
 namespace framework\entities_proxy\filials;
 
-use framework\entities\default_entities\DefaultEntitiesService;
-use framework\database\Request;
+use framework\entities_proxy\default_entities\DefaultEntitiesService;
+use framework\database\RequestProxy;
 use framework\utils\RadiansHelper;
 use PDO;
 
@@ -28,7 +28,7 @@ class AtbFilialsService extends DefaultEntitiesService
         $whereQuery = "`xcord` > $minXCord AND `xcord` < $maxXCord AND `ycord` > $minYCord AND `ycord` < $maxYCord";
         $query = "select * from `$table` where $whereQuery";
 
-        $connection = new Request($query);
+        $connection = new RequestProxy($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
 

@@ -12,7 +12,7 @@ class AtbCategoriesGetter
     {
         $this->_atbCategoriesService = new AtbCategoriesService();
     }
-    public function get(int $fillialId = 310): array
+    public function get(): array
     {
         $preCategories = $this->_atbCategoriesService->getItemsFromDB();
 

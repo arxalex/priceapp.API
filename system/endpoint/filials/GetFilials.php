@@ -78,13 +78,13 @@ class GetFilials extends BaseEndpointBuilder
             $this->_usersService->unavaliableRequest($this->getParam('cookie'));
             if ($this->getParam('shopid') === 3) {
                 $filialsInDb = $this->_filialsService->getItemsFromDB(['shopid' => [3]]);
-                $foraFilialModels = $this->_atbfilialsGetter->getFilials();
+                $foraFilialModels = $this->_atbFilialsGetter->getFilials();
                 $filials = [];
                 foreach ($foraFilialModels as $model) {
                     if($model->xcord == null || $model->ycord == null){
                         continue;
                     }
-                    $filial_temp = $this->_atbfilialsGetter->convertFilial($model);
+                    $filial_temp = $this->_atbFilialsGetter->convertFilial($model);
                     if (!ListHelper::isObjectinArray($filial_temp, $filialsInDb, ["inshopid"])) {
                         $this->_filialsService->insertItemToDB($filial_temp);
                         $filials[] = $filial_temp;

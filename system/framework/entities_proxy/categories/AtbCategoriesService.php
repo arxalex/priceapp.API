@@ -2,7 +2,7 @@
 
 namespace framework\entities_proxy\categories;
 
-use framework\entities\default_entities\DefaultEntitiesService;
+use framework\entities_proxy\default_entities\DefaultEntitiesService;
 
 class AtbCategoriesService extends DefaultEntitiesService
 {
