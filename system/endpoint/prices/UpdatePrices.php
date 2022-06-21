@@ -17,6 +17,7 @@ use framework\shops\fora\ForaPricesGetter;
 use framework\entities\prices\Price;
 use framework\entities\prices_history\PriceHistory;
 use framework\shops\atb\AtbPricesGetter;
+use framework\shops\atb\PriceAndQuantityAtb;
 use framework\shops\silpo\PriceAndQuantitySilpo;
 use framework\shops\fora\PriceAndQuantityFora;
 use stdClass;
@@ -191,7 +192,7 @@ class UpdatePrices extends BaseEndpointBuilder
                                 $filials[$i]->inshopid
                             );
                     }
-                    $PAQObject = $this->getPAQObjectFora($item->inshopid, $PAQs[$baseCategoryId]);
+                    $PAQObject = $this->getPAQObjectAtb($item->inshopid, $PAQs[$baseCategoryId]);
                     $price = $PAQObject->price * NumericHelper::toFloat($item->pricefactor);
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 }
@@ -263,5 +264,14 @@ class UpdatePrices extends BaseEndpointBuilder
             }
         }
         return new PriceAndQuantityFora($inshopid, 0, 0);
+    }
+    private function getPAQObjectAtb(int $inshopid, array $PAQs): PriceAndQuantityAtb
+    {
+        foreach ($PAQs as $value) {
+            if ($value->inshopid == $inshopid) {
+                return $value;
+            }
+        }
+        return new PriceAndQuantityAtb($inshopid, 0, 0);
     }
 }
