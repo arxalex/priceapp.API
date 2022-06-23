@@ -45,7 +45,7 @@ class LoadPrices extends BaseEndpointBuilder
             $lastCategory = ($this->_constantsService->getItemsFromDB(['label' => ['ATB_LAST_SCANNED_CATEGORYID']]))[0];
 
             if(NumericHelper::toInt($lastFilial->value) == 0 && NumericHelper::toInt($lastCategory->value) == 0){
-                (new Request("UPDATE `pa_prices` SET `quantity`='0'"))->execute();
+                //(new Request("UPDATE `pa_prices` SET `quantity`='0'"))->execute();
             }
 
             $filials = $this->_atbFilialsService->getItemsFromDB();

@@ -37,6 +37,18 @@
                                 "routeType": "default",
                                 "className": "atb\\LoadPrices",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "load_prices_process",
+                                "routeType": "default",
+                                "className": "atb\\LoadPricesProcess",
+                                "contants": []
+                            },
+                            {
+                                "routeName": "load_prices_parallel",
+                                "routeType": "default",
+                                "className": "atb\\LoadPricesParallel",
+                                "contants": []
                             }
                         ]
                     },

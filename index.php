@@ -2,6 +2,8 @@
 
 use framework\routing\Routing;
 
+set_time_limit(0);
+
 const FOLDER_NAME = "system";
 
 $uri_string = parse_url($_SERVER['REQUEST_URI'])['path'];
