@@ -205,7 +205,7 @@ class UpdatePrices extends BaseEndpointBuilder
                         "filialid" => [$filials[$i]->id]
                     ]);
                     if(count($priceObjects) > 0){
-                        $priceObject =  $priceObjects[0];
+                        $priceObject = $priceObjects[0];
                         $priceObject->price = $price;
                         $priceObject->quantity = $quantity;
                         if ($price <= 0 || $quantity <= 0) {
