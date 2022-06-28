@@ -41,6 +41,9 @@ class AtbPricesGetter
 
         $result = [];
         foreach($items as $item){
+            if($item->updatetime < time() - 604800){
+                continue;
+            }
             $priceAndQuantity = new PriceAndQuantityAtb(NumericHelper::toInt($item->itemid), NumericHelper::toFloat($item->price), NumericHelper::toFloat($item->quantity));
             $result[] = $priceAndQuantity;
         }
