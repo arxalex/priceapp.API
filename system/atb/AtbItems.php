@@ -113,6 +113,7 @@ class AtbItems
 				$price->price = NumericHelper::toFloat($priceOfItem);
 				$price->filialid = $filialIdFromDB;
 				$price->quantity = 1;
+				$price->updatetime = time();
 
 				if ($this->_pricesService->count(['itemid' => [$itemIdFromDB], 'shopid' => [3], 'filialid' => [$filialIdFromDB]]) > 0) {
 					$priceId = ($this->_pricesService->getItemsFromDB(['itemid' => [$itemIdFromDB], 'shopid' => [3], 'filialid' => [$filialIdFromDB]]))[0]->id;
