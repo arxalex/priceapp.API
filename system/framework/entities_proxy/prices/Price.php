@@ -21,7 +21,7 @@ class Price extends DefaultEntity
         ?float $price = null,
         ?int $filialid = null,
         ?float $quantity = 0,
-        ?int $updatetime = null,
+        ?int $updatetime = null
     ) {
         $this->id = $id;
         $this->itemid = $itemid;
