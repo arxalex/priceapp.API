@@ -27,6 +27,12 @@
                         "routeType": "default",
                         "className": "documents\\Privacy",
                         "contants": []
+                    },
+                    {
+                        "routeName": "faq",
+                        "routeType": "default",
+                        "className": "documents\\FAQ",
+                        "contants": []
                     }
                 ]
             },
