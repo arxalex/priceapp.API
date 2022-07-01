@@ -49,6 +49,20 @@ class GetShoppingList extends BaseEndpointBuilder
                     $this->getParam('radius')
                 );
                 return $result;
+            } elseif ($this->getParam('method') == "oneLowest") {
+                $result->shoppingList = $this->_pricesWebService->getShoppingListOneLowest(
+                    $this->getParam('items'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
+                $result->economy = $this->_pricesWebService->getShoppingListEconomyOneShop(
+                    $this->getParam('items'),
+                    $this->getParam('xCord'),
+                    $this->getParam('yCord'),
+                    $this->getParam('radius')
+                );
+                return $result;
             }
         }
     }
