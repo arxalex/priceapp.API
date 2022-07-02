@@ -155,10 +155,10 @@ class UpdatePrices extends BaseEndpointBuilder
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory(
-                                ListHelper::getOneByFields($categoriesLinksFromDB, [
-                                    'categoryid' => $baseCategoryId,
-                                    'shopid' => 1
-                                ])->categoryshopid,
+                                ListHelper::getMultipleByFields($categoriesLinksFromDB, [
+                                    'categoryid' => [$baseCategoryId],
+                                    'shopid' => [1]
+                                ]),
                                 $filials[$i]->inshopid
                             );
                     }
@@ -170,10 +170,10 @@ class UpdatePrices extends BaseEndpointBuilder
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_foraPricesGetter
                             ->getPricesAndQuantitiesByCategory(
-                                ListHelper::getOneByFields($categoriesLinksFromDB, [
-                                    'categoryid' => $baseCategoryId,
-                                    'shopid' => 2
-                                ])->categoryshopid,
+                                ListHelper::getMultipleByFields($categoriesLinksFromDB, [
+                                    'categoryid' => [$baseCategoryId],
+                                    'shopid' => [2]
+                                ]),
                                 $filials[$i]->inshopid
                             );
                     }
@@ -182,13 +182,14 @@ class UpdatePrices extends BaseEndpointBuilder
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 } elseif ($item->shopid == 3) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_atbPricesGetter
                             ->getPricesAndQuantitiesByCategory(
-                                ListHelper::getOneByFields($categoriesLinksFromDB, [
-                                    'categoryid' => $baseCategoryId,
-                                    'shopid' => 3
-                                ])->categoryshopid,
+                                ListHelper::getMultipleByFields($categoriesLinksFromDB, [
+                                    'categoryid' => [$baseCategoryId],
+                                    'shopid' => [3]
+                                ]),
                                 $filials[$i]->inshopid
                             );
                     }
