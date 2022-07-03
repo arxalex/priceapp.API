@@ -61,7 +61,7 @@ class ForaPricesGetter
             $context  = stream_context_create($options);
             $result = json_decode(file_get_contents($url, false, $context));
 
-            $items = array_merge($result->items, $items);
+            $items = array_merge(is_array($result->items) ? $result->items : [], $items);
         }
 
         $result = [];

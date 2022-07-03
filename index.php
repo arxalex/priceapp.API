@@ -33,6 +33,7 @@ $namespaces = [
     'framework\database',
     //'framework\entities',
     'framework\entities\brands',
+    'framework\entities\brand_alerts',
     'framework\entities\categories',
     'framework\entities\categories_link',
     'framework\entities\confirm_email',

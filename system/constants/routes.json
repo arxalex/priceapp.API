@@ -195,6 +195,12 @@
                                 "routeType": "default",
                                 "className": "brands\\InsertBrands",
                                 "contants": []
+                            },
+                            {
+                                "routeName": "get_brand_alert",
+                                "routeType": "default",
+                                "className": "brands\\GetBrandAlert",
+                                "contants": []
                             }
                         ]
                     },
