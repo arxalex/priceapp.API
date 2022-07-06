@@ -128,9 +128,7 @@ class UpdatePrices extends BaseEndpointBuilder
         $lastPoint = 0;
 
         for ($i = 0; $i < count($filials); $i++) {
-            $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filials[$i]->id]]);
-
-            if (count($pricesHistory) > 0) {
+            if ($this->_pricesHistoryService->count(['date' => [$dateToday], 'filialid' => [$filials[$i]->id]]) > 0) {
                 $lastPoint = $i;
             }
         }
@@ -149,6 +147,9 @@ class UpdatePrices extends BaseEndpointBuilder
 
                 if ($item->shopid == 1) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+                    if($baseCategoryId == 0){
+                        continue;
+                    }
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_silpoPricesGetter
                             ->getPricesAndQuantitiesByCategory(
@@ -164,6 +165,9 @@ class UpdatePrices extends BaseEndpointBuilder
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 } elseif ($item->shopid == 2) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
+                    if($baseCategoryId == 0){
+                        continue;
+                    }
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_foraPricesGetter
                             ->getPricesAndQuantitiesByCategory(
@@ -179,7 +183,9 @@ class UpdatePrices extends BaseEndpointBuilder
                     $quantity = $PAQObject->quantity / NumericHelper::toFloat($item->pricefactor);
                 } elseif ($item->shopid == 3) {
                     $baseCategoryId = $this->getBaseCategoryFromMap($item, $map[$item->shopid]);
-
+                    if($baseCategoryId == 0){
+                        continue;
+                    }
                     if (!array_key_exists($baseCategoryId, $PAQs) || $PAQs[$baseCategoryId] == null) {
                         $PAQs[$baseCategoryId] = $this->_atbPricesGetter
                             ->getPricesAndQuantitiesByCategory(
@@ -203,12 +209,12 @@ class UpdatePrices extends BaseEndpointBuilder
                 ]);
                 if (count($priceObjects) > 0) {
                     $priceObject = $priceObjects[0];
-                    $priceObject->price = $price;
-                    $priceObject->quantity = $quantity;
                     if ($price <= 0 || $quantity <= 0) {
                         $this->_pricesService->deleteItem($priceObject);
                         continue;
                     } else {
+                        $priceObject->price = $price;
+                        $priceObject->quantity = $quantity;
                         $this->_pricesService->updateItemInDB($priceObject);
                         $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filials[$i]->id));
                     }
