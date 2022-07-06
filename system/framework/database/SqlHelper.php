@@ -136,7 +136,25 @@ class SqlHelper
     {
         $query = "";
         foreach ($where as $key => $value) {
-            if (array_key_exists(0, $value)) {
+            if (count($value) == 1) {
+                if (is_numeric($value[0])) {
+                    $query .= "`$key` = ";
+                    $query .= "'" . $value[0] . "'";
+                    $query .= " AND ";
+                } elseif (is_string($value[0]) && substr($key, -5) == "_like") {
+                    $key = substr($key, 0, -5);
+                    $query .= self::arrayLikeString($key, $value);
+                    $query .= " AND ";
+                } elseif (is_string($value[0]) && substr($key, -5) != "_like") {
+                    $query .= "`$key` = ";
+                    $query .= "'" . $value[0] . "'";
+                    $query .= " AND ";
+                } elseif ($value[0] == NULL) {
+                    $query .= "`$key` is NULL";
+                    $query .= " AND ";
+                }
+            }
+            elseif (array_key_exists(0, $value)) {
                 if (is_numeric($value[0])) {
                     $query .= "`$key` in ";
                     $query .= self::arrayInNumeric($value);

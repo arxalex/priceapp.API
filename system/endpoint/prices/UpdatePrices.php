@@ -72,8 +72,6 @@ class UpdatePrices extends BaseEndpointBuilder
         $categoriesLinksFromDB = $this->_categoriesLinkService->getItemsFromDB();
         $itemsLinksFromDB = $this->_itemsLinkService->getItemsFromDB();
         $itemsFromDB = $this->_itemsService->getItemsFromDB();
-        $pricesFromDB = $this->_pricesService->getItemsFromDB();
-        $pricesHistoryFromDB = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday]]);
 
         $shops = [1, 2, 3];
         $map = [];
@@ -129,17 +127,16 @@ class UpdatePrices extends BaseEndpointBuilder
 
         $lastPoint = 0;
 
-        for($i = 0; $i < count($filials); $i++) {
-            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
+        for ($i = 0; $i < count($filials); $i++) {
+            $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filials[$i]->id]]);
 
-            if(count($pricesHistory) > 0){
+            if (count($pricesHistory) > 0) {
                 $lastPoint = $i;
             }
         }
 
-        for($i = $lastPoint; $i < count($filials); $i++) {
-            $pricesHistory = ListHelper::getMultipleByFields($pricesHistoryFromDB, ['filialid' => [$filials[$i]->id]]);
-            $prices = ListHelper::getMultipleByFields($pricesFromDB, ['filialid' => [$filials[$i]->id]]);
+        for ($i = $lastPoint; $i < count($filials); $i++) {
+            $pricesHistory = $this->_pricesHistoryService->getItemsFromDB(['date' => [$dateToday], 'filialid' => [$filials[$i]->id]]);
             $itemsLinks = ListHelper::getMultipleByFields($itemsLinksFromDB, ['shopid' => [$filials[$i]->shopid]]);
 
             $PAQs = [];
@@ -199,37 +196,29 @@ class UpdatePrices extends BaseEndpointBuilder
                 }
 
 
-                if (ListHelper::isObjectinArray($item, $prices, ["itemid", "shopid"])) {
-                    $priceObjects = $this->_pricesService->getItemsFromDB([
-                        "itemid" => [$item->itemid],
-                        "shopid" => [$item->shopid],
-                        "filialid" => [$filials[$i]->id]
-                    ]);
-                    if(count($priceObjects) > 0){
-                        $priceObject = $priceObjects[0];
-                        $priceObject->price = $price;
-                        $priceObject->quantity = $quantity;
-                        if ($price <= 0 || $quantity <= 0) {
-                            $this->_pricesService->deleteItem($priceObject);
-                            continue;
-                        } else {
-                            $this->_pricesService->updateItemInDB($priceObject);
-                        }
+                $priceObjects = $this->_pricesService->getItemsFromDB([
+                    "itemid" => [$item->itemid],
+                    "shopid" => [$item->shopid],
+                    "filialid" => [$filials[$i]->id]
+                ]);
+                if (count($priceObjects) > 0) {
+                    $priceObject = $priceObjects[0];
+                    $priceObject->price = $price;
+                    $priceObject->quantity = $quantity;
+                    if ($price <= 0 || $quantity <= 0) {
+                        $this->_pricesService->deleteItem($priceObject);
+                        continue;
+                    } else {
+                        $this->_pricesService->updateItemInDB($priceObject);
+                        $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filials[$i]->id));
                     }
-                    
-                    
                 } else {
                     if ($price <= 0 || $quantity <= 0) {
                         continue;
                     } else {
                         $this->_pricesService->insertItemToDB(new Price(null, $item->itemid, $item->shopid, $price, $filials[$i]->id, $quantity));
+                        $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filials[$i]->id));
                     }
-                }
-
-                if ($price <= 0 || $quantity <= 0) {
-                    continue;
-                } else {
-                    $this->_pricesHistoryService->insertItemToDB(new PriceHistory(null, $item->itemid, $item->shopid, $price, $dateToday, $filials[$i]->id));
                 }
             }
         }
