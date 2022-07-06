@@ -22,7 +22,6 @@ class DefaultEntitiesService
         $table = $this->tableName;
         $query = "select * from `$table` where id = $id";
         $connection = new Request($query);
-        echo $query ."\n";
         $connection->execute();
         $response = $connection->fetchObject($this->className);
         return $response;
@@ -32,7 +31,6 @@ class DefaultEntitiesService
         $table = $this->tableName;
         $query = "SELECT * FROM `$table` ORDER BY `id` DESC LIMIT 1";
         $connection = new Request($query);
-        echo $query ."\n";
         $connection->execute();
         $response = $connection->fetchObject($this->className);
         return $response;
@@ -56,7 +54,6 @@ class DefaultEntitiesService
             $query .= " LIMIT $limit OFFSET $offset";
         }
 
-        echo $query ."\n";
         $connection = new Request($query);
         $connection->execute();
         $response = $connection->fetchAll(PDO::FETCH_CLASS, $this->className);
@@ -66,7 +63,6 @@ class DefaultEntitiesService
     {
         $table = $this->tableName;
         $query = "INSERT INTO `$table` " . SqlHelper::insertObjects([$item]);
-        echo $query ."\n";
         return (new Request($query))->execute();
     }
     public function updateItemInDB($item): bool
@@ -77,7 +73,6 @@ class DefaultEntitiesService
             . " WHERE " . SqlHelper::whereCreate([
                 'id' => [$item->id]
             ]);            
-            echo $query ."\n";
         return (new Request($query))->execute();
     }
     public function orderItemsByRate(array $items, array $rates, int $max = null): array
@@ -138,7 +133,6 @@ class DefaultEntitiesService
         $query = "DELETE FROM `$table` WHERE " . SqlHelper::whereCreate([
             'id' => [$item->id]
         ]);
-        echo $query ."\n";
         return (new Request($query))->execute();
     }
     public function count(array $where = []) : int
@@ -156,7 +150,6 @@ class DefaultEntitiesService
             $query = "select count(*) from `$table`";
         }
 
-        echo $query ."\n";
         $connection = new Request($query);
         $connection->execute();
         $response = NumericHelper::toInt($connection->fetch()['count(*)']);
