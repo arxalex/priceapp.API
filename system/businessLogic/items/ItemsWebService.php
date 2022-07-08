@@ -2,6 +2,7 @@
 
 namespace businessLogic\items;
 
+use framework\database\ListHelper;
 use viewModels\ItemViewModel;
 use framework\entities\categories\CategoriesService;
 use framework\entities\filials\FilialsService;
@@ -33,13 +34,12 @@ class ItemsWebService
 
         $limit = $to - $from;
 
-        $items = $this->_itemsService->getItemsFromDB([
-            'category' => $categories
-        ], $from, $limit);
-
         $result = [];
 
         if ($xCord === null || $yCord === null || $radius === null) {
+            $items = $this->_itemsService->getItemsFromDB([
+                'category' => $categories
+            ], $from, $limit);
             foreach ($items as $item) {
                 $preResult = new ItemViewModel($item);
                 if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
@@ -48,6 +48,7 @@ class ItemsWebService
             }
         } else {
             $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
+            $items = $this->_itemsService->getItemsFromDBByFilials($categories, ListHelper::getColumn($filials, 'id'), $from, $limit);
             foreach ($items as $item) {
                 $preResult = new ItemViewModel($item, $filials);
                 if ($preResult->priceMin !== null && $preResult->priceMax !== null) {

@@ -47,7 +47,7 @@ class GetItems extends BaseEndpointBuilder
     {
         $this->_usersService->unavaliableRequest($this->getParam('cookie'), 1);
         if ($this->getParam('source') === 0) {
-            if ($this->getParam('method') == 'byId') {
+            if ($this->getParam('method') == 'byId' && $this->getParam('id') != null) {
                 $this->_usersService->unavaliableRequest($this->getParam('cookie'));
                 return $this->_itemsService->getItemFromDB($this->getParam('id'));
             } elseif ($this->getParam('method') == 'byNameAndCategory') {

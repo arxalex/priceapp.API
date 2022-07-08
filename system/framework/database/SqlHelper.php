@@ -136,7 +136,7 @@ class SqlHelper
     {
         $query = "";
         foreach ($where as $key => $value) {
-            if (count($value) == 1) {
+            if (is_array($value) && count($value) == 1) {
                 if (is_numeric($value[0])) {
                     $query .= "`$key` = ";
                     $query .= "'" . $value[0] . "'";

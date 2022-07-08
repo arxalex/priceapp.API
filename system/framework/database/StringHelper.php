@@ -38,6 +38,9 @@ class StringHelper
                 $result[] = $value;
             }
         }
+        foreach($result as $value){
+            $result[] = substr($value, 0, -1);
+        }
         return $result;
     }
     public static function stringCleaner($str): string
