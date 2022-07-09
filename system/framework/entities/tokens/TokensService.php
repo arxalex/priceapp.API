@@ -46,7 +46,7 @@ class TokensService extends DefaultEntitiesService
     }
     public function createToken(int $userid) : Token{
         $token = StringHelper::generateRsndomString(32);
-        $expires = time() + 604800;
+        $expires = time() + 3144960;
 
         $tokenInstance = new Token(null, $userid, $token, $expires);
 
