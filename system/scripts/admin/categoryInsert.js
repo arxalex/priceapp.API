@@ -17,11 +17,8 @@ Vue.component('categoryInsert', {
                         <input class="form-control" v-model="item.label" placeholder="Label">
                     </div>
                     <div class="position-relative flex-fill me-2">
-                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Parent</label>
-                        <select class="form-select" v-model="item.parent">
-                            <option disabled value="">Chose parent item</option>
-                            <option v-for="itemL in items" :value="itemL.id">{{ itemL.label }}</option>
-                        </select>
+                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label z-5">Parent</label>
+                        <selectSearch :elems="items" v-model="item.parent"></selectSearch>
                     </div>
                     <div class="position-relative mx-2 mt-2">
                         <label class="fw-light fs-min bg-white position-absolute input-label">isFilter</label>
@@ -35,20 +32,12 @@ Vue.component('categoryInsert', {
                         <input class="form-control" v-model="categoryLink.id" placeholder="Id">
                     </div>
                     <div class="position-relative flex-fill me-2">
-                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Category</label>
-                        <select class="form-select" v-model="categoryLink.categoryid">
-                            <option disabled>Chose item</option>
-                            <option :value="null">Null</option>
-                            <option v-for="itemL in items" :value="itemL.id">{{ itemL.label }}</option>
-                        </select>
+                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label z-5">Category</label>
+                        <selectSearch :elems="items" v-model="categoryLink.categoryid"></selectSearch>
                     </div>
                     <div class="position-relative flex-fill me-2">
-                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Shop</label>
-                        <select class="form-select" v-model="categoryLink.shopid">
-                            <option disabled>Chose shop</option>
-                            <option :value="null">Null</option>
-                            <option v-for="shop in shops" :value="shop.id">{{ shop.label }}</option>
-                        </select>
+                        <label class="ms-2 px-1 fw-light bg-white position-absolute input-label z-5">Shop</label>
+                        <selectSearch :elems="shops" v-model="categoryLink.shopid"></selectSearch>
                     </div>
                     <div class="position-relative flex-fill me-2">
                         <label class="ms-2 px-1 fw-light bg-white position-absolute input-label">Category shop id</label>

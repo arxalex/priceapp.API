@@ -15,14 +15,8 @@ Vue.component('Items', {
                     </div>
                 </p>
                 <div class="input-group mb-3">
-                    <select class="form-select" v-model="selectedShopId">
-                        <option selected disabled>Chose shop</option>
-                        <option v-for="shop in shops" v-bind:value="shop.id">{{ shop.label }}</option>
-                    </select>
-                    <select class="form-select" v-model="selectedCategoryId">
-                        <option selected disabled>Chose category</option>
-                        <option v-for="shopCategory in shopCategories" v-bind:value="shopCategory.id">{{ shopCategory.label }}</option>
-                    </select>
+                    <selectSearch :elems="shops" v-model="selectedShopId" style="flex: 1 1 auto"></selectSearch>
+                    <selectSearch :elems="shopCategories" v-model="selectedCategoryId" style="flex: 1 1 auto"></selectSearch>
                 </div>
                 <div class="input-group mb-3">
                     <button @click="get_items()" class="btn btn-primary mt-2 w-100">Get items</button>

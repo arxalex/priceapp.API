@@ -88,11 +88,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.categoryLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationItem.category">
-                                <option disabled>Chose category</option>
-                                <option :value="-1">New item</option>
-                                <option v-for="category in categories" v-bind:value="category.id">{{ category.label }}</option>
-                            </select>
+                            <selectSearch :elems="categories" v-model="destinationItem.category" style="flex: 1 1 auto"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('category')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
@@ -108,11 +104,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.packageLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationItem.package">
-                                <option disabled>Chose package</option>
-                                <option :value="-1">New item</option>
-                                <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
-                            </select>
+                            <selectSearch :elems="packages" v-model="destinationItem.package" style="flex: 1 1 auto"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('package')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
@@ -128,11 +120,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.brandLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationItem.brand">
-                                <option disabled>Chose brand</option>
-                                <option :value="-1">New item</option>
-                                <option v-for="brand in brands" :value="brand.id">{{ brand.label }}</option>
-                            </select>
+                            <selectSearch :elems="brands" v-model="destinationItem.brand" style="flex: 1 1 auto"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('brand')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
@@ -231,11 +219,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.countryLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <select class="form-select" v-model="destinationItem.additional.country">
-                                <option disabled>Chose country</option>
-                                <option :value="-1">New item</option>
-                                <option v-for="country in countries" :value="country.id">{{ country.label }}</option>
-                            </select>
+                            <selectSearch :elems="countries" v-model="destinationItem.additional.country" style="flex: 1 1 auto"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('country')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
@@ -416,7 +400,7 @@ Vue.component('itemsaver', {
                 this.$labels.countries.filter(value => value.id == this.destinationItem.additional.country) :
                 [{
                     id: null,
-                    label: "",
+                    label: this.originalLabels.countryLabel ?? "",
                     short: ""
                 }];
 
@@ -431,25 +415,29 @@ Vue.component('itemsaver', {
         categories: {
             cache: false,
             get: function () {
-                return this.$labels.categories;
+                var list = new Array({id:-1, label: "New item"});
+                return list.concat(this.$labels.categories);
             }
         },
         packages: {
             cache: false,
             get: function () {
-                return this.$labels.packages;
+                var list = new Array({id:-1, label: "New item"});
+                return list.concat(this.$labels.packages);
             }
         },
         brands: {
             cache: false,
             get: function () {
-                return this.$labels.brands;
+                var list = new Array({id:-1, label: "New item"});
+                return list.concat(this.$labels.brands);
             }
         },
         countries: {
             cache: false,
             get: function () {
-                return this.$labels.countries;
+                var list = new Array({id:-1, label: "New item"});
+                return list.concat(this.$labels.countries);
             }
         },
         consists: {

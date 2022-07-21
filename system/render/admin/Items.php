@@ -19,6 +19,7 @@ class Items extends BaseRenderBuilder
                 '<script src="/system/scripts/admin/brandInsert.js"></script>',
                 '<script src="/system/scripts/admin/consistInsert.js"></script>',
                 '<script src="/system/scripts/admin/countryInsert.js"></script>',
+                '<script src="/system/scripts/ui/selectSearch.js"></script>',
             ],
             'links' => [
                 '<link href="/system/style/admin/items.css" rel="stylesheet">'
