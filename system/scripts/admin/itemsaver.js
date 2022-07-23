@@ -268,6 +268,9 @@ Vue.component('itemsaver', {
         },
         originalLabels: {
             type: Object
+        },
+        helpers: {
+            type: Array
         }
     },
     methods: {
@@ -347,7 +350,23 @@ Vue.component('itemsaver', {
                     return response.data;
                 }
             });
-        }
+        },
+        insertOrUpdateBrand: async function (value) {
+            const insertUrl = "../be/brands/insert_brands";
+            const labelsUrl = "../be/items/get_labels";
+            var data = {
+                method: "InsertOrUpdateBrand",
+                brand: value
+            }
+            await this.getItemsFromDb(insertUrl, data);
+
+            var labels = await this.getItemsFromDb(labelsUrl, {
+                method: "GetAllLabels"
+            });
+            Vue.prototype.$labels = labels;
+            this.$labels = labels;
+            this.$emit("itemInserted");
+        },
     },
     computed: {
         sourceLabels: function () {
@@ -454,6 +473,34 @@ Vue.component('itemsaver', {
             shopid: this.originalLabels.shopId,
             inshopid: this.originalLabels.inShopId,
             pricefactor: 1
+        }
+        if(this.helpers[0].isActive){
+            if(this.sourceItem.units == 0.1 && this.sourceItem.package == 1){
+                this.destinationItem.units = 1;
+                this.itemLink.pricefactor = 10;
+            }
+        }
+        if(this.helpers[1].isActive){
+            if((this.sourceItem.units != 1 || !this.helpers[0].isActive) && this.sourceItem.package == 1){
+                this.sourceItem.package = this.helpers[1].package;
+            }
+        }
+        if(this.helpers[2].isActive){
+            if(this.originalLabels.brandLabel != null && 
+                this.originalLabels.brandLabel.length > 0 && 
+                this.originalLabels.brandLabel != this.destinationSelect.brand.label){
+                brandToInsert = {
+                    id: null,
+                    label: this.originalLabels.brandLabel,
+                    short: ""
+                };
+                this.insertOrUpdateBrand(brandToInsert).then((response) => {
+                    var brands = this.$labels.brands.filter(value => value.label == this.originalLabels.brandLabel);
+                    if(brands.length > 0){
+                        this.destinationItem.brand = brands[0].id;
+                    }
+                });
+            }
         }
     }
 });

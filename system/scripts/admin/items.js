@@ -1,9 +1,32 @@
 Vue.component('Items', {
     template: `
         <div>
+            <div class="position-fixed top-50 start-0 z-5 dropdown mx-3">
+                <button class="btn btn-secondary " type="button" id="dropdownAuto" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-sliders"></i>
+                </button>
+                <div class="dropdown-menu shadow-sm p-3 bg-body rounded" aria-labelledby="dropdownAuto" style="width: max-content;">
+                    <div class="input-group">
+                        <label class="fw-light fs-min bg-white input-label">Autoconvert to kg</label>
+                        <input class="form-check-input mx-2" type="checkbox" v-model="helpers[0].isActive">
+                    </div>
+                    <div class="input-group">
+                        <label class="fw-light fs-min bg-white input-label">Autopackage</label>
+                        <select class="form-select ms-1 py-0" v-model="helpers[1].package">
+                            <option v-for="package in packages" v-bind:value="package.id">{{ package.label }}</option>
+                        </select>
+                        <input class="form-check-input mx-2" type="checkbox" v-model="helpers[1].isActive">
+                    </div>
+                    <div class="input-group">
+                        <label class="fw-light fs-min bg-white input-label">Autobrand insert</label>
+                        <input class="form-check-input mx-2" type="checkbox" v-model="helpers[2].isActive">
+                    </div>
+                </div>
+            </div>
             <itemsaver :sourceItem="itemsaverModel.sourceItem"
                 :destinationItem="itemsaverModel.destinationItem"
                 :originalLabels="itemsaverModel.originalLabels"
+                :helpers="helpers"
                 @insert="inserted(true)"
                 @insertCanceled="inserted(false)"
                 v-if="itemsaverModel.saveActive"></itemsaver>
@@ -53,7 +76,19 @@ Vue.component('Items', {
                 destinationItem: null,
                 saveActive: false,
                 originalLabels: null
-            }
+            },
+            helpers: [
+                {
+                    isActive: true
+                },
+                {
+                    isActive: true,
+                    package: 5
+                },
+                {
+                    isActive: true
+                }
+            ]
         }
     },
     methods: {
@@ -136,8 +171,8 @@ Vue.component('Items', {
                 originalLabels: null
             }
         },
-        inserted: function(status) {
-            if(status){
+        inserted: function (status) {
+            if (status) {
                 this.get_items();
             }
             this.itemsaverModel.saveActive = false;
@@ -154,11 +189,15 @@ Vue.component('Items', {
             method: "GetAllLabels"
         });
         Vue.prototype.$labels = labels;
+        console.log(1)
         this.loaded = true;
     },
-    computed:{
-        shops: function(){
+    computed: {
+        shops: function () {
             return this.$labels.shops;
+        },
+        packages: function () {
+            return this.loaded ? this.$labels.packages : [];
         }
     }
 });
