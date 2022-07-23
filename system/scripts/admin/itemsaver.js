@@ -88,7 +88,7 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.categoryLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <selectSearch :elems="categories" v-model="destinationItem.category" style="flex: 1 1 auto"></selectSearch>
+                            <selectSearch :elems="categories" v-model="destinationItem.category" style="flex: 1 1 auto" :class="{ 'danger-shadow' : destinationItem.category == 0}"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('category')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
@@ -219,7 +219,8 @@ Vue.component('itemsaver', {
                             <span class="fw-light text-secondary">{{ originalLabels.countryLabel }}</span>
                         </td>
                         <td class="input-group">
-                            <selectSearch :elems="countries" v-model="destinationItem.additional.country" style="flex: 1 1 auto"></selectSearch>
+                            <selectSearch :elems="countries" v-model="destinationItem.additional.country" style="flex: 1 1 auto"
+                            :class="{ 'danger-shadow' : destinationItem.additional.country == 0}"></selectSearch>
                             <button class="btn btn-primary" @click="insertItem('country')">
                                 <i class="bi bi-plus-square"></i>
                             </button>
