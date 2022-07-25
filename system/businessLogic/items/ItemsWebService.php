@@ -91,30 +91,23 @@ class ItemsWebService
 
         $itemsNotTrimmed = $this->_itemsService->orderItemsByRate($itemsFromDB, $rates);
 
-        $items = [];
-
-        for ($i = $from; $i < $to && $i < count($itemsNotTrimmed); $i++) {
-            $items[] = $itemsNotTrimmed[$i];
-        }
-
         $result = [];
-
-        if ($xCord === null || $yCord === null || $radius === null) {
-            foreach ($items as $item) {
-                $preResult = new ItemViewModel($item);
+        if ($xCord === null || $yCord === null || $radius === null){
+            for ($i = $from; count($result) <= ($to - $from) && $i < count($itemsNotTrimmed); $i++) {
+                $preResult = new ItemViewModel($itemsNotTrimmed[$i]);
                 if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
                     $result[] = $preResult;
                 }
             }
         } else {
             $filials = $this->_filialsService->getFilialsByCord($xCord, $yCord, $radius);
-            foreach ($items as $item) {
-                $preResult = new ItemViewModel($item, $filials);
+            for ($i = $from; count($result) <= ($to - $from) && $i < count($itemsNotTrimmed); $i++) {                
+                $preResult = new ItemViewModel($itemsNotTrimmed[$i], $filials);
                 if ($preResult->priceMin !== null && $preResult->priceMax !== null) {
                     $result[] = $preResult;
                 }
             }
-        }
+        } 
 
         return $result;
     }
