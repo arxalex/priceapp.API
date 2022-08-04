@@ -10,7 +10,7 @@ public class MailService : IMailService
     private const string FromEmail = "info@arxalex.co";
     private const string MailHost = "mail.arxalex.co";
     private const string Domain = $"https://{DomainPretty}";
-    private const string DomainPretty = "priceapp.arxalex.co";
+    private const string DomainPretty = "priceapp.co";
     private readonly ILogger<MailService> _logger;
 
     public MailService(ILogger<MailService> logger)
@@ -22,7 +22,7 @@ public class MailService : IMailService
     {
         var smtpClient = new SmtpClient(MailHost);
         var message = new MailMessage();
-        var link = $"{Domain}/register/confirm_email?userid={userId}&token={token}";
+        var link = $"{Domain}/confirm_email?userid={userId}&token={token}";
         var credentials = new NetworkCredential(FromEmail, "nel8~VQ&BE1z");
 
         message.From = new MailAddress("info@arxalex.co", "priceapp");

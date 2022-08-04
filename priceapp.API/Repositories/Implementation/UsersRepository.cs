@@ -66,7 +66,7 @@ public class UsersRepository : IUsersRepository
         parameters.Add("@username", username, DbType.String);
         parameters.Add("@email", email, DbType.String);
 
-        const string query = $"select * from {Table} where `email` = @email and `username` = @username";
+        const string query = $"select * from {Table} where `email` = @email or `username` = @username";
         return (await connection.QueryAsync(query, parameters)).ToList().Count == 1;
     }
 

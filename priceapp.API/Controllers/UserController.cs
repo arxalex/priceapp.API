@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MySqlConnector;
 using priceapp.API.Controllers.Models.Request;
 using priceapp.API.Controllers.Models.Response;
 using priceapp.API.Models;
@@ -62,9 +63,35 @@ public class UserController : ControllerBase
             var response = new SuccessResponseModel {Status = true};
             return Ok(response);
         }
+        catch (MySqlException e)
+        {
+            var message = "";
+            var code = "WUR2";
+            if (e.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+            {
+                message = "This username or email already registered";
+                code = "IUR1";
+            }
+
+            var response = new ErrorResponseModel {Status = false, Message = message, Code = code};
+            return BadRequest(response);
+        }
+        catch (InvalidDataException e)
+        {
+            var message = "";
+            var code = "WUR2";
+            if (e.Message.Contains("already exists"))
+            {
+                message = "This username or email already registered";
+                code = "IUR1";
+            }
+
+            var response = new ErrorResponseModel {Status = false, Message = message, Code = code};
+            return BadRequest(response);
+        }
         catch (Exception e)
         {
-            var response = new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUR1"};
+            var response = new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUR3"};
             return BadRequest(response);
         }
     }
@@ -123,6 +150,22 @@ public class UserController : ControllerBase
         catch (Exception e)
         {
             return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUL1"});
+        }
+    }
+
+    [HttpGet("info")]
+    [Authorize]
+    public async Task<IActionResult> GetUserInfo()
+    {
+        try
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.Sid).Value);
+            var user = await _usersService.GetUserByIdAsync(userId);
+            return Ok(user);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUUi1"});
         }
     }
 }
