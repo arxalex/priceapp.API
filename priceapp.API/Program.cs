@@ -62,6 +62,7 @@ builder.Services.AddScoped<ICategoriesService, CategoriesService>();
 builder.Services.AddScoped<IConsistsService, ConsistsService>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IFilialsService, FilialsService>();
+builder.Services.AddScoped<IItemLinksService, ItemLinksService>();
 builder.Services.AddScoped<IItemsService, ItemsService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IPackagesService, PackagesService>();

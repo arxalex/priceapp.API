@@ -16,13 +16,14 @@ public class ForaService : IForaService
     private readonly ICategoriesService _categoriesService;
     private readonly RestClient _client;
     private readonly ICountriesService _countriesService;
-    private readonly IItemsService _itemsService;
+    private readonly IItemLinksService _itemLinksService;
     private readonly ILogger<ForaService> _logger;
 
-    public ForaService(IItemsService itemsService, IBrandsService brandsService, ICategoriesService categoriesService,
+    public ForaService(IItemLinksService itemLinksService, IBrandsService brandsService,
+        ICategoriesService categoriesService,
         ICountriesService countriesService, ILogger<ForaService> logger)
     {
-        _itemsService = itemsService;
+        _itemLinksService = itemLinksService;
         _brandsService = brandsService;
         _categoriesService = categoriesService;
         _countriesService = countriesService;
@@ -61,7 +62,7 @@ public class ForaService : IForaService
         var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
-        var inTableItems = await _itemsService.GetItemLinksAsync(1);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(1);
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();

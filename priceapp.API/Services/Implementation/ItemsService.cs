@@ -142,9 +142,4 @@ public class ItemsService : IItemsService
 
         return itemsList;
     }
-
-    public async Task<List<ItemLinkModel>> GetItemLinksAsync(int shopId)
-    {
-        return _mapper.Map<List<ItemLinkModel>>(await _itemsRepository.GetItemLinksByShopAsync(shopId));
-    }
 }

@@ -16,14 +16,15 @@ public class SilpoService : ISilpoService
     private readonly ICategoriesService _categoriesService;
     private readonly RestClient _client;
     private readonly ICountriesService _countriesService;
-    private readonly IItemsService _itemsService;
+    private readonly IItemLinksService _itemLinksService;
     private readonly ILogger<SilpoService> _logger;
 
 
-    public SilpoService(IItemsService itemsService, IBrandsService brandsService, ICategoriesService categoriesService,
+    public SilpoService(IItemLinksService itemLinksService, IBrandsService brandsService,
+        ICategoriesService categoriesService,
         ICountriesService countriesService, ILogger<SilpoService> logger)
     {
-        _itemsService = itemsService;
+        _itemLinksService = itemLinksService;
         _brandsService = brandsService;
         _categoriesService = categoriesService;
         _countriesService = countriesService;
@@ -63,7 +64,7 @@ public class SilpoService : ISilpoService
         var result = JsonSerializer.Deserialize<SilpoCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
-        var inTableItems = await _itemsService.GetItemLinksAsync(1);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(1);
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();

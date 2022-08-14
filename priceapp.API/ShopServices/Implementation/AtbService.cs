@@ -15,13 +15,13 @@ public class AtbService : IAtbService
     private readonly IBrandsService _brandsService;
     private readonly ICategoriesService _categoriesService;
     private readonly ICountriesService _countriesService;
-    private readonly IItemsService _itemsService;
+    private readonly IItemLinksService _itemLinksService;
     private readonly MySQLDbConnectionFactory _mySqlDbConnectionFactory;
 
-    public AtbService(IItemsService itemsService, ICategoriesService categoriesService,
+    public AtbService(IItemLinksService itemLinksService, ICategoriesService categoriesService,
         ICountriesService countriesService, IBrandsService brandsService)
     {
-        _itemsService = itemsService;
+        _itemLinksService = itemLinksService;
         _categoriesService = categoriesService;
         _countriesService = countriesService;
         _brandsService = brandsService;
@@ -46,7 +46,7 @@ public class AtbService : IAtbService
         parameters.Add("@offset", from, DbType.Int32);
         var resultItems = (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
 
-        var inTableItems = await _itemsService.GetItemLinksAsync(1);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(1);
         var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
