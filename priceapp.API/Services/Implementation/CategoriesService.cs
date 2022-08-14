@@ -20,4 +20,20 @@ public class CategoriesService : ICategoriesService
     {
         return _mapper.Map<List<CategoryModel>>(await _categoriesRepository.GetChildCategoriesAsync(baseCategoryId));
     }
+
+    public async Task<List<CategoryLinkModel>> GetCategoryLinksByShopAsync(int shopId)
+    {
+        return _mapper.Map<List<CategoryLinkModel>>(await _categoriesRepository.GetCategoryLinksByShopAsync(shopId));
+    }
+
+    public async Task<List<CategoryModel>> GetCategoriesAsync()
+    {
+        return _mapper.Map<List<CategoryModel>>(await _categoriesRepository.GetCategoriesAsync());
+    }
+
+    public async Task<CategoryModel> GetCategoryByShopAndInShopIdAsync(int shopId, int inShopId)
+    {
+        return _mapper.Map<CategoryModel>(
+            await _categoriesRepository.GetCategoryByShopAndInShopIdAsync(shopId, inShopId));
+    }
 }

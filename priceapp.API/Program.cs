@@ -27,7 +27,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         {
             var serviceProvider = builder.Services.BuildServiceProvider();
             var tokenService = serviceProvider.GetService<ITokenService>();
-            if (!tokenService.IsCurrentTokenActive().Result) context.Fail("Unauthorized");
+            if (!tokenService!.IsCurrentTokenActive().Result) context.Fail("Unauthorized");
 
             return Task.CompletedTask;
         }
@@ -57,10 +57,15 @@ builder.Services.AddSingleton(new JWTSetting
 });
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+builder.Services.AddScoped<IBrandsService, BrandsService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<IConsistsService, ConsistsService>();
+builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IFilialsService, FilialsService>();
 builder.Services.AddScoped<IItemsService, ItemsService>();
 builder.Services.AddScoped<IMailService, MailService>();
+builder.Services.AddScoped<IPackagesService, PackagesService>();
+builder.Services.AddScoped<IShopsService, ShopsService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
@@ -68,16 +73,21 @@ builder.Services.AddScoped<ISilpoService, SilpoService>();
 builder.Services.AddScoped<IAtbService, AtbService>();
 builder.Services.AddScoped<IForaService, ForaService>();
 
+builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<IConsistsRepository, ConsistsRepository>();
+builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IFilialsRepository, FilialsRepository>();
 builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
+builder.Services.AddScoped<IPackagesRepository, PackagesRepository>();
+builder.Services.AddScoped<IShopsRepository, ShopsRepository>();
 builder.Services.AddScoped<ITokensRepository, TokensRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "CorsPolicy",
-        builder => builder.WithOrigins("http://localhost:4200")
+        corsPolicyBuilder => corsPolicyBuilder.WithOrigins("http://localhost:4200")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials());

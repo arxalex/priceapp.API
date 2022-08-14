@@ -20,4 +20,6 @@ public interface IItemsService
     Task<List<ItemModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to);
     Task<ItemExtendedModel> GetItemExtendedByIdAsync(int id);
     Task<ItemExtendedModel> GetItemExtendedByIdAndLocationAsync(int id, double xCord, double yCord, double radius);
+    Task<List<List<ItemModel>>> SearchMultipleItemsAsync(List<string> searchList, int from, int to);
+    Task<List<ItemLinkModel>> GetItemLinksAsync(int shopId);
 }

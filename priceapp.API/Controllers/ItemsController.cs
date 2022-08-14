@@ -96,6 +96,16 @@ public class ItemsController : ControllerBase
         return Ok(await _itemsService.SearchItemsAsync(model.Search, from, to));
     }
 
+    [HttpPost("search/multiple")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> SearchMultipleItems(
+        [FromQuery] int from,
+        [FromQuery] int to,
+        [FromBody] List<string> model)
+    {
+        return Ok(await _itemsService.SearchMultipleItemsAsync(model, from, to));
+    }
+
     [HttpGet("shop/{shopId:int}/category/{categoryId:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetItemsByShop([FromRoute] int shopId,

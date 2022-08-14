@@ -126,4 +126,25 @@ public class ItemsService : IItemsService
         return _mapper.Map<ItemExtendedModel>(
             await _itemsRepository.GetItemExtendedByLocationAsync(id, filials.Select(x => x.Id)));
     }
+
+    public async Task<List<List<ItemModel>>> SearchMultipleItemsAsync(List<string> searchList, int from, int to)
+    {
+        var itemsList = new List<List<ItemModel>>();
+        foreach (var search in searchList)
+        {
+            var keywords = StringUtil.NameToKeywords(search);
+            var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsByKeywordsAsync(keywords));
+
+            var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+
+            itemsList.Add(items.OrderBy(x => rates[x.Id]).ToList().GetRange(from, to - from));
+        }
+
+        return itemsList;
+    }
+
+    public async Task<List<ItemLinkModel>> GetItemLinksAsync(int shopId)
+    {
+        return _mapper.Map<List<ItemLinkModel>>(await _itemsRepository.GetItemLinksByShopAsync(shopId));
+    }
 }

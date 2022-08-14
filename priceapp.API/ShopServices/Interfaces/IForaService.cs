@@ -1,8 +1,8 @@
-﻿using priceapp.API.ShopServices.Models;
+﻿using priceapp.API.Models;
 
 namespace priceapp.API.ShopServices.Interfaces;
 
 public interface IForaService
 {
-    Task<ItemForaModel> GetItemsByCategoryAsync(int categoryId, int from, int to);
+    Task<List<ItemShopModel>> GetItemsByCategoryAsync(int categoryId, int from, int to, int filialId = 310);
 }

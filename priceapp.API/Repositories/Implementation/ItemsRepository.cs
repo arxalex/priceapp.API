@@ -9,6 +9,7 @@ namespace priceapp.API.Repositories.Implementation;
 public class ItemsRepository : IItemsRepository
 {
     private const string Table = "pa_items";
+    private const string TableLink = "pa_items_link";
     private readonly MySQLDbConnectionFactory _mySqlDbConnectionFactory;
 
     public ItemsRepository(MySQLDbConnectionFactory mySqlDbConnectionFactory)
@@ -237,5 +238,17 @@ public class ItemsRepository : IItemsRepository
         ";
 
         return await connection.QueryFirstAsync<ItemExtendedRepositoryModel>(query, parameters);
+    }
+
+    public async Task<List<ItemLinkRepositoryModel>> GetItemLinksByShopAsync(int shopId)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {TableLink} where `shopid` = @shopId";
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@shopId", shopId, DbType.Int32);
+
+        return (await connection.QueryAsync<ItemLinkRepositoryModel>(query, parameters)).ToList();
     }
 }
