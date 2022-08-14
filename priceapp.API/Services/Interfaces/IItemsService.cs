@@ -17,7 +17,7 @@ public interface IItemsService
         double radius, int from, int to);
 
     Task<List<ItemModel>> SearchItemsByCategoryAsync(string search, int categoryId, int from, int to);
-    Task<List<ItemModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to);
+    Task<List<ItemShopModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to);
     Task<ItemExtendedModel> GetItemExtendedByIdAsync(int id);
     Task<ItemExtendedModel> GetItemExtendedByIdAndLocationAsync(int id, double xCord, double yCord, double radius);
     Task<List<List<ItemModel>>> SearchMultipleItemsAsync(List<string> searchList, int from, int to);

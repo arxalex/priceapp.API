@@ -75,4 +75,19 @@ public class CategoriesRepository : ICategoriesRepository
 
         return await connection.QueryFirstAsync<CategoryRepositoryModel>(query, parameters);
     }
+
+    public async Task<CategoryLinkRepositoryModel> GetCategoryLinkByShopAndInShopIdAsync(int shopId, int inShopId)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = @$"select * 
+                                from {TableLinks}
+                                where shopid = @shopId
+                                and categoryshopid = @categoryshopid
+                                limit 1";
+        var parameters = new DynamicParameters();
+        parameters.Add("@shopId", shopId, DbType.Int32);
+        parameters.Add("@categoryshopid", inShopId, DbType.Int32);
+
+        return await connection.QueryFirstAsync<CategoryLinkRepositoryModel>(query, parameters);
+    }
 }

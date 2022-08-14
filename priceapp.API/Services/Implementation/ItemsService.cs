@@ -35,9 +35,16 @@ public class ItemsService : IItemsService
         var keywords = StringUtil.NameToKeywords(search);
         var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsByKeywordsAsync(keywords));
 
-        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
-        return items.OrderBy(x => rates[x.Id]).ToList().GetRange(from, to - from);
+        if (items.Count <= from)
+        {
+            return new List<ItemModel>();
+        }
+            
+        var count = items.Count > to ? to - from : items.Count - from;
+        
+        return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
     public async Task<ItemModel> GetItemByIdAsync(int id)
@@ -70,9 +77,16 @@ public class ItemsService : IItemsService
         var keywords = StringUtil.NameToKeywords(search);
         var items = _mapper.Map<List<ItemExtendedModel>>(
             await _itemsRepository.SearchItemsExtendedAsync(keywords));
-        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
-        return items.OrderBy(x => rates[x.Id]).ToList().GetRange(from, to - from);
+        if (items.Count <= from)
+        {
+            return new List<ItemExtendedModel>();
+        }
+            
+        var count = items.Count > to ? to - from : items.Count - from;
+        
+        return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
     public async Task<List<ItemExtendedModel>> SearchItemsExtendedByLocationAsync(string search, double xCord,
@@ -83,9 +97,16 @@ public class ItemsService : IItemsService
         var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
         var items = _mapper.Map<List<ItemExtendedModel>>(
             await _itemsRepository.SearchItemsExtendedByLocationAsync(keywords, filials.Select(x => x.Id)));
-        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
-        return items.OrderBy(x => rates[x.Id]).ToList().GetRange(from, to - from);
+        if (items.Count <= from)
+        {
+            return new List<ItemExtendedModel>();
+        }
+            
+        var count = items.Count > to ? to - from : items.Count - from;
+        
+        return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
     public async Task<List<ItemModel>> SearchItemsByCategoryAsync(string search, int categoryId, int from, int to)
@@ -96,20 +117,27 @@ public class ItemsService : IItemsService
             await _itemsRepository.GetItemsByKeywordsAndCategoryAsync(keywords,
                 categories.Select(x => x.Id).Prepend(categoryId)));
 
-        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
-        var itemsOrdered = items.OrderBy(x => rates[x.Id]).ToList();
+        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
+        var itemsOrdered = items.OrderByDescending(x => rates[x.Id]).ToList();
 
-        return itemsOrdered.GetRange(from, to - from);
+        if (items.Count <= from)
+        {
+            return new List<ItemModel>();
+        }
+            
+        var count = items.Count > to ? to - from : items.Count - from;
+        
+        return itemsOrdered.GetRange(from, count);
     }
 
-    public async Task<List<ItemModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to)
+    public async Task<List<ItemShopModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to)
     {
         return shopId switch
         {
-            1 => _mapper.Map<List<ItemModel>>(await _silpoService.GetItemsByCategoryAsync(categoryId, from, to)),
-            2 => _mapper.Map<List<ItemModel>>(await _foraService.GetItemsByCategoryAsync(categoryId, from, to)),
-            3 => _mapper.Map<List<ItemModel>>(await _atbService.GetItemsByCategoryAsync(categoryId, from, to)),
-            _ => new List<ItemModel>()
+            1 => _mapper.Map<List<ItemShopModel>>(await _silpoService.GetItemsByCategoryAsync(categoryId, from, to)),
+            2 => _mapper.Map<List<ItemShopModel>>(await _foraService.GetItemsByCategoryAsync(categoryId, from, to)),
+            3 => _mapper.Map<List<ItemShopModel>>(await _atbService.GetItemsByCategoryAsync(categoryId, from, to)),
+            _ => new List<ItemShopModel>()
         };
     }
 
@@ -135,9 +163,16 @@ public class ItemsService : IItemsService
             var keywords = StringUtil.NameToKeywords(search);
             var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsByKeywordsAsync(keywords));
 
-            var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+            var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
-            itemsList.Add(items.OrderBy(x => rates[x.Id]).ToList().GetRange(from, to - from));
+            if (items.Count <= from)
+            {
+                itemsList.Add(new List<ItemModel>());
+                continue;
+            }
+            
+            var count = items.Count > to ? to - from : items.Count - from;
+            itemsList.Add(items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count));
         }
 
         return itemsList;

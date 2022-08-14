@@ -1,4 +1,6 @@
-﻿namespace priceapp.API.Utils;
+﻿using System.Globalization;
+
+namespace priceapp.API.Utils;
 
 public static class NumericHelper
 {
@@ -16,6 +18,6 @@ public static class NumericHelper
 
         var label = str[number.Length..];
 
-        return (double.Parse(number), label);
+        return (double.Parse(number, CultureInfo.InvariantCulture), label);
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Connections;
 using priceapp.API.Models;
@@ -70,37 +71,36 @@ public class SilpoService : ISilpoService
         var items = new List<ItemShopModel>();
         foreach (var value in handledResult)
         {
-            var packageObject = value.parameters.FirstOrDefault(x => x.key == "packageType");
+            var packageObject = value.parameters?.FirstOrDefault(x => x.key == "packageType");
             var packageLabel = packageObject != null ? packageObject.value : "";
             var package = 0;
             var (units, unitShort) = NumericHelper.ParseNumberString(value.unit);
-            if (value.parameters.FirstOrDefault(x => x.key == "isWeighted") != null) package = 1;
+            if (value.parameters?.FirstOrDefault(x => x.key == "isWeighted") != null) package = 1;
 
-            var brandObject = value.parameters.FirstOrDefault(x => x.key == "trademark");
+            var brandObject = value.parameters?.FirstOrDefault(x => x.key == "trademark");
             var brandLabel = "Без ТМ";
             if (brandObject != null) brandLabel = brandObject.value;
 
-            var calorieObject = value.parameters.FirstOrDefault(x => x.key == "calorie");
+            var calorieObject = value.parameters?.FirstOrDefault(x => x.key == "calorie");
             double? calorie = null;
-            if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'));
+            if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var carbohydratesObject = value.parameters.FirstOrDefault(x => x.key == "carbohydrates");
+            var carbohydratesObject = value.parameters?.FirstOrDefault(x => x.key == "carbohydrates");
             double? carbohydrates = null;
-            if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'));
-
-            var fatsObject = value.parameters.FirstOrDefault(x => x.key == "fats");
+            if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
+            var fatsObject = value.parameters?.FirstOrDefault(x => x.key == "fats");
             double? fats = null;
-            if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'));
+            if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var proteinsObject = value.parameters.FirstOrDefault(x => x.key == "proteins");
+            var proteinsObject = value.parameters?.FirstOrDefault(x => x.key == "proteins");
             double? proteins = null;
-            if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'));
+            if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var alcoholObject = value.parameters.FirstOrDefault(x => x.key == "alcoholContent");
+            var alcoholObject = value.parameters?.FirstOrDefault(x => x.key == "alcoholContent");
             double? alcohol = null;
-            if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'));
+            if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var countryObject = value.parameters.FirstOrDefault(x => x.key == "country");
+            var countryObject = value.parameters?.FirstOrDefault(x => x.key == "country");
             var country = "";
             if (countryObject != null) country = countryObject.value;
 
@@ -131,16 +131,26 @@ public class SilpoService : ISilpoService
             CategoryModel? categoryModel;
             try
             {
-                categoryModel = await _categoriesService.GetCategoryByShopAndInShopIdAsync(1, value.categories[^1].id);
+                categoryModel = await _categoriesService.GetCategoryAsync(1, value.categories[^1].id);
             }
             catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
                 categoryModel = null;
             }
+            CategoryLinkModel? categoryLinkModel;
+            try
+            {
+                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(1, value.categories[^1].id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                categoryLinkModel = null;
+            }
 
-            var brandModel = await _brandsService.SearchBrandAsync(brandLabel);
-            var countryModel = await _countriesService.SearchCountryAsync(country);
+            var brandModel = brandLabel.Length > 0 ? await _brandsService.SearchBrandAsync(brandLabel) : null;
+            var countryModel = country.Length > 0 ? await _countriesService.SearchCountryAsync(country) : null;
 
             items.Add(new ItemShopModel
             {
@@ -166,7 +176,7 @@ public class SilpoService : ISilpoService
                 Brand = brandLabel,
                 Package = packageLabel,
                 Country = country,
-                Category = value.categories[^1].name,
+                Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
                 Url = "https://shop.silpo.ua/product/" + value.slug
             });
         }

@@ -27,8 +27,8 @@ public class CountriesService : ICountriesService
         var keywords = StringUtil.NameToKeywords(search);
         var items = _mapper.Map<List<CountryModel>>(await _countriesRepository.GetCountriesByKeywordsAsync(keywords));
 
-        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => x.Label).ToList());
+        var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
-        return items.OrderBy(x => rates[x.Id]).ToList().FirstOrDefault();
+        return items.OrderByDescending(x => rates[x.Id]).ToList().FirstOrDefault();
     }
 }

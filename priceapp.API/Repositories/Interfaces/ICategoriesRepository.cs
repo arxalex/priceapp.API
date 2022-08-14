@@ -8,4 +8,5 @@ public interface ICategoriesRepository
     Task<List<CategoryLinkRepositoryModel>> GetCategoryLinksByShopAsync(int shopId);
     Task<List<CategoryRepositoryModel>> GetCategoriesAsync();
     Task<CategoryRepositoryModel> GetCategoryByShopAndInShopIdAsync(int shopId, int inShopId);
+    Task<CategoryLinkRepositoryModel> GetCategoryLinkByShopAndInShopIdAsync(int shopId, int inShopId);
 }

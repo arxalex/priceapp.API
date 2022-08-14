@@ -23,7 +23,7 @@ public class SilpoItemModel
     public bool? ecoPacking { get; set; }
     public string? recommendationBlockName { get; set; }
     public object? facings { get; set; }
-    public List<SilpoItemParameters> parameters { get; set; }
+    public List<SilpoItemParameters>? parameters { get; set; }
     public List<SilpoItemPrices> prices { get; set; }
     public List<SilpoPromotion> promotions { get; set; }
     public double? rating { get; set; }

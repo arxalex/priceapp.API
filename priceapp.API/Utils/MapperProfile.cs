@@ -12,12 +12,13 @@ public class MapperProfile : Profile
         CreateMap<ItemRepositoryModel, ItemModel>().BeforeMap((s, d) =>
         {
             d.Additional = s.additional != null ? JsonSerializer.Deserialize<object>(s.additional) : null;
-            d.Consist = s.consist != null ? JsonSerializer.Deserialize<List<int>>(s.consist) : null;
+            //d.Consist = s.consist != null ? JsonSerializer.Deserialize<int[]>(s.consist) : null;
+            //d.Consist = null;
         });
         CreateMap<ItemModel, ItemRepositoryModel>().BeforeMap((s, d) =>
         {
             d.additional = JsonSerializer.Serialize(s.Additional);
-            d.consist = JsonSerializer.Serialize(s.Consist);
+            //d.consist = JsonSerializer.Serialize(s.Consist);
             d.barcodes = null;
         });
 
@@ -29,7 +30,7 @@ public class MapperProfile : Profile
         CreateMap<ItemExtendedRepositoryModel, ItemExtendedModel>().BeforeMap((s, d) =>
         {
             d.Additional = JsonSerializer.Deserialize<object>(s.additional);
-            d.Consist = JsonSerializer.Deserialize<List<int>>(s.consist);
+            d.Consist = JsonSerializer.Deserialize<int[]>(s.consist);
         });
 
         CreateMap<CategoryModel, CategoryRepositoryModel>();

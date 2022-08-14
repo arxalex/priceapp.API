@@ -14,7 +14,7 @@ public class ItemExtendedModel
     public string PackageUnits { get; set; }
     public double Units { get; set; }
     public double Term { get; set; }
-    public List<int>? Consist { get; set; }
+    public int[]? Consist { get; set; }
     public double? Calorie { get; set; }
     public double? Carbohydrates { get; set; }
     public double? Fat { get; set; }

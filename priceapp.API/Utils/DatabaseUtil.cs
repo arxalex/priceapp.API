@@ -9,11 +9,14 @@ public static class DatabaseUtil
         string parameterPrefix = "like")
     {
         var i = 0;
-        var query = likeArray.Aggregate((current, value) =>
+        var query = "";
+
+        foreach (var value in likeArray)
         {
             dynamicParameters.Add($"@{parameterPrefix}{i}", "%" + value + "%", DbType.String);
-            return current + $"{field} like @{parameterPrefix}{i++} OR ";
-        });
+            query += $"{field} like @{parameterPrefix}{i++} OR ";
+        }
+        
         return query[..^3];
     }
 

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Globalization;
+using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Connections;
 using priceapp.API.Models;
@@ -62,7 +63,7 @@ public class ForaService : IForaService
         var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
-        var inTableItems = await _itemLinksService.GetItemLinksAsync(1);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(2);
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
@@ -80,23 +81,24 @@ public class ForaService : IForaService
 
             var calorieObject = value.parameters.FirstOrDefault(x => x.key == "calorie");
             double? calorie = null;
-            if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'));
+            
+            if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var carbohydratesObject = value.parameters.FirstOrDefault(x => x.key == "carbohydrates");
             double? carbohydrates = null;
-            if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'));
+            if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var fatsObject = value.parameters.FirstOrDefault(x => x.key == "fats");
             double? fats = null;
-            if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'));
+            if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var proteinsObject = value.parameters.FirstOrDefault(x => x.key == "proteins");
             double? proteins = null;
-            if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'));
+            if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var alcoholObject = value.parameters.FirstOrDefault(x => x.key == "alcoholContent");
             double? alcohol = null;
-            if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'));
+            if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var countryObject = value.parameters.FirstOrDefault(x => x.key == "country");
             var country = "";
@@ -131,16 +133,26 @@ public class ForaService : IForaService
             CategoryModel? categoryModel;
             try
             {
-                categoryModel = await _categoriesService.GetCategoryByShopAndInShopIdAsync(1, value.categories[^1].id);
+                categoryModel = await _categoriesService.GetCategoryAsync(2, value.categories[^1].id);
             }
             catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
                 categoryModel = null;
             }
+            CategoryLinkModel? categoryLinkModel;
+            try
+            {
+                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(1, value.categories[^1].id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                categoryLinkModel = null;
+            }
 
-            var brandModel = await _brandsService.SearchBrandAsync(brandLabel);
-            var countryModel = await _countriesService.SearchCountryAsync(country);
+            var brandModel = brandLabel.Length > 0 ? await _brandsService.SearchBrandAsync(brandLabel) : null;
+            var countryModel = country.Length > 0 ? await _countriesService.SearchCountryAsync(country) : null;
 
             items.Add(new ItemShopModel
             {
@@ -166,7 +178,7 @@ public class ForaService : IForaService
                 Brand = brandLabel,
                 Package = packageLabel,
                 Country = country,
-                Category = value.categories[^1].name,
+                Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
                 Url = "https://shop.silpo.ua/product/" + value.slug
             });
         }

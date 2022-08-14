@@ -20,7 +20,7 @@ public class CategoriesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetCategoryLinksByShopAsync([FromRoute] int shopId)
     {
-        return Ok(await _categoriesService.GetCategoryLinksByShopAsync(shopId));
+        return Ok(await _categoriesService.GetCategoryLinksAsync(shopId));
     }
 
     [HttpGet("")]

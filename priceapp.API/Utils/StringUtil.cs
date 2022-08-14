@@ -45,17 +45,18 @@ public static class StringUtil
 
     public static string StringCleaner(string str)
     {
-        var reg = new Regex(@"~[^\p{Cyrillic}a-z0-9_\s-]+~ui");
+        var reg = new Regex(@"~[а-яА-ЯёЁa-zA-Z0-9_\s-]+~ui");
         return reg.Replace(str, "");
     }
 
-    public static Dictionary<int, int> RateItemsByKeywords(string label, List<string> itemLabels)
+    public static Dictionary<int, int> RateItemsByKeywords(string label, List<(int Id, string Label)> itemIdsAndLabels)
     {
         var keywords = NameToKeywords(StringCleaner(label));
-        var rates = new Dictionary<int, int>(itemLabels.Count);
-        for (var key = 0; key < itemLabels.Count; key++)
+        var rates = new Dictionary<int, int>(itemIdsAndLabels.Count);
+        for (var key = 0; key < itemIdsAndLabels.Count; key++)
         {
-            var itemLabel = itemLabels[key];
+            var itemLabel = itemIdsAndLabels[key].Label;
+            var itemId = itemIdsAndLabels[key].Id;
             var itemKeywords = NameToKeywords(StringCleaner(itemLabel));
             var tempRate = 0;
             tempRate += itemLabel == label ? keywords.Count * 8 : 0;
@@ -81,7 +82,7 @@ public static class StringUtil
 
             tempRate +=
                 (from itemStr in itemKeywords from labelStr in keywords select labelStr == itemStr ? 1 : 0).Sum();
-            rates[key] = tempRate;
+            rates[itemId] = tempRate;
         }
 
         return rates;

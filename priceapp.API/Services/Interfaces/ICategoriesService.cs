@@ -5,7 +5,8 @@ namespace priceapp.API.Services.Interfaces;
 public interface ICategoriesService
 {
     Task<List<CategoryModel>> GetChildCategoriesAsync(int baseCategoryId);
-    Task<List<CategoryLinkModel>> GetCategoryLinksByShopAsync(int shopId);
+    Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int shopId);
     Task<List<CategoryModel>> GetCategoriesAsync();
-    Task<CategoryModel> GetCategoryByShopAndInShopIdAsync(int shopId, int inShopId);
+    Task<CategoryModel> GetCategoryAsync(int shopId, int inShopId);
+    Task<CategoryLinkModel> GetCategoryLinkAsync(int shopId, int inShopId);
 }

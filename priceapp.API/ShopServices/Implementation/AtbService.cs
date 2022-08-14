@@ -17,14 +17,16 @@ public class AtbService : IAtbService
     private readonly ICountriesService _countriesService;
     private readonly IItemLinksService _itemLinksService;
     private readonly MySQLDbConnectionFactory _mySqlDbConnectionFactory;
+    private readonly ILogger<AtbService> _logger;
 
     public AtbService(IItemLinksService itemLinksService, ICategoriesService categoriesService,
-        ICountriesService countriesService, IBrandsService brandsService)
+        ICountriesService countriesService, IBrandsService brandsService, ILogger<AtbService> logger)
     {
         _itemLinksService = itemLinksService;
         _categoriesService = categoriesService;
         _countriesService = countriesService;
         _brandsService = brandsService;
+        _logger = logger;
         _mySqlDbConnectionFactory = new MySQLDbConnectionFactory(
             "server=priceapp.crjdcmsi5oyh.eu-central-1.rds.amazonaws.com;user=priceapp_admin;password=h9Fht9EiuE46AD7;database=arxalexc_priceapp_proxy");
     }
@@ -46,14 +48,24 @@ public class AtbService : IAtbService
         parameters.Add("@offset", from, DbType.Int32);
         var resultItems = (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
 
-        var inTableItems = await _itemLinksService.GetItemLinksAsync(1);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(3);
         var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
         foreach (var value in handledResult)
         {
-            var categoryModel = await _categoriesService.GetCategoryByShopAndInShopIdAsync(1, value.category);
-            var brandModel = value.brand != null
+            var categoryModel = await _categoriesService.GetCategoryAsync(3, value.category);
+            CategoryLinkModel? categoryLinkModel;
+            try
+            {
+                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(3, value.category);
+            }
+            catch (Exception e)
+            {
+                _logger.LogInformation(e.Message);
+                categoryLinkModel = null;
+            }
+            var brandModel = value.brand != null && value.brand.Length > 0
                 ? await _brandsService.SearchBrandAsync(value.brand)
                 : new BrandModel
                 {
@@ -61,7 +73,7 @@ public class AtbService : IAtbService
                     Label = "Без ТМ",
                     Short = "Без ТМ"
                 };
-            var countryModel = value.country != null
+            var countryModel = value.country != null && value.country.Length > 0
                 ? await _countriesService.SearchCountryAsync(value.country)
                 : new CountryModel
                 {
@@ -86,7 +98,7 @@ public class AtbService : IAtbService
                 InShopId = value.id,
                 Brand = value.brand,
                 Country = value.country,
-                Category = value.categorylabel,
+                Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categorylabel,
                 Url = "https://zakaz.atbmarket.com/product/1154/" + value.internalid
             });
         }
