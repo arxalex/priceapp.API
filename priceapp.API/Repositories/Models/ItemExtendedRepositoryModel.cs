@@ -14,12 +14,12 @@ public class ItemExtendedRepositoryModel
     public string packageUnits { get; set; }
     public double units { get; set; }
     public double term { get; set; }
-    public string consist { get; set; }
+    public string? consist { get; set; }
     public double? calorie { get; set; }
     public double? carbohydrates { get; set; }
     public double? fat { get; set; }
     public double? proteins { get; set; }
-    public string additional { get; set; }
+    public string? additional { get; set; }
     public double priceMin { get; set; }
     public double priceMax { get; set; }
 }
