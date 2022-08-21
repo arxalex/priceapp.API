@@ -27,4 +27,8 @@ public interface IItemsRepository
     Task<ItemExtendedRepositoryModel> GetItemExtendedAsync(int id);
     Task<ItemExtendedRepositoryModel> GetItemExtendedByLocationAsync(int id, IEnumerable<int> filialIds);
     Task<List<ItemLinkRepositoryModel>> GetItemLinksByShopAsync(int shopId);
+    Task InsertItemAsync(ItemRepositoryModel model);
+    Task UpdateItemAsync(ItemRepositoryModel model);
+    Task InsertItemLinkAsync(ItemLinkRepositoryModel model);
+    Task<ItemRepositoryModel> GetLastInsertedItemAsync();
 }

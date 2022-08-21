@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
@@ -21,5 +22,25 @@ public class ConsistsController : ControllerBase
     public async Task<IActionResult> GetConsistsAsync()
     {
         return Ok(await _consistsService.GetConsistsAsync());
+    }
+    
+    [HttpPost("")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertConsistAsync([FromBody] ConsistModel model)
+    {
+        await _consistsService.InsertConsistAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("{id:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> UpdateConsistAsync([FromBody] ConsistModel model, [FromRoute] int id)
+    {
+        if (model.Id != id)
+        {
+            return BadRequest();
+        }
+        await _consistsService.UpdateConsistAsync(model);
+        return Ok();
     }
 }

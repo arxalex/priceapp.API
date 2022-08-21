@@ -9,4 +9,8 @@ public interface ICategoriesService
     Task<List<CategoryModel>> GetCategoriesAsync();
     Task<CategoryModel> GetCategoryAsync(int shopId, int inShopId);
     Task<CategoryLinkModel> GetCategoryLinkAsync(int shopId, int inShopId);
+    Task InsertCategoryAsync(CategoryModel model);
+    Task InsertCategoryLinkAsync(CategoryLinkModel model);
+    Task UpdateCategoryAsync(CategoryModel model);
+    Task UpdateCategoryLinkAsync(CategoryLinkModel model);
 }

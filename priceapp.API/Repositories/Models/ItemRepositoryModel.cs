@@ -3,8 +3,8 @@
 public class ItemRepositoryModel
 {
     public int id { get; set; }
-    public string? label { get; set; }
-    public string? image { get; set; }
+    public string label { get; set; }
+    public string image { get; set; }
     public int category { get; set; }
     public int brand { get; set; }
     public int package { get; set; }

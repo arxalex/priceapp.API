@@ -9,4 +9,5 @@ public class ItemShopModel
     public string? Country { get; set; }
     public string? Category { get; set; }
     public string Url { get; set; }
+    public int ShopId { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
+using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Services.Implementation;
@@ -19,5 +20,15 @@ public class PackagesService : IPackagesService
     public async Task<List<PackageModel>> GetPackagesAsync()
     {
         return _mapper.Map<List<PackageModel>>(await _packagesRepository.GetPackagesAsync());
+    }
+
+    public async Task InsertPackageAsync(PackageModel model)
+    {
+        await _packagesRepository.InsertPackageAsync(_mapper.Map<PackageRepositoryModel>(model));
+    }
+
+    public async Task UpdatePackageAsync(PackageModel model)
+    {
+        await _packagesRepository.UpdatePackageAsync(_mapper.Map<PackageRepositoryModel>(model));
     }
 }

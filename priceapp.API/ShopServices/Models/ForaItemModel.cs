@@ -23,7 +23,7 @@ public class ForaItemModel
     public bool? ecoPacking { get; set; }
     public string? recommendationBlockName { get; set; }
     public object? facings { get; set; }
-    public List<ForaItemParameters> parameters { get; set; }
+    public List<ForaItemParameters>? parameters { get; set; }
     public List<ForaItemPrices> prices { get; set; }
     public List<ForaPromotion> promotions { get; set; }
     public double? rating { get; set; }

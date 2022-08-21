@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
@@ -21,5 +22,25 @@ public class PackagesController : ControllerBase
     public async Task<IActionResult> GetPackagesAsync()
     {
         return Ok(await _packagesService.GetPackagesAsync());
+    }
+    
+    [HttpPost("")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertPackageAsync([FromBody] PackageModel model)
+    {
+        await _packagesService.InsertPackageAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("{id:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> UpdatePackageAsync([FromBody] PackageModel model, [FromRoute] int id)
+    {
+        if (model.Id != id)
+        {
+            return BadRequest();
+        }
+        await _packagesService.UpdatePackageAsync(model);
+        return Ok();
     }
 }

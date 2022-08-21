@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using priceapp.API.Controllers.Models.Request;
+using priceapp.API.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
@@ -21,21 +22,21 @@ public class ItemsController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetItem([FromRoute] int id)
     {
-        return Ok(await _itemsService.GetItemByIdAsync(id));
+        return Ok(await _itemsService.GetItemAsync(id));
     }
 
     [HttpGet("{id}/extended")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetItemExtended([FromRoute] int id)
     {
-        return Ok(await _itemsService.GetItemExtendedByIdAsync(id));
+        return Ok(await _itemsService.GetItemExtendedAsync(id));
     }
 
     [HttpPost("{id}/location/extended")]
     public async Task<IActionResult> GetItemExtendedByLocation([FromRoute] int id,
         [FromBody] LocationRequestModel model)
     {
-        return Ok(await _itemsService.GetItemExtendedByIdAndLocationAsync(id, model.XCord, model.YCord, model.Radius));
+        return Ok(await _itemsService.GetItemExtendedAsync(id, model.XCord, model.YCord, model.Radius));
     }
 
     [HttpGet("category/{categoryId:int}/extended")]
@@ -43,7 +44,7 @@ public class ItemsController : ControllerBase
         [FromQuery] int from,
         [FromQuery] int to)
     {
-        return Ok(await _itemsService.GetItemsExtendedByCategoryAsync(categoryId, from, to));
+        return Ok(await _itemsService.GetItemsExtendedAsync(categoryId, from, to));
     }
 
     [HttpPost("category/{categoryId:int}/location/extended")]
@@ -52,7 +53,7 @@ public class ItemsController : ControllerBase
         [FromQuery] int to,
         [FromBody] LocationRequestModel model)
     {
-        return Ok(await _itemsService.GetItemsExtendedByCategoryAndLocationAsync(categoryId, model.XCord, model.YCord,
+        return Ok(await _itemsService.GetItemsExtendedAsync(categoryId, model.XCord, model.YCord,
             model.Radius, from, to));
     }
 
@@ -64,7 +65,7 @@ public class ItemsController : ControllerBase
         [FromRoute] int categoryId,
         [FromBody] SearchRequestModel model)
     {
-        return Ok(await _itemsService.SearchItemsByCategoryAsync(model.Search, categoryId, from, to));
+        return Ok(await _itemsService.SearchItemsAsync(model.Search, categoryId, from, to));
     }
 
     [HttpPost("search/extended")]
@@ -82,7 +83,7 @@ public class ItemsController : ControllerBase
         [FromQuery] int to,
         [FromBody] SearchAndLocationRequestModel model)
     {
-        return Ok(await _itemsService.SearchItemsExtendedByLocationAsync(model.Search, model.XCord, model.YCord,
+        return Ok(await _itemsService.SearchItemsExtendedAsync(model.Search, model.XCord, model.YCord,
             model.Radius, from, to));
     }
 
@@ -114,6 +115,48 @@ public class ItemsController : ControllerBase
         [FromQuery] int to
     )
     {
-        return Ok(await _itemsService.GetItemsByShopAndCategoryAsync(shopId, categoryId, from, to));
+        return Ok(await _itemsService.GetShopItemsAsync(shopId, categoryId, from, to));
+    }
+
+    [HttpPost("")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertItemAsync([FromBody] ItemModel model)
+    {
+        await _itemsService.InsertItemAsync(model);
+        return Ok();
+    }
+
+    [HttpPost("{id:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> UpdateItemAsync([FromBody] ItemModel model, [FromRoute] int id)
+    {
+        if (model.Id != id)
+        {
+            return BadRequest();
+        }
+
+        await _itemsService.UpdateItemAsync(model);
+        return Ok();
+    }
+
+    [HttpPost("link")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertItemLinkAsync([FromBody] ItemLinkModel model)
+    {
+        await _itemsService.InsertItemLinkAsync(model);
+        return Ok();
+    }
+
+    [HttpPost("last")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> GetLastInsertedItem([FromBody] SearchRequestModel model)
+    {
+        var item = await _itemsService.GetLastInsertedItemAsync();
+        if (item.Label == model.Search)
+        {
+            return Ok(item);
+        }
+
+        return BadRequest();
     }
 }

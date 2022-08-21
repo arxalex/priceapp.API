@@ -52,21 +52,26 @@ public class AtbService : IAtbService
         var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
+        var categories = await _categoriesService.GetCategoriesAsync();
+        var categoryLinks = await _categoriesService.GetCategoryLinksAsync(1);
+        var brands = await _brandsService.GetBrandsAsync();
+        var countries = await _countriesService.GetCountriesAsync();
+        
         foreach (var value in handledResult)
         {
-            var categoryModel = await _categoriesService.GetCategoryAsync(3, value.category);
-            CategoryLinkModel? categoryLinkModel;
+            CategoryModel? categoryModel = null;
+            CategoryLinkModel? categoryLinkModel = null;
             try
             {
-                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(3, value.category);
+                categoryLinkModel = categoryLinks.FirstOrDefault(x => x.CategoryShopId == value.category);
+                categoryModel = categories.FirstOrDefault(x => x.Id == categoryLinkModel?.CategoryId);
             }
             catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
-                categoryLinkModel = null;
             }
             var brandModel = value.brand != null && value.brand.Length > 0
-                ? await _brandsService.SearchBrandAsync(value.brand)
+                ? brands.FirstOrDefault(x => x.Label == value.brand)
                 : new BrandModel
                 {
                     Id = 0,
@@ -74,7 +79,7 @@ public class AtbService : IAtbService
                     Short = "Без ТМ"
                 };
             var countryModel = value.country != null && value.country.Length > 0
-                ? await _countriesService.SearchCountryAsync(value.country)
+                ? countries.FirstOrDefault(x => x.Label == value.country)
                 : new CountryModel
                 {
                     Id = 0,
@@ -86,6 +91,7 @@ public class AtbService : IAtbService
             {
                 Item = new ItemModel
                 {
+                    Id = -1,
                     Label = value.label,
                     Image = value.image,
                     Category = categoryModel?.Id ?? 0,
@@ -99,7 +105,8 @@ public class AtbService : IAtbService
                 Brand = value.brand,
                 Country = value.country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categorylabel,
-                Url = "https://zakaz.atbmarket.com/product/1154/" + value.internalid
+                Url = "https://zakaz.atbmarket.com/product/1154/" + value.internalid,
+                ShopId = 3
             });
         }
 

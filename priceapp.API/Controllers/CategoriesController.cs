@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
@@ -28,5 +29,45 @@ public class CategoriesController : ControllerBase
     public async Task<IActionResult> GetCategoriesAsync()
     {
         return Ok(await _categoriesService.GetCategoriesAsync());
+    }
+    
+    [HttpPost("")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertCategoryAsync([FromBody] CategoryModel model)
+    {
+        await _categoriesService.InsertCategoryAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("link/")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> InsertCategoryLinkAsync([FromBody] CategoryLinkModel model)
+    {
+        await _categoriesService.InsertCategoryLinkAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("{id:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> UpdateCategoryAsync([FromBody] CategoryModel model, [FromRoute] int id)
+    {
+        if (model.Id != id)
+        {
+            return BadRequest();
+        }
+        await _categoriesService.UpdateCategoryAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("link/{id:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> UpdateCategoryLinkAsync([FromBody] CategoryLinkModel model, [FromRoute] int id)
+    {
+        if (model.Id != id)
+        {
+            return BadRequest();
+        }
+        await _categoriesService.UpdateCategoryLinkAsync(model);
+        return Ok();
     }
 }

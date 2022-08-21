@@ -25,7 +25,7 @@ public class CategoriesRepository : ICategoriesRepository
         var i = 1;
         resultByLevel.Add(new List<CategoryRepositoryModel>
         {
-            new() {id = categoryId}
+            new() { id = categoryId }
         });
 
         while (resultByLevel[i - 1].Count > 0)
@@ -89,5 +89,113 @@ public class CategoriesRepository : ICategoriesRepository
         parameters.Add("@categoryshopid", inShopId, DbType.Int32);
 
         return await connection.QueryFirstAsync<CategoryLinkRepositoryModel>(query, parameters);
+    }
+
+    public async Task InsertCategoryAsync(CategoryRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@label", model.label, DbType.String);
+        if (model.image != null)
+        {
+            parameters.Add("@image", model.image, DbType.String);
+        }
+
+        if (model.parent != null)
+        {
+            parameters.Add("@parent", model.parent, DbType.String);
+        }
+
+        parameters.Add("@isFilter", model.isFilter, DbType.String);
+
+        var query = @$"insert into {Table} 
+                          values (DEFAULT, 
+                                  @label, 
+                                  {(model.parent != null ? "@parent" : "DEFAULT")}, 
+                                  @isFilter, 
+                                  {(model.image != null ? "@image" : "DEFAULT")})";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error inserting");
+        }
+    }
+
+    public async Task InsertCategoryLinkAsync(CategoryLinkRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@categoryshopid", model.categoryshopid, DbType.Int32);
+        parameters.Add("@shopcategorylabel", model.shopcategorylabel, DbType.String);
+        parameters.Add("@shopid", model.shopid, DbType.Int32);
+        if (model.categoryid != null)
+        {
+            parameters.Add("@categoryid", model.categoryid, DbType.Int32);
+        }
+
+        var query = @$"insert into {TableLinks} 
+                       values (DEFAULT, 
+                               {(model.categoryid != null ? "@categoryid" : "DEFAULT")}, 
+                               @shopid, 
+                               @categoryshopid,
+                               @shopcategorylabel)";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error inserting");
+        }
+    }
+
+    public async Task UpdateCategoryAsync(CategoryRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", model.id, DbType.Int32);
+        parameters.Add("@label", model.label, DbType.String);
+        if (model.image != null)
+        {
+            parameters.Add("@image", model.image, DbType.String);
+        }
+
+        if (model.parent != null)
+        {
+            parameters.Add("@parent", model.parent, DbType.String);
+        }
+
+        parameters.Add("@isFilter", model.isFilter, DbType.String);
+
+        var query = @$"update {Table} 
+                       set `label` = @label,
+                           `parent` = {(model.parent != null ? "@parent" : "null")},
+                           `isFilter` = @isFilter,
+                           `image` = {(model.image != null ? "@image" : "null")}
+                       where `id` = @id";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error updating");
+        }
+    }
+
+    public async Task UpdateCategoryLinkAsync(CategoryLinkRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", model.id, DbType.Int32);
+        parameters.Add("@categoryshopid", model.categoryshopid, DbType.Int32);
+        parameters.Add("@shopcategorylabel", model.shopcategorylabel, DbType.String);
+        parameters.Add("@shopid", model.shopid, DbType.Int32);
+        if (model.categoryid != null)
+        {
+            parameters.Add("@categoryid", model.categoryid, DbType.Int32);
+        }
+
+        var query = @$"update {TableLinks} 
+                       set `categoryid` = {(model.categoryid != null ? "@categoryid" : "null")},
+                           `shopid` = @shopid,
+                           `categoryshopid` = @categoryshopid,
+                           `shopcategorylabel` = @shopcategorylabel,
+                       where `id` = @id";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error updating");
+        }
     }
 }

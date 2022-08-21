@@ -69,6 +69,11 @@ public class SilpoService : ISilpoService
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
+        var categories = await _categoriesService.GetCategoriesAsync();
+        var categoryLinks = await _categoriesService.GetCategoryLinksAsync(1);
+        var brands = await _brandsService.GetBrandsAsync();
+        var countries = await _countriesService.GetCountriesAsync();
+        
         foreach (var value in handledResult)
         {
             var packageObject = value.parameters?.FirstOrDefault(x => x.key == "packageType");
@@ -128,34 +133,26 @@ public class SilpoService : ISilpoService
                     break;
             }
 
-            CategoryModel? categoryModel;
+            CategoryModel? categoryModel = null;
+            CategoryLinkModel? categoryLinkModel = null;
             try
             {
-                categoryModel = await _categoriesService.GetCategoryAsync(1, value.categories[^1].id);
+                categoryLinkModel = categoryLinks.FirstOrDefault(x => x.CategoryShopId == value.categories[^1].id);
+                categoryModel = categories.FirstOrDefault(x => x.Id == categoryLinkModel?.CategoryId);
             }
             catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
-                categoryModel = null;
-            }
-            CategoryLinkModel? categoryLinkModel;
-            try
-            {
-                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(1, value.categories[^1].id);
-            }
-            catch (Exception e)
-            {
-                _logger.LogInformation(e.Message);
-                categoryLinkModel = null;
             }
 
-            var brandModel = brandLabel.Length > 0 ? await _brandsService.SearchBrandAsync(brandLabel) : null;
-            var countryModel = country.Length > 0 ? await _countriesService.SearchCountryAsync(country) : null;
+            var brandModel = brandLabel.Length > 0 ? brands.FirstOrDefault(x => x.Label == brandLabel) : null;
+            var countryModel = country.Length > 0 ? countries.FirstOrDefault(x => x.Label == country) : null;
 
             items.Add(new ItemShopModel
             {
                 Item = new ItemModel
                 {
+                    Id = -1,
                     Label = value.name,
                     Image = value.mainImage,
                     Category = categoryModel?.Id ?? 0,
@@ -177,7 +174,8 @@ public class SilpoService : ISilpoService
                 Package = packageLabel,
                 Country = country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
-                Url = "https://shop.silpo.ua/product/" + value.slug
+                Url = "https://shop.silpo.ua/product/" + value.slug,
+                ShopId = 1
             });
         }
 

@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Data;
+using Dapper;
 using priceapp.API.Repositories.Interfaces;
 using priceapp.API.Repositories.Models;
 using priceapp.API.Utils;
@@ -33,5 +34,34 @@ public class CountriesRepository : ICountriesRepository
         query += whereQueryKeywords;
 
         return (await connection.QueryAsync<CountryRepositoryModel>(query, parameters)).ToList();
+    }
+
+    public async Task InsertCountryAsync(CountryRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@label", model.label, DbType.String);
+        parameters.Add("@short", model.@short, DbType.String);
+
+        const string query = $"insert into {Table} values (DEFAULT, @label, @short)";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error inserting");
+        }
+    }
+
+    public async Task UpdateCountryAsync(CountryRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", model.id, DbType.Int32);
+        parameters.Add("@label", model.label, DbType.String);
+        parameters.Add("@short", model.@short, DbType.String);
+
+        const string query = $"update {Table} set `label` = @label, `short` = @short where `id` = @id";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error updating");
+        }
     }
 }

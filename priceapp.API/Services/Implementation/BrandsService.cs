@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
+using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 using priceapp.API.Utils;
 
@@ -30,5 +31,16 @@ public class BrandsService : IBrandsService
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
         return items.OrderByDescending(x => rates[x.Id]).ToList().FirstOrDefault();
+    }
+
+    public async Task InsertBrandAsync(BrandModel model)
+    {
+        await _brandsRepository.InsertBrandAsync(_mapper.Map<BrandRepositoryModel>(model));
+    }
+
+    public async Task UpdateBrandAsync(BrandModel model)
+    {
+        await _brandsRepository.UpdateBrandAsync(_mapper.Map<BrandRepositoryModel>(model));
+
     }
 }

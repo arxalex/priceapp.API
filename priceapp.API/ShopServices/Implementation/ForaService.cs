@@ -67,40 +67,43 @@ public class ForaService : IForaService
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
+        var categories = await _categoriesService.GetCategoriesAsync();
+        var categoryLinks = await _categoriesService.GetCategoryLinksAsync(1);
+        var brands = await _brandsService.GetBrandsAsync();
+        var countries = await _countriesService.GetCountriesAsync();
+        
         foreach (var value in handledResult)
         {
-            var packageObject = value.parameters.FirstOrDefault(x => x.key == "packageType");
+            var packageObject = value.parameters?.FirstOrDefault(x => x.key == "packageType");
             var packageLabel = packageObject != null ? packageObject.value : "";
             var package = 0;
             var (units, unitShort) = NumericHelper.ParseNumberString(value.unit);
-            if (value.parameters.FirstOrDefault(x => x.key == "isWeighted") != null) package = 1;
+            if (value.parameters?.FirstOrDefault(x => x.key == "isWeighted") != null) package = 1;
 
-            var brandObject = value.parameters.FirstOrDefault(x => x.key == "trademark");
+            var brandObject = value.parameters?.FirstOrDefault(x => x.key == "trademark");
             var brandLabel = "Без ТМ";
             if (brandObject != null) brandLabel = brandObject.value;
 
-            var calorieObject = value.parameters.FirstOrDefault(x => x.key == "calorie");
+            var calorieObject = value.parameters?.FirstOrDefault(x => x.key == "calorie");
             double? calorie = null;
-            
             if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var carbohydratesObject = value.parameters.FirstOrDefault(x => x.key == "carbohydrates");
+            var carbohydratesObject = value.parameters?.FirstOrDefault(x => x.key == "carbohydrates");
             double? carbohydrates = null;
             if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
-
-            var fatsObject = value.parameters.FirstOrDefault(x => x.key == "fats");
+            var fatsObject = value.parameters?.FirstOrDefault(x => x.key == "fats");
             double? fats = null;
             if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var proteinsObject = value.parameters.FirstOrDefault(x => x.key == "proteins");
+            var proteinsObject = value.parameters?.FirstOrDefault(x => x.key == "proteins");
             double? proteins = null;
             if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var alcoholObject = value.parameters.FirstOrDefault(x => x.key == "alcoholContent");
+            var alcoholObject = value.parameters?.FirstOrDefault(x => x.key == "alcoholContent");
             double? alcohol = null;
             if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
-            var countryObject = value.parameters.FirstOrDefault(x => x.key == "country");
+            var countryObject = value.parameters?.FirstOrDefault(x => x.key == "country");
             var country = "";
             if (countryObject != null) country = countryObject.value;
 
@@ -108,11 +111,9 @@ public class ForaService : IForaService
             {
                 case "кг":
                     if (package != 1) package = 5;
-
                     break;
                 case "г":
                     if (package != 1) package = 5;
-
                     units /= 1000;
                     break;
                 case "шт/уп":
@@ -130,34 +131,26 @@ public class ForaService : IForaService
                     break;
             }
 
-            CategoryModel? categoryModel;
+            CategoryModel? categoryModel = null;
+            CategoryLinkModel? categoryLinkModel = null;
             try
             {
-                categoryModel = await _categoriesService.GetCategoryAsync(2, value.categories[^1].id);
+                categoryLinkModel = categoryLinks.FirstOrDefault(x => x.CategoryShopId == value.categories[^1].id);
+                categoryModel = categories.FirstOrDefault(x => x.Id == categoryLinkModel?.CategoryId);
             }
             catch (Exception e)
             {
                 _logger.LogInformation(e.Message);
-                categoryModel = null;
-            }
-            CategoryLinkModel? categoryLinkModel;
-            try
-            {
-                categoryLinkModel = await _categoriesService.GetCategoryLinkAsync(1, value.categories[^1].id);
-            }
-            catch (Exception e)
-            {
-                _logger.LogInformation(e.Message);
-                categoryLinkModel = null;
             }
 
-            var brandModel = brandLabel.Length > 0 ? await _brandsService.SearchBrandAsync(brandLabel) : null;
-            var countryModel = country.Length > 0 ? await _countriesService.SearchCountryAsync(country) : null;
+            var brandModel = brandLabel.Length > 0 ? brands.FirstOrDefault(x => x.Label == brandLabel) : null;
+            var countryModel = country.Length > 0 ? countries.FirstOrDefault(x => x.Label == country) : null;
 
             items.Add(new ItemShopModel
             {
                 Item = new ItemModel
                 {
+                    Id = -1,
                     Label = value.name,
                     Image = value.mainImage,
                     Category = categoryModel?.Id ?? 0,
@@ -179,7 +172,8 @@ public class ForaService : IForaService
                 Package = packageLabel,
                 Country = country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
-                Url = "https://shop.silpo.ua/product/" + value.slug
+                Url = "https://shop.silpo.ua/product/" + value.slug,
+                ShopId = 2
             });
         }
 

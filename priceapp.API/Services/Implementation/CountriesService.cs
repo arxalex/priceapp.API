@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
+using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 using priceapp.API.Utils;
 
@@ -30,5 +31,15 @@ public class CountriesService : ICountriesService
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
         return items.OrderByDescending(x => rates[x.Id]).ToList().FirstOrDefault();
+    }
+
+    public async Task InsertCountryAsync(CountryModel model)
+    {
+        await _countriesRepository.InsertCountryAsync(_mapper.Map<CountryRepositoryModel>(model));
+    }
+
+    public async Task UpdateCountryAsync(CountryModel model)
+    {
+        await _countriesRepository.UpdateCountryAsync(_mapper.Map<CountryRepositoryModel>(model));
     }
 }

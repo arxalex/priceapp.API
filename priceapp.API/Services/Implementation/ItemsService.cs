@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
+using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 using priceapp.API.ShopServices.Interfaces;
 using priceapp.API.Utils;
@@ -41,18 +42,18 @@ public class ItemsService : IItemsService
         {
             return new List<ItemModel>();
         }
-            
+
         var count = items.Count > to ? to - from : items.Count - from;
-        
+
         return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
-    public async Task<ItemModel> GetItemByIdAsync(int id)
+    public async Task<ItemModel> GetItemAsync(int id)
     {
         return _mapper.Map<ItemModel>(await _itemsRepository.GetItemByIdAsync(id));
     }
 
-    public async Task<List<ItemExtendedModel>> GetItemsExtendedByCategoryAsync(int categoryId, int from, int to)
+    public async Task<List<ItemExtendedModel>> GetItemsExtendedAsync(int categoryId, int from, int to)
     {
         var categories = await _categoriesService.GetChildCategoriesAsync(categoryId);
         return _mapper.Map<List<ItemExtendedModel>>(
@@ -60,7 +61,7 @@ public class ItemsService : IItemsService
                 from, to));
     }
 
-    public async Task<List<ItemExtendedModel>> GetItemsExtendedByCategoryAndLocationAsync(int categoryId,
+    public async Task<List<ItemExtendedModel>> GetItemsExtendedAsync(int categoryId,
         double xCord,
         double yCord, double radius, int from, int to)
     {
@@ -83,13 +84,13 @@ public class ItemsService : IItemsService
         {
             return new List<ItemExtendedModel>();
         }
-            
+
         var count = items.Count > to ? to - from : items.Count - from;
-        
+
         return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
-    public async Task<List<ItemExtendedModel>> SearchItemsExtendedByLocationAsync(string search, double xCord,
+    public async Task<List<ItemExtendedModel>> SearchItemsExtendedAsync(string search, double xCord,
         double yCord, double radius,
         int from, int to)
     {
@@ -103,13 +104,13 @@ public class ItemsService : IItemsService
         {
             return new List<ItemExtendedModel>();
         }
-            
+
         var count = items.Count > to ? to - from : items.Count - from;
-        
+
         return items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count);
     }
 
-    public async Task<List<ItemModel>> SearchItemsByCategoryAsync(string search, int categoryId, int from, int to)
+    public async Task<List<ItemModel>> SearchItemsAsync(string search, int categoryId, int from, int to)
     {
         var keywords = StringUtil.NameToKeywords(search);
         var categories = await _categoriesService.GetChildCategoriesAsync(categoryId);
@@ -124,13 +125,13 @@ public class ItemsService : IItemsService
         {
             return new List<ItemModel>();
         }
-            
+
         var count = items.Count > to ? to - from : items.Count - from;
-        
+
         return itemsOrdered.GetRange(from, count);
     }
 
-    public async Task<List<ItemShopModel>> GetItemsByShopAndCategoryAsync(int shopId, int categoryId, int from, int to)
+    public async Task<List<ItemShopModel>> GetShopItemsAsync(int shopId, int categoryId, int from, int to)
     {
         return shopId switch
         {
@@ -141,13 +142,13 @@ public class ItemsService : IItemsService
         };
     }
 
-    public async Task<ItemExtendedModel> GetItemExtendedByIdAsync(int id)
+    public async Task<ItemExtendedModel> GetItemExtendedAsync(int id)
     {
         return _mapper.Map<ItemExtendedModel>(
             await _itemsRepository.GetItemExtendedAsync(id));
     }
 
-    public async Task<ItemExtendedModel> GetItemExtendedByIdAndLocationAsync(int id, double xCord, double yCord,
+    public async Task<ItemExtendedModel> GetItemExtendedAsync(int id, double xCord, double yCord,
         double radius)
     {
         var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
@@ -170,11 +171,31 @@ public class ItemsService : IItemsService
                 itemsList.Add(new List<ItemModel>());
                 continue;
             }
-            
+
             var count = items.Count > to ? to - from : items.Count - from;
             itemsList.Add(items.OrderByDescending(x => rates[x.Id]).ToList().GetRange(from, count));
         }
 
         return itemsList;
+    }
+
+    public async Task InsertItemAsync(ItemModel model)
+    {
+        await _itemsRepository.InsertItemAsync(_mapper.Map<ItemRepositoryModel>(model));
+    }
+
+    public async Task UpdateItemAsync(ItemModel model)
+    {
+        await _itemsRepository.UpdateItemAsync(_mapper.Map<ItemRepositoryModel>(model));
+    }
+
+    public async Task InsertItemLinkAsync(ItemLinkModel model)
+    {
+        await _itemsRepository.InsertItemLinkAsync(_mapper.Map<ItemLinkRepositoryModel>(model));
+    }
+
+    public async Task<ItemModel> GetLastInsertedItemAsync()
+    {
+        return _mapper.Map<ItemModel>(await _itemsRepository.GetLastInsertedItemAsync());
     }
 }

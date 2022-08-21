@@ -251,4 +251,182 @@ public class ItemsRepository : IItemsRepository
 
         return (await connection.QueryAsync<ItemLinkRepositoryModel>(query, parameters)).ToList();
     }
+
+    public async Task InsertItemAsync(ItemRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@label", model.label, DbType.String);
+        parameters.Add("@image", model.image, DbType.String);
+        parameters.Add("@category", model.category, DbType.Int32);
+        parameters.Add("@brand", model.brand, DbType.Int32);
+        parameters.Add("@package", model.package, DbType.Int32);
+        if (model.units != null)
+        {
+            parameters.Add("@units", model.units, DbType.Double);
+        }
+
+        if (model.term != null)
+        {
+            parameters.Add("@term", model.term, DbType.Double);
+        }
+
+        if (model.barcodes != null)
+        {
+            parameters.Add("@barcodes", model.barcodes, DbType.String);
+        }
+
+        if (model.consist != null)
+        {
+            parameters.Add("@consist", model.consist, DbType.String);
+        }
+
+        if (model.calorie != null)
+        {
+            parameters.Add("@calorie", model.calorie, DbType.Double);
+        }
+
+        if (model.carbohydrates != null)
+        {
+            parameters.Add("@carbohydrates", model.carbohydrates, DbType.Double);
+        }
+
+        if (model.fat != null)
+        {
+            parameters.Add("@fat", model.fat, DbType.Double);
+        }
+
+        if (model.proteins != null)
+        {
+            parameters.Add("@proteins", model.proteins, DbType.Double);
+        }
+
+        if (model.additional != null)
+        {
+            parameters.Add("@additional", model.additional, DbType.String);
+        }
+
+
+        var query = @$"insert into {Table} 
+                          values (DEFAULT, 
+                                  @label, 
+                                  @image, 
+                                  @category, 
+                                  @brand, 
+                                  @package, 
+                                  {(model.units != null ? "@units" : "DEFAULT")}, 
+                                  {(model.term != null ? "@term" : "DEFAULT")}
+                                  {(model.barcodes != null ? "@barcodes" : "DEFAULT")}, 
+                                  {(model.consist != null ? "@consist" : "DEFAULT")}, 
+                                  {(model.calorie != null ? "@calorie" : "DEFAULT")}, 
+                                  {(model.carbohydrates != null ? "@carbohydrates" : "DEFAULT")}, 
+                                  {(model.fat != null ? "@fat" : "DEFAULT")}, 
+                                  {(model.proteins != null ? "@proteins" : "DEFAULT")}, 
+                                  {(model.additional != null ? "@additional" : "DEFAULT")})";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error inserting");
+        }
+    }
+
+    public async Task UpdateItemAsync(ItemRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", model.id, DbType.Int32);
+        parameters.Add("@label", model.label, DbType.String);
+        parameters.Add("@image", model.image, DbType.String);
+        parameters.Add("@category", model.category, DbType.Int32);
+        parameters.Add("@brand", model.brand, DbType.Int32);
+        parameters.Add("@package", model.package, DbType.Int32);
+        if (model.units != null)
+        {
+            parameters.Add("@units", model.units, DbType.Double);
+        }
+
+        if (model.term != null)
+        {
+            parameters.Add("@term", model.term, DbType.Double);
+        }
+
+        if (model.barcodes != null)
+        {
+            parameters.Add("@barcodes", model.barcodes, DbType.String);
+        }
+
+        if (model.consist != null)
+        {
+            parameters.Add("@consist", model.consist, DbType.String);
+        }
+
+        if (model.calorie != null)
+        {
+            parameters.Add("@calorie", model.calorie, DbType.Double);
+        }
+
+        if (model.carbohydrates != null)
+        {
+            parameters.Add("@carbohydrates", model.carbohydrates, DbType.Double);
+        }
+
+        if (model.fat != null)
+        {
+            parameters.Add("@fat", model.fat, DbType.Double);
+        }
+
+        if (model.proteins != null)
+        {
+            parameters.Add("@proteins", model.proteins, DbType.Double);
+        }
+
+        if (model.additional != null)
+        {
+            parameters.Add("@additional", model.additional, DbType.String);
+        }
+
+        var query = @$"update {Table} 
+                       set `label` = @label,
+                           `image` = @image,
+                           `category` = @category,
+                           `brand` = @brand,
+                           `package` = @package,
+                           `units` = {(model.units != null ? "@units" : "null")},
+                           `term` = {(model.term != null ? "@term" : "null")},
+                           `barcodes` = {(model.barcodes != null ? "@barcodes" : "null")},
+                           `consist` = {(model.consist != null ? "@consist" : "null")},
+                           `calorie` = {(model.calorie != null ? "@calorie" : "null")},
+                           `carbohydrates` = {(model.carbohydrates != null ? "@carbohydrates" : "null")},
+                           `fat` = {(model.fat != null ? "@fat" : "null")},
+                           `proteins` = {(model.proteins != null ? "@proteins" : "null")},
+                           `additional` = {(model.additional != null ? "@additional" : "null")}
+                       where `id` = @id";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error updating");
+        }
+    }
+
+    public async Task InsertItemLinkAsync(ItemLinkRepositoryModel model)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@itemid", model.itemid, DbType.Int32);
+        parameters.Add("@shopid", model.shopid, DbType.Int32);
+        parameters.Add("@inshopid", model.inshopid, DbType.Int32);
+        parameters.Add("@pricefactor", model.pricefactor, DbType.Double);
+
+        const string query = $"insert into {TableLink} values (DEFAULT, @itemid, @shopid, @inshopid, @pricefactor)";
+        if (await connection.ExecuteAsync(query, parameters) != 1)
+        {
+            throw new IOException("Error inserting");
+        }
+    }
+
+    public async Task<ItemRepositoryModel> GetLastInsertedItemAsync()
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {Table} order by `id` desc";
+
+        return await connection.QueryFirstAsync<ItemRepositoryModel>(query);
+    }
 }

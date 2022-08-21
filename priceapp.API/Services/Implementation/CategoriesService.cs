@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
+using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 
 namespace priceapp.API.Services.Implementation;
@@ -41,5 +42,25 @@ public class CategoriesService : ICategoriesService
     {
         return _mapper.Map<CategoryLinkModel>(
             await _categoriesRepository.GetCategoryLinkByShopAndInShopIdAsync(shopId, inShopId));
+    }
+
+    public async Task InsertCategoryAsync(CategoryModel model)
+    {
+        await _categoriesRepository.InsertCategoryAsync(_mapper.Map<CategoryRepositoryModel>(model));
+    }
+
+    public async Task InsertCategoryLinkAsync(CategoryLinkModel model)
+    {
+        await _categoriesRepository.InsertCategoryLinkAsync(_mapper.Map<CategoryLinkRepositoryModel>(model));
+    }
+
+    public async Task UpdateCategoryAsync(CategoryModel model)
+    {
+        await _categoriesRepository.UpdateCategoryAsync(_mapper.Map<CategoryRepositoryModel>(model));
+    }
+
+    public async Task UpdateCategoryLinkAsync(CategoryLinkModel model)
+    {
+        await _categoriesRepository.UpdateCategoryLinkAsync(_mapper.Map<CategoryLinkRepositoryModel>(model));
     }
 }
