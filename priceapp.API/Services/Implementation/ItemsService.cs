@@ -34,7 +34,7 @@ public class ItemsService : IItemsService
     public async Task<List<ItemModel>> SearchItemsAsync(string search, int from, int to)
     {
         var keywords = StringUtil.NameToKeywords(search);
-        var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsByKeywordsAsync(keywords));
+        var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsAsync(keywords));
 
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
@@ -50,14 +50,14 @@ public class ItemsService : IItemsService
 
     public async Task<ItemModel> GetItemAsync(int id)
     {
-        return _mapper.Map<ItemModel>(await _itemsRepository.GetItemByIdAsync(id));
+        return _mapper.Map<ItemModel>(await _itemsRepository.GetItemAsync(id));
     }
 
     public async Task<List<ItemExtendedModel>> GetItemsExtendedAsync(int categoryId, int from, int to)
     {
         var categories = await _categoriesService.GetChildCategoriesAsync(categoryId);
         return _mapper.Map<List<ItemExtendedModel>>(
-            await _itemsRepository.GetItemExtendedByCategoriesAsync(categories.Select(x => x.Id).Prepend(categoryId),
+            await _itemsRepository.GetItemExtendedAsync(categories.Select(x => x.Id).Prepend(categoryId),
                 from, to));
     }
 
@@ -69,7 +69,7 @@ public class ItemsService : IItemsService
         var filials = await _filialsService.GetFilialsByLocationAsync(xCord,
             yCord, radius);
         return _mapper.Map<List<ItemExtendedModel>>(
-            await _itemsRepository.GetItemsExtendedByCategoriesAndFilialsAsync(
+            await _itemsRepository.GetItemsExtendedAsync(
                 categories.Select(x => x.Id).Prepend(categoryId), filials.Select(x => x.Id), from, to));
     }
 
@@ -97,7 +97,7 @@ public class ItemsService : IItemsService
         var keywords = StringUtil.NameToKeywords(search);
         var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
         var items = _mapper.Map<List<ItemExtendedModel>>(
-            await _itemsRepository.SearchItemsExtendedByLocationAsync(keywords, filials.Select(x => x.Id)));
+            await _itemsRepository.SearchItemsExtendedAsync(keywords, filials.Select(x => x.Id)));
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
         if (items.Count <= from)
@@ -115,7 +115,7 @@ public class ItemsService : IItemsService
         var keywords = StringUtil.NameToKeywords(search);
         var categories = await _categoriesService.GetChildCategoriesAsync(categoryId);
         var items = _mapper.Map<List<ItemModel>>(
-            await _itemsRepository.GetItemsByKeywordsAndCategoryAsync(keywords,
+            await _itemsRepository.GetItemsAsync(keywords,
                 categories.Select(x => x.Id).Prepend(categoryId)));
 
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
@@ -131,13 +131,13 @@ public class ItemsService : IItemsService
         return itemsOrdered.GetRange(from, count);
     }
 
-    public async Task<List<ItemShopModel>> GetShopItemsAsync(int shopId, int categoryId, int from, int to)
+    public async Task<List<ItemShopModel>> GetShopItemsAsync(int shopId, int internalCategoryId, int from, int to)
     {
         return shopId switch
         {
-            1 => _mapper.Map<List<ItemShopModel>>(await _silpoService.GetItemsByCategoryAsync(categoryId, from, to)),
-            2 => _mapper.Map<List<ItemShopModel>>(await _foraService.GetItemsByCategoryAsync(categoryId, from, to)),
-            3 => _mapper.Map<List<ItemShopModel>>(await _atbService.GetItemsByCategoryAsync(categoryId, from, to)),
+            1 => _mapper.Map<List<ItemShopModel>>(await _silpoService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
+            2 => _mapper.Map<List<ItemShopModel>>(await _foraService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
+            3 => _mapper.Map<List<ItemShopModel>>(await _atbService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
             _ => new List<ItemShopModel>()
         };
     }
@@ -153,7 +153,7 @@ public class ItemsService : IItemsService
     {
         var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
         return _mapper.Map<ItemExtendedModel>(
-            await _itemsRepository.GetItemExtendedByLocationAsync(id, filials.Select(x => x.Id)));
+            await _itemsRepository.GetItemExtendedAsync(id, filials.Select(x => x.Id)));
     }
 
     public async Task<List<List<ItemModel>>> SearchMultipleItemsAsync(List<string> searchList, int from, int to)
@@ -162,7 +162,7 @@ public class ItemsService : IItemsService
         foreach (var search in searchList)
         {
             var keywords = StringUtil.NameToKeywords(search);
-            var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsByKeywordsAsync(keywords));
+            var items = _mapper.Map<List<ItemModel>>(await _itemsRepository.GetItemsAsync(keywords));
 
             var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
 
@@ -187,11 +187,6 @@ public class ItemsService : IItemsService
     public async Task UpdateItemAsync(ItemModel model)
     {
         await _itemsRepository.UpdateItemAsync(_mapper.Map<ItemRepositoryModel>(model));
-    }
-
-    public async Task InsertItemLinkAsync(ItemLinkModel model)
-    {
-        await _itemsRepository.InsertItemLinkAsync(_mapper.Map<ItemLinkRepositoryModel>(model));
     }
 
     public async Task<ItemModel> GetLastInsertedItemAsync()

@@ -24,7 +24,7 @@ public class ItemsRepository : IItemsRepository
         return (await connection.QueryAsync<ItemRepositoryModel>(query)).ToList();
     }
 
-    public async Task<ItemRepositoryModel> GetItemByIdAsync(int id)
+    public async Task<ItemRepositoryModel> GetItemAsync(int id)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         const string query = $"select * from {Table} where `id` = @id";
@@ -36,7 +36,7 @@ public class ItemsRepository : IItemsRepository
         return await connection.QueryFirstAsync<ItemRepositoryModel>(query, parameters);
     }
 
-    public async Task<List<ItemRepositoryModel>> GetItemsByKeywordsAndCategoryAsync(IEnumerable<string> keywords,
+    public async Task<List<ItemRepositoryModel>> GetItemsAsync(IEnumerable<string> keywords,
         IEnumerable<int> categoryIds)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
@@ -51,7 +51,7 @@ public class ItemsRepository : IItemsRepository
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
 
-    public async Task<List<ItemRepositoryModel>> GetItemsByKeywordsAsync(List<string> keywords)
+    public async Task<List<ItemRepositoryModel>> GetItemsAsync(List<string> keywords)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = $"select * from {Table} where ";
@@ -64,7 +64,7 @@ public class ItemsRepository : IItemsRepository
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
 
-    public async Task<List<ItemExtendedRepositoryModel>> GetItemExtendedByCategoriesAsync(IEnumerable<int> categoryIds,
+    public async Task<List<ItemExtendedRepositoryModel>> GetItemExtendedAsync(IEnumerable<int> categoryIds,
         int from, int to)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
@@ -93,7 +93,7 @@ public class ItemsRepository : IItemsRepository
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query)).ToList();
     }
 
-    public async Task<List<ItemExtendedRepositoryModel>> GetItemsExtendedByCategoriesAndFilialsAsync(
+    public async Task<List<ItemExtendedRepositoryModel>> GetItemsExtendedAsync(
         IEnumerable<int> categoryIds, IEnumerable<int> filialIds, int from, int to)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
@@ -153,7 +153,7 @@ public class ItemsRepository : IItemsRepository
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query, parameters)).ToList();
     }
 
-    public async Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedByLocationAsync(List<string> search,
+    public async Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedAsync(List<string> search,
         IEnumerable<int> filialIds)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
@@ -209,7 +209,7 @@ public class ItemsRepository : IItemsRepository
         return await connection.QueryFirstAsync<ItemExtendedRepositoryModel>(query, parameters);
     }
 
-    public async Task<ItemExtendedRepositoryModel> GetItemExtendedByLocationAsync(int id, IEnumerable<int> filialIds)
+    public async Task<ItemExtendedRepositoryModel> GetItemExtendedAsync(int id, IEnumerable<int> filialIds)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = $@"
@@ -240,7 +240,7 @@ public class ItemsRepository : IItemsRepository
         return await connection.QueryFirstAsync<ItemExtendedRepositoryModel>(query, parameters);
     }
 
-    public async Task<List<ItemLinkRepositoryModel>> GetItemLinksByShopAsync(int shopId)
+    public async Task<List<ItemLinkRepositoryModel>> GetItemLinksAsync(int shopId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         const string query = $"select * from {TableLink} where `shopid` = @shopId";
@@ -428,5 +428,24 @@ public class ItemsRepository : IItemsRepository
         const string query = $"select * from {Table} order by `id` desc";
 
         return await connection.QueryFirstAsync<ItemRepositoryModel>(query);
+    }
+
+    public async Task<List<ItemLinkRepositoryModel>> GetItemLinksAsync(int shopId, IEnumerable<int> categoryIds)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var query = @$"select il.id, il.itemid, il.shopid, il.inshopid, il.pricefactor 
+                       from {TableLink} il 
+                           left join {Table} i on il.itemid = i.id 
+                       where il.shopid = @shopId
+                         and ";
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@shopId", shopId, DbType.Int32);
+        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "i.category");
+
+        query += whereQueryCategories;
+
+        return (await connection.QueryAsync<ItemLinkRepositoryModel>(query, parameters)).ToList();
     }
 }

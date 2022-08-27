@@ -10,4 +10,6 @@ public class AtbItemModel
     public string categorylabel { get; set; }
     public string? brand { get; set; }
     public string? country { get; set; }
+    public double price { get; set; }
+    public double quantity { get; set; }
 }

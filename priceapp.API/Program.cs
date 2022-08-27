@@ -66,13 +66,14 @@ builder.Services.AddScoped<IItemLinksService, ItemLinksService>();
 builder.Services.AddScoped<IItemsService, ItemsService>();
 builder.Services.AddScoped<IMailService, MailService>();
 builder.Services.AddScoped<IPackagesService, PackagesService>();
+builder.Services.AddScoped<IPricesService, PricesService>();
 builder.Services.AddScoped<IShopsService, ShopsService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
-builder.Services.AddScoped<ISilpoService, SilpoService>();
-builder.Services.AddScoped<IAtbService, AtbService>();
-builder.Services.AddScoped<IForaService, ForaService>();
+builder.Services.AddSingleton<ISilpoService, SilpoService>();
+builder.Services.AddSingleton<IAtbService, AtbService>();
+builder.Services.AddSingleton<IForaService, ForaService>();
 
 builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
@@ -81,6 +82,7 @@ builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IFilialsRepository, FilialsRepository>();
 builder.Services.AddScoped<IItemsRepository, ItemsRepository>();
 builder.Services.AddScoped<IPackagesRepository, PackagesRepository>();
+builder.Services.AddScoped<IPricesRepository, PricesRepository>();
 builder.Services.AddScoped<IShopsRepository, ShopsRepository>();
 builder.Services.AddScoped<ITokensRepository, TokensRepository>();
 builder.Services.AddScoped<IUsersRepository, UsersRepository>();

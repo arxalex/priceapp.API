@@ -24,7 +24,7 @@ public class CategoriesService : ICategoriesService
 
     public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int shopId)
     {
-        return _mapper.Map<List<CategoryLinkModel>>(await _categoriesRepository.GetCategoryLinksByShopAsync(shopId));
+        return _mapper.Map<List<CategoryLinkModel>>(await _categoriesRepository.GetCategoryLinksAsync(shopId));
     }
 
     public async Task<List<CategoryModel>> GetCategoriesAsync()
@@ -35,13 +35,13 @@ public class CategoriesService : ICategoriesService
     public async Task<CategoryModel> GetCategoryAsync(int shopId, int inShopId)
     {
         return _mapper.Map<CategoryModel>(
-            await _categoriesRepository.GetCategoryByShopAndInShopIdAsync(shopId, inShopId));
+            await _categoriesRepository.GetCategoryAsync(shopId, inShopId));
     }
 
     public async Task<CategoryLinkModel> GetCategoryLinkAsync(int shopId, int inShopId)
     {
         return _mapper.Map<CategoryLinkModel>(
-            await _categoriesRepository.GetCategoryLinkByShopAndInShopIdAsync(shopId, inShopId));
+            await _categoriesRepository.GetCategoryLinkAsync(shopId, inShopId));
     }
 
     public async Task InsertCategoryAsync(CategoryModel model)
@@ -62,5 +62,15 @@ public class CategoriesService : ICategoriesService
     public async Task UpdateCategoryLinkAsync(CategoryLinkModel model)
     {
         await _categoriesRepository.UpdateCategoryLinkAsync(_mapper.Map<CategoryLinkRepositoryModel>(model));
+    }
+
+    public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int shopId, int categoryId)
+    {
+        return _mapper.Map<List<CategoryLinkModel>>(await _categoriesRepository.GetCategoryLinksAsync(shopId, categoryId));
+    }
+
+    public async Task<List<CategoryModel>> GetBaseCategoriesAsync()
+    {
+        return _mapper.Map<List<CategoryModel>>(await _categoriesRepository.GetBaseCategoriesAsync());
     }
 }

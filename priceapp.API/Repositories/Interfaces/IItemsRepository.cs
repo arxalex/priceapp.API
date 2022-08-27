@@ -5,30 +5,31 @@ namespace priceapp.API.Repositories.Interfaces;
 public interface IItemsRepository
 {
     public Task<List<ItemRepositoryModel>> GetItemsAsync();
-    public Task<ItemRepositoryModel> GetItemByIdAsync(int id);
+    public Task<ItemRepositoryModel> GetItemAsync(int id);
 
-    public Task<List<ItemRepositoryModel>> GetItemsByKeywordsAndCategoryAsync(IEnumerable<string> keywords,
+    public Task<List<ItemRepositoryModel>> GetItemsAsync(IEnumerable<string> keywords,
         IEnumerable<int> categoryIds);
 
-    Task<List<ItemRepositoryModel>> GetItemsByKeywordsAsync(List<string> keywords);
+    Task<List<ItemRepositoryModel>> GetItemsAsync(List<string> keywords);
 
-    Task<List<ItemExtendedRepositoryModel>> GetItemExtendedByCategoriesAsync(IEnumerable<int> categoryIds, int from,
+    Task<List<ItemExtendedRepositoryModel>> GetItemExtendedAsync(IEnumerable<int> categoryIds, int from,
         int to);
 
-    Task<List<ItemExtendedRepositoryModel>> GetItemsExtendedByCategoriesAndFilialsAsync(IEnumerable<int> categoryIds,
+    Task<List<ItemExtendedRepositoryModel>> GetItemsExtendedAsync(IEnumerable<int> categoryIds,
         IEnumerable<int> filialIds,
         int from, int to);
 
     Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedAsync(List<string> search);
 
-    Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedByLocationAsync(List<string> search,
+    Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedAsync(List<string> search,
         IEnumerable<int> filialIds);
 
     Task<ItemExtendedRepositoryModel> GetItemExtendedAsync(int id);
-    Task<ItemExtendedRepositoryModel> GetItemExtendedByLocationAsync(int id, IEnumerable<int> filialIds);
-    Task<List<ItemLinkRepositoryModel>> GetItemLinksByShopAsync(int shopId);
+    Task<ItemExtendedRepositoryModel> GetItemExtendedAsync(int id, IEnumerable<int> filialIds);
+    Task<List<ItemLinkRepositoryModel>> GetItemLinksAsync(int shopId);
     Task InsertItemAsync(ItemRepositoryModel model);
     Task UpdateItemAsync(ItemRepositoryModel model);
     Task InsertItemLinkAsync(ItemLinkRepositoryModel model);
     Task<ItemRepositoryModel> GetLastInsertedItemAsync();
+    Task<List<ItemLinkRepositoryModel>> GetItemLinksAsync(int shopId, IEnumerable<int> categoryIds);
 }

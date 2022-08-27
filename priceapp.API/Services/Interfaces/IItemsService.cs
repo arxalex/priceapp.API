@@ -17,12 +17,11 @@ public interface IItemsService
         double radius, int from, int to);
 
     Task<List<ItemModel>> SearchItemsAsync(string search, int categoryId, int from, int to);
-    Task<List<ItemShopModel>> GetShopItemsAsync(int shopId, int categoryId, int from, int to);
+    Task<List<ItemShopModel>> GetShopItemsAsync(int shopId, int internalCategoryId, int from, int to);
     Task<ItemExtendedModel> GetItemExtendedAsync(int id);
     Task<ItemExtendedModel> GetItemExtendedAsync(int id, double xCord, double yCord, double radius);
     Task<List<List<ItemModel>>> SearchMultipleItemsAsync(List<string> searchList, int from, int to);
     Task InsertItemAsync(ItemModel model);
     Task UpdateItemAsync(ItemModel model);
-    Task InsertItemLinkAsync(ItemLinkModel model);
     Task<ItemModel> GetLastInsertedItemAsync();
 }

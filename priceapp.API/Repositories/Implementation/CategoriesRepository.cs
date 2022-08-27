@@ -42,7 +42,7 @@ public class CategoriesRepository : ICategoriesRepository
         return result;
     }
 
-    public async Task<List<CategoryLinkRepositoryModel>> GetCategoryLinksByShopAsync(int shopId)
+    public async Task<List<CategoryLinkRepositoryModel>> GetCategoryLinksAsync(int shopId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         const string query = $"select * from {TableLinks} where `shopid` = @shopId";
@@ -60,7 +60,7 @@ public class CategoriesRepository : ICategoriesRepository
         return (await connection.QueryAsync<CategoryRepositoryModel>(query)).ToList();
     }
 
-    public async Task<CategoryRepositoryModel> GetCategoryByShopAndInShopIdAsync(int shopId, int inShopId)
+    public async Task<CategoryRepositoryModel> GetCategoryAsync(int shopId, int inShopId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         const string query = @$"select t.id, t.label, t.parent, t.isFilter, t.image 
@@ -76,7 +76,7 @@ public class CategoriesRepository : ICategoriesRepository
         return await connection.QueryFirstAsync<CategoryRepositoryModel>(query, parameters);
     }
 
-    public async Task<CategoryLinkRepositoryModel> GetCategoryLinkByShopAndInShopIdAsync(int shopId, int inShopId)
+    public async Task<CategoryLinkRepositoryModel> GetCategoryLinkAsync(int shopId, int inShopId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         const string query = @$"select * 
@@ -197,5 +197,24 @@ public class CategoriesRepository : ICategoriesRepository
         {
             throw new IOException("Error updating");
         }
+    }
+
+    public async Task<List<CategoryLinkRepositoryModel>> GetCategoryLinksAsync(int shopId, int categoryId)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {TableLinks} where `shopid` = @shopId and `categoryid` = @categoryId";
+        var parameters = new DynamicParameters();
+        parameters.Add("@shopId", shopId, DbType.Int32);
+        parameters.Add("@categoryId", categoryId, DbType.Int32);
+
+        return (await connection.QueryAsync<CategoryLinkRepositoryModel>(query, parameters)).ToList();
+    }
+
+    public async Task<List<CategoryRepositoryModel>> GetBaseCategoriesAsync()
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {Table} where `parent` is null";
+
+        return (await connection.QueryAsync<CategoryRepositoryModel>(query)).ToList();
     }
 }

@@ -19,6 +19,27 @@ public class ForaService : IForaService
     private readonly ICountriesService _countriesService;
     private readonly IItemLinksService _itemLinksService;
     private readonly ILogger<ForaService> _logger;
+    private const int ShopId = 2;
+    
+    private List<ItemLinkModel> _itemLinks;
+    private DateTime _itemLinksLastUpdatedTime;
+
+    private List<ItemLinkModel> ItemLinks
+    {
+        get
+        {
+            if (DateTime.Now - _itemLinksLastUpdatedTime <= TimeSpan.FromMinutes(30)) return _itemLinks;
+            _itemLinks = _itemLinksService.GetItemLinksAsync(ShopId).Result;
+            _itemLinksLastUpdatedTime = DateTime.Now;
+
+            return _itemLinks;
+        }
+        set
+        {
+            _itemLinksLastUpdatedTime = DateTime.Now;
+            _itemLinks = value;
+        }
+    }
 
     public ForaService(IItemLinksService itemLinksService, IBrandsService brandsService,
         ICategoriesService categoriesService,
@@ -35,9 +56,11 @@ public class ForaService : IForaService
         };
 
         _client = new RestClient(httpClient);
+        _itemLinksLastUpdatedTime = DateTime.MinValue;
+        _itemLinks = new List<ItemLinkModel>();
     }
 
-    public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int categoryId, int from, int to, int filialId = 310)
+    public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int internalCategoryId, int from, int to, int internalFilialId = 310)
     {
         var json = JsonSerializer.Serialize(new
         {
@@ -45,8 +68,8 @@ public class ForaService : IForaService
             {
                 from,
                 to,
-                categoryId,
-                filialId
+                categoryId = internalCategoryId,
+                filialId = internalFilialId
             },
             method = "GetSimpleCatalogItems"
         });
@@ -63,7 +86,8 @@ public class ForaService : IForaService
         var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
-        var inTableItems = await _itemLinksService.GetItemLinksAsync(2);
+        var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
+        ItemLinks = inTableItems;
         var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
@@ -173,10 +197,57 @@ public class ForaService : IForaService
                 Country = country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
                 Url = "https://shop.silpo.ua/product/" + value.slug,
-                ShopId = 2
+                ShopId = ShopId
             });
         }
 
         return items;
+    }
+    
+    public async Task<List<PriceModel>> GetPrices(int categoryId, int internalFilialId, int from = 0, int to = 10000)
+    {
+        var internalCategories = await _categoriesService.GetCategoryLinksAsync(ShopId, categoryId);
+        var items = new List<ForaItemModel>();
+        foreach (var internalCategory in internalCategories)
+        {
+            var json = JsonSerializer.Serialize(new
+            {
+                data = new
+                {
+                    from,
+                    to,
+                    internalCategory.CategoryShopId,
+                    filialId = internalFilialId
+                },
+                method = "GetSimpleCatalogItems"
+            });
+
+            var request = new RestRequest("api/2.0/exec/EcomCatalogGlobal", Method.Post);
+            request.AddHeader("Content-Type", "application/json");
+            request.AddBody(json, "application/json");
+
+            var response = await _client.ExecuteAsync(request);
+
+            if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
+                throw new ConnectionAbortedException("Could not get data from Silpo");
+
+            var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
+            if (result == null) throw new ConnectionAbortedException("Could not parse data");
+            
+            items.AddRange(result.items);
+        }
+
+        return (from item in items
+            join link in ItemLinks on item.id equals link.InShopId
+            select new PriceModel()
+            {
+                FilialId = internalFilialId,
+                Price = item.price,
+                Quantity = item.quantity ?? 0,
+                PriceFactor = null,
+                ShopId = ShopId,
+                Id = -1,
+                ItemId = link.ItemId
+            }).ToList();
     }
 }

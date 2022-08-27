@@ -12,10 +12,12 @@ namespace priceapp.API.Controllers;
 public class ItemsController : ControllerBase
 {
     private readonly IItemsService _itemsService;
+    private readonly IItemLinksService _itemLinksService;
 
-    public ItemsController(IItemsService itemsService)
+    public ItemsController(IItemsService itemsService, IItemLinksService itemLinksService)
     {
         _itemsService = itemsService;
+        _itemLinksService = itemLinksService;
     }
 
     [HttpGet("{id}")]
@@ -33,14 +35,14 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("{id}/location/extended")]
-    public async Task<IActionResult> GetItemExtendedByLocation([FromRoute] int id,
+    public async Task<IActionResult> GetItemExtended([FromRoute] int id,
         [FromBody] LocationRequestModel model)
     {
         return Ok(await _itemsService.GetItemExtendedAsync(id, model.XCord, model.YCord, model.Radius));
     }
 
     [HttpGet("category/{categoryId:int}/extended")]
-    public async Task<IActionResult> GetItemsExtendedByCategory([FromRoute] int categoryId,
+    public async Task<IActionResult> GetItemsExtended([FromRoute] int categoryId,
         [FromQuery] int from,
         [FromQuery] int to)
     {
@@ -48,7 +50,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("category/{categoryId:int}/location/extended")]
-    public async Task<IActionResult> GetItemsExtendedByCategoryAndLocation([FromRoute] int categoryId,
+    public async Task<IActionResult> GetItemsExtended([FromRoute] int categoryId,
         [FromQuery] int from,
         [FromQuery] int to,
         [FromBody] LocationRequestModel model)
@@ -59,7 +61,7 @@ public class ItemsController : ControllerBase
 
     [HttpPost("category/{categoryId:int}/search")]
     [Authorize(Roles = "9")]
-    public async Task<IActionResult> SearchItemsByCategory(
+    public async Task<IActionResult> SearchItems(
         [FromQuery] int from,
         [FromQuery] int to,
         [FromRoute] int categoryId,
@@ -78,7 +80,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("search/location/extended")]
-    public async Task<IActionResult> SearchItemsExtendedByLocation(
+    public async Task<IActionResult> SearchItemsExtended(
         [FromQuery] int from,
         [FromQuery] int to,
         [FromBody] SearchAndLocationRequestModel model)
@@ -107,15 +109,15 @@ public class ItemsController : ControllerBase
         return Ok(await _itemsService.SearchMultipleItemsAsync(model, from, to));
     }
 
-    [HttpGet("shop/{shopId:int}/category/{categoryId:int}")]
+    [HttpGet("shop/{shopId:int}/category/{internalCategoryId:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetItemsByShop([FromRoute] int shopId,
-        [FromRoute] int categoryId,
+        [FromRoute] int internalCategoryId,
         [FromQuery] int from,
         [FromQuery] int to
     )
     {
-        return Ok(await _itemsService.GetShopItemsAsync(shopId, categoryId, from, to));
+        return Ok(await _itemsService.GetShopItemsAsync(shopId, internalCategoryId, from, to));
     }
 
     [HttpPost("")]
@@ -143,7 +145,7 @@ public class ItemsController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> InsertItemLinkAsync([FromBody] ItemLinkModel model)
     {
-        await _itemsService.InsertItemLinkAsync(model);
+        await _itemLinksService.InsertItemLinkAsync(model);
         return Ok();
     }
 
