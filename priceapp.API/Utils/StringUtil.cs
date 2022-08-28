@@ -116,4 +116,19 @@ public static class StringUtil
         for (var i = 0; i < length; i++) randomString += characters[random.Next(0, characters.Length - 1)];
         return randomString;
     }
+
+    public static string ExecuteCityName(string str)
+    {
+        var strArray = str.Split(' ', 2);
+        return strArray.Length == 2 ? strArray[1] : strArray[0];
+    }
+    public static string ExecuteHouseNumber(string str)
+    {
+        var strArray = str.Split(',', 2);
+        return strArray.Length == 2 ? strArray[1] : "";
+    }
+    public static string ExecuteStreetName(string str)
+    {
+        return str.Split(',', 2)[0];
+    }
 }

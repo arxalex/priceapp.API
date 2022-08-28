@@ -4,5 +4,9 @@ namespace priceapp.API.Services.Interfaces;
 
 public interface IFilialsService
 {
-    Task<List<FilialModel>> GetFilialsByLocationAsync(double xCord, double yCord, double radius);
+    Task<List<FilialModel>> GetFilialsAsync(double xCord, double yCord, double radius);
+    Task<List<FilialModel>> GetFilialsAsync();
+    Task<List<FilialModel>> GetFilialsAsync(int shopId);
+    Task InsertFilialsAsync();
+    Task<string> GetRegionAsync(string city);
 }

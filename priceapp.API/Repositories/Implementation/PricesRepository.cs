@@ -46,10 +46,7 @@ public class PricesRepository : IPricesRepository
 								    filialid = pi.filialid, 
 								    quantity = pi.quantity,
 								    pricefactor = pi.pricefactor";
-        if (await connection.ExecuteAsync(query, parameters) < 1)
-        {
-            throw new IOException("Error inserting");
-        }
+        await connection.ExecuteAsync(query, parameters);
     }
 
     public async Task SetPriceQuantitiesZeroAsync()
@@ -57,10 +54,17 @@ public class PricesRepository : IPricesRepository
         using var connection = _mySqlDbConnectionFactory.Connect();
 
         const string query = $"update {Table} set `quantity` = 0";
-        if (await connection.ExecuteAsync(query) < 1)
-        {
-            throw new IOException("Error setting");
-        }
+        await connection.ExecuteAsync(query);
+    }
+    
+    public async Task SetPriceQuantitiesZeroAsync(int filialId)
+    {
+	    using var connection = _mySqlDbConnectionFactory.Connect();
+	    var parameters = new DynamicParameters();
+	    parameters.Add("@filialId", filialId, DbType.Int32);
+
+	    const string query = $"update {Table} set `quantity` = 0 where `filialid` = @filialId";
+	    await connection.ExecuteAsync(query);
     }
 
     public async Task InsertOrUpdatePricesHistoryAsync(List<PriceHistoryRepositoryModel> models)
@@ -91,9 +95,17 @@ public class PricesRepository : IPricesRepository
 								    price = pi.price, 
 								    date = pi.date,
 								    filialid = pi.filialid";
-        if (await connection.ExecuteAsync(query, parameters) < 1)
-        {
-            throw new IOException("Error inserting");
-        }
+        await connection.ExecuteAsync(query, parameters);
+    }
+
+    public async Task<int> GetMaxFilialIdToday()
+    {
+	    using var connection = _mySqlDbConnectionFactory.Connect();
+	    var parameters = new DynamicParameters();
+	    parameters.Add("@date", DateTime.Now, DbType.DateTime);
+
+	    const string query = $"select max(filialid) from {TableHistory} where date = @date";
+
+	    return await connection.QueryFirstAsync<int>(query, parameters);
     }
 }

@@ -71,9 +71,9 @@ builder.Services.AddScoped<IShopsService, ShopsService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
-builder.Services.AddSingleton<ISilpoService, SilpoService>();
-builder.Services.AddSingleton<IAtbService, AtbService>();
-builder.Services.AddSingleton<IForaService, ForaService>();
+builder.Services.AddScoped<ISilpoService, SilpoService>();
+builder.Services.AddScoped<IAtbService, AtbService>();
+builder.Services.AddScoped<IForaService, ForaService>();
 
 builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();

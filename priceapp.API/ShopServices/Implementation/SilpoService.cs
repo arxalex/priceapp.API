@@ -1,8 +1,10 @@
 ﻿using System.Globalization;
 using System.Net;
 using System.Text.Json;
+using AutoMapper;
 using Microsoft.AspNetCore.Connections;
 using priceapp.API.Models;
+using priceapp.API.Repositories.Interfaces;
 using priceapp.API.Services.Interfaces;
 using priceapp.API.ShopServices.Interfaces;
 using priceapp.API.ShopServices.Models;
@@ -19,6 +21,8 @@ public class SilpoService : ISilpoService
     private readonly ICountriesService _countriesService;
     private readonly IItemLinksService _itemLinksService;
     private readonly ILogger<SilpoService> _logger;
+    private readonly IFilialsRepository _filialsRepository;
+    private readonly IMapper _mapper;
     private const int ShopId = 1;
 
     private List<ItemLinkModel> _itemLinks;
@@ -44,13 +48,16 @@ public class SilpoService : ISilpoService
 
     public SilpoService(IItemLinksService itemLinksService, IBrandsService brandsService,
         ICategoriesService categoriesService,
-        ICountriesService countriesService, ILogger<SilpoService> logger)
+        ICountriesService countriesService, ILogger<SilpoService> logger, IFilialsRepository filialsRepository,
+        IMapper mapper)
     {
         _itemLinksService = itemLinksService;
         _brandsService = brandsService;
         _categoriesService = categoriesService;
         _countriesService = countriesService;
         _logger = logger;
+        _filialsRepository = filialsRepository;
+        _mapper = mapper;
         var httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.catalog.ecom.silpo.ua/")
@@ -90,15 +97,15 @@ public class SilpoService : ISilpoService
 
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
+        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
         var categoryLinks = await _categoriesService.GetCategoryLinksAsync(ShopId);
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
-        
-        foreach (var value in handledResult)
+
+        foreach (var value in notHandledResult)
         {
             var packageObject = value.parameters?.FirstOrDefault(x => x.key == "packageType");
             var packageLabel = packageObject != null ? packageObject.value : "";
@@ -112,22 +119,28 @@ public class SilpoService : ISilpoService
 
             var calorieObject = value.parameters?.FirstOrDefault(x => x.key == "calorie");
             double? calorie = null;
-            if (calorieObject != null) calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'), CultureInfo.InvariantCulture);
+            if (calorieObject != null)
+                calorie = double.Parse(calorieObject.value.Split('/', 2)[0].Replace(',', '.'),
+                    CultureInfo.InvariantCulture);
 
             var carbohydratesObject = value.parameters?.FirstOrDefault(x => x.key == "carbohydrates");
             double? carbohydrates = null;
-            if (carbohydratesObject != null) carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
+            if (carbohydratesObject != null)
+                carbohydrates = double.Parse(carbohydratesObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
             var fatsObject = value.parameters?.FirstOrDefault(x => x.key == "fats");
             double? fats = null;
-            if (fatsObject != null) fats = double.Parse(fatsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
+            if (fatsObject != null)
+                fats = double.Parse(fatsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var proteinsObject = value.parameters?.FirstOrDefault(x => x.key == "proteins");
             double? proteins = null;
-            if (proteinsObject != null) proteins = double.Parse(proteinsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
+            if (proteinsObject != null)
+                proteins = double.Parse(proteinsObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var alcoholObject = value.parameters?.FirstOrDefault(x => x.key == "alcoholContent");
             double? alcohol = null;
-            if (alcoholObject != null) alcohol = double.Parse(alcoholObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
+            if (alcoholObject != null)
+                alcohol = double.Parse(alcoholObject.value.Replace(',', '.'), CultureInfo.InvariantCulture);
 
             var countryObject = value.parameters?.FirstOrDefault(x => x.key == "country");
             var country = "";
@@ -235,7 +248,7 @@ public class SilpoService : ISilpoService
 
             var result = JsonSerializer.Deserialize<SilpoCatalogItems>(response.Content);
             if (result == null) throw new ConnectionAbortedException("Could not parse data");
-            
+
             items.AddRange(result.items);
         }
 
@@ -251,5 +264,52 @@ public class SilpoService : ISilpoService
                 Id = -1,
                 ItemId = link.ItemId
             }).ToList();
+    }
+
+    public async Task<List<FilialModel>> GetFilials()
+    {
+        var json = JsonSerializer.Serialize(new
+        {
+            data = new { businessId = 1 },
+            method = "GetPickupFilials"
+        });
+
+        var request = new RestRequest("api/2.0/exec/EcomCatalogGlobal", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        request.AddBody(json, "application/json");
+
+        var response = await _client.ExecuteAsync(request);
+
+        if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
+            throw new ConnectionAbortedException("Could not get data from Silpo");
+
+        var result = JsonSerializer.Deserialize<SilpoFilialResponse>(response.Content);
+        if (result == null) throw new ConnectionAbortedException("Could not parse data");
+
+        var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
+        var notHandledResult =
+            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id)).ToList();
+
+        var filials = new List<FilialModel>();
+
+        foreach (var filial in notHandledResult)
+        {
+            var city = StringUtil.ExecuteCityName(filial.city);
+            filials.Add(new FilialModel()
+            {
+                Id = -1,
+                City = city,
+                House = StringUtil.ExecuteHouseNumber(filial.address),
+                Street = StringUtil.ExecuteStreetName(filial.address),
+                InShopId = filial.id,
+                Label = filial.title,
+                Region = await _filialsRepository.GetRegionAsync(city),
+                ShopId = ShopId,
+                XCord = filial.lon,
+                YCord = filial.lat
+            });
+        }
+
+        return filials;
     }
 }

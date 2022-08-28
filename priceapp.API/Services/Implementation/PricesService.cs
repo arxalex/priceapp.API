@@ -60,9 +60,33 @@ public class PricesService : IPricesService
             ShopId = x.ShopId
         });
 
-        await _pricesRepository.SetPriceQuantitiesZeroAsync();
         await _pricesRepository.InsertOrUpdatePricesAsync(_mapper.Map<List<PriceRepositoryModel>>(prices));
         await _pricesRepository.InsertOrUpdatePricesHistoryAsync(
             _mapper.Map<List<PriceHistoryRepositoryModel>>(pricesHistory));
+    }
+
+    public async Task SetPriceQuantitiesZeroAsync()
+    {
+        await _pricesRepository.SetPriceQuantitiesZeroAsync();
+    }
+    
+    public async Task SetPriceQuantitiesZeroAsync(int filialId)
+    {
+        await _pricesRepository.SetPriceQuantitiesZeroAsync(filialId);
+    }
+
+    public async Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
+    {
+        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
+        var filials = forceUpdate ? await _filialsService.GetFilialsAsync() : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();
+        
+        foreach (var filial in filials)
+        {
+            if (!skipSetZeroQuantity)
+            {
+                await SetPriceQuantitiesZeroAsync(filial.Id);
+            }
+            await UpdatePricesAsync(filial);
+        }
     }
 }

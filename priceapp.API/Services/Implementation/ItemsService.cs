@@ -66,7 +66,7 @@ public class ItemsService : IItemsService
         double yCord, double radius, int from, int to)
     {
         var categories = await _categoriesService.GetChildCategoriesAsync(categoryId);
-        var filials = await _filialsService.GetFilialsByLocationAsync(xCord,
+        var filials = await _filialsService.GetFilialsAsync(xCord,
             yCord, radius);
         return _mapper.Map<List<ItemExtendedModel>>(
             await _itemsRepository.GetItemsExtendedAsync(
@@ -95,7 +95,7 @@ public class ItemsService : IItemsService
         int from, int to)
     {
         var keywords = StringUtil.NameToKeywords(search);
-        var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
+        var filials = await _filialsService.GetFilialsAsync(xCord, yCord, radius);
         var items = _mapper.Map<List<ItemExtendedModel>>(
             await _itemsRepository.SearchItemsExtendedAsync(keywords, filials.Select(x => x.Id)));
         var rates = StringUtil.RateItemsByKeywords(search, items.Select(x => (x.Id, x.Label)).ToList());
@@ -151,7 +151,7 @@ public class ItemsService : IItemsService
     public async Task<ItemExtendedModel> GetItemExtendedAsync(int id, double xCord, double yCord,
         double radius)
     {
-        var filials = await _filialsService.GetFilialsByLocationAsync(xCord, yCord, radius);
+        var filials = await _filialsService.GetFilialsAsync(xCord, yCord, radius);
         return _mapper.Map<ItemExtendedModel>(
             await _itemsRepository.GetItemExtendedAsync(id, filials.Select(x => x.Id)));
     }
