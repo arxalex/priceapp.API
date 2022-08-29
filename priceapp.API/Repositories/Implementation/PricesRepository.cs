@@ -108,4 +108,12 @@ public class PricesRepository : IPricesRepository
 
 	    return await connection.QueryFirstAsync<int>(query, parameters);
     }
+
+    public async Task<List<PriceRepositoryModel>> GetPricesAsync()
+    {
+	    using var connection = _mySqlDbConnectionFactory.Connect();
+	    const string query = $"select * from {Table}";
+
+	    return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
+    }
 }

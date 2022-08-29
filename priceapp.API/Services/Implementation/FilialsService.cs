@@ -16,13 +16,15 @@ public class FilialsService : IFilialsService
     private readonly IAtbService _atbService;
     private readonly IShopsService _shopsService;
 
-    public FilialsService(IMapper mapper, IFilialsRepository filialsRepository, ISilpoService silpoService, IForaService foraService, IAtbService atbService)
+    public FilialsService(IMapper mapper, IFilialsRepository filialsRepository, ISilpoService silpoService,
+        IForaService foraService, IAtbService atbService, IShopsService shopsService)
     {
         _mapper = mapper;
         _filialsRepository = filialsRepository;
         _silpoService = silpoService;
         _foraService = foraService;
         _atbService = atbService;
+        _shopsService = shopsService;
     }
 
     public async Task<List<FilialModel>> GetFilialsAsync(double xCord, double yCord, double radius)
@@ -39,9 +41,9 @@ public class FilialsService : IFilialsService
     {
         var filials = shopId switch
         {
-            1 => await _silpoService.GetFilials(),
-            2 => await _foraService.GetFilials(),
-            3 => await _atbService.GetFilials(),
+            1 => await _silpoService.GetFilialsAsync(),
+            2 => await _foraService.GetFilialsAsync(),
+            3 => await _atbService.GetFilialsAsync(),
             _ => new List<FilialModel>()
         };
 

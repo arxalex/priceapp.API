@@ -17,7 +17,9 @@ public class PricesService : IPricesService
     private readonly IFilialsService _filialsService;
     private readonly ICategoriesService _categoriesService;
 
-    public PricesService(ISilpoService silpoService, IForaService foraService, IAtbService atbService, IPricesRepository pricesRepository, IMapper mapper, IFilialsService filialsService, ICategoriesService categoriesService)
+    public PricesService(ISilpoService silpoService, IForaService foraService, IAtbService atbService,
+        IPricesRepository pricesRepository, IMapper mapper, IFilialsService filialsService,
+        ICategoriesService categoriesService)
     {
         _silpoService = silpoService;
         _foraService = foraService;
@@ -28,13 +30,13 @@ public class PricesService : IPricesService
         _categoriesService = categoriesService;
     }
 
-    public async Task<List<PriceModel>> GetPrices(int shopId, int internalFilialId, int categoryId)
+    public async Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int categoryId)
     {
         var prices = shopId switch
         {
-            1 => await _silpoService.GetPrices(categoryId, internalFilialId),
-            2 => await _foraService.GetPrices(categoryId, internalFilialId),
-            3 => await _atbService.GetPrices(categoryId, internalFilialId),
+            1 => await _silpoService.GetPricesAsync(categoryId, internalFilialId),
+            2 => await _foraService.GetPricesAsync(categoryId, internalFilialId),
+            3 => await _atbService.GetPricesAsync(categoryId, internalFilialId),
             _ => new List<PriceModel>()
         };
 
@@ -47,7 +49,7 @@ public class PricesService : IPricesService
         var prices = new List<PriceModel>();
         foreach (var category in categories)
         {
-            prices.AddRange(await GetPrices(filial.ShopId, filial.InShopId, category.Id));
+            prices.AddRange(await GetPricesAsync(filial.ShopId, filial.InShopId, category.Id));
         }
 
         var pricesHistory = prices.Select(x => new PriceHistoryModel()
@@ -69,7 +71,7 @@ public class PricesService : IPricesService
     {
         await _pricesRepository.SetPriceQuantitiesZeroAsync();
     }
-    
+
     public async Task SetPriceQuantitiesZeroAsync(int filialId)
     {
         await _pricesRepository.SetPriceQuantitiesZeroAsync(filialId);
@@ -78,15 +80,70 @@ public class PricesService : IPricesService
     public async Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
     {
         var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
-        var filials = forceUpdate ? await _filialsService.GetFilialsAsync() : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();
-        
+        var filials = forceUpdate
+            ? await _filialsService.GetFilialsAsync()
+            : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();
+
         foreach (var filial in filials)
         {
             if (!skipSetZeroQuantity)
             {
                 await SetPriceQuantitiesZeroAsync(filial.Id);
             }
+
             await UpdatePricesAsync(filial);
         }
+    }
+
+    public async Task RefactorPricesAsync()
+    {
+        var prices = (await GetPricesAsync()).GroupBy(x => x.ItemId);
+        var pricesToUpdate = new List<PriceModel>();
+        foreach (var priceGroup in prices)
+        {
+            var priceSum = 0.0;
+            var i = 0;
+
+            foreach (var price in priceGroup)
+            {
+                if (price.PriceFactor != null)
+                {
+                    continue;
+                }
+
+                priceSum += price.Price;
+                i++;
+            }
+
+            var priceAvg = priceSum / i;
+
+            foreach (var price in priceGroup)
+            {
+                if (price.PriceFactor != null)
+                {
+                    continue;
+                }
+
+                var factor = priceAvg / price.Price;
+                switch (factor)
+                {
+                    case > 6:
+                        price.PriceFactor = 10;
+                        pricesToUpdate.Add(price);
+                        break;
+                    case < 0.4:
+                        price.PriceFactor = 0.1;
+                        pricesToUpdate.Add(price);
+                        break;
+                }
+            }
+        }
+
+        await _pricesRepository.InsertOrUpdatePricesAsync(_mapper.Map<List<PriceRepositoryModel>>(pricesToUpdate));
+    }
+
+    public async Task<List<PriceModel>> GetPricesAsync()
+    {
+        return _mapper.Map<List<PriceModel>>(await _pricesRepository.GetPricesAsync());
     }
 }

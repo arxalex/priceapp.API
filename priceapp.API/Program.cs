@@ -59,6 +59,7 @@ builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddScoped<IBrandsService, BrandsService>();
 builder.Services.AddScoped<ICategoriesService, CategoriesService>();
+builder.Services.AddScoped<ICategoryLinksService, CategoryLinksService>();
 builder.Services.AddScoped<IConsistsService, ConsistsService>();
 builder.Services.AddScoped<ICountriesService, CountriesService>();
 builder.Services.AddScoped<IFilialsService, FilialsService>();
@@ -77,6 +78,7 @@ builder.Services.AddScoped<IForaService, ForaService>();
 
 builder.Services.AddScoped<IBrandsRepository, BrandsRepository>();
 builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
+builder.Services.AddScoped<ICategoryLinksRepository, CategoryLinksRepository>();
 builder.Services.AddScoped<IConsistsRepository, ConsistsRepository>();
 builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 builder.Services.AddScoped<IFilialsRepository, FilialsRepository>();

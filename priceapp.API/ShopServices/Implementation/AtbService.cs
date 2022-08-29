@@ -18,13 +18,14 @@ public class AtbService : IAtbService
     private const string TableFilials = "pa_filials_atb";
     private const string TablePrices = "pa_prices";
     private readonly IBrandsService _brandsService;
-    private readonly ICategoriesService _categoriesService;
     private readonly ICountriesService _countriesService;
     private readonly IItemLinksService _itemLinksService;
     private readonly MySQLDbConnectionFactory _mySqlDbConnectionFactory;
     private readonly ILogger<AtbService> _logger;
     private readonly IFilialsRepository _filialsRepository;
     private readonly IMapper _mapper;
+    private readonly ICategoryLinksRepository _categoryLinksRepository;
+    private readonly ICategoriesService _categoriesService;
     private const int ShopId = 3;
 
     private List<ItemLinkModel> _itemLinks;
@@ -47,17 +48,18 @@ public class AtbService : IAtbService
         }
     }
 
-    public AtbService(IItemLinksService itemLinksService, ICategoriesService categoriesService,
-        ICountriesService countriesService, IBrandsService brandsService, ILogger<AtbService> logger,
-        IFilialsRepository filialsRepository, IMapper mapper)
+    public AtbService(IItemLinksService itemLinksService, ICountriesService countriesService,
+        IBrandsService brandsService, ILogger<AtbService> logger, IFilialsRepository filialsRepository, IMapper mapper,
+        ICategoryLinksRepository categoryLinksRepository, ICategoriesService categoriesService)
     {
         _itemLinksService = itemLinksService;
-        _categoriesService = categoriesService;
         _countriesService = countriesService;
         _brandsService = brandsService;
         _logger = logger;
         _filialsRepository = filialsRepository;
         _mapper = mapper;
+        _categoryLinksRepository = categoryLinksRepository;
+        _categoriesService = categoriesService;
         _mySqlDbConnectionFactory = new MySQLDbConnectionFactory(
             "server=priceapp.crjdcmsi5oyh.eu-central-1.rds.amazonaws.com;user=priceapp_admin;password=h9Fht9EiuE46AD7;database=arxalexc_priceapp_proxy");
         _itemLinksLastUpdatedTime = DateTime.MinValue;
@@ -66,15 +68,15 @@ public class AtbService : IAtbService
 
     public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int proxyCategoryId, int from, int to)
     {
-        var resultItems = await GetItems(proxyCategoryId, from, to);
+        var resultItems = await GetItemsAsync(proxyCategoryId, from, to);
 
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
+        var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.id));
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
-        var categoryLinks = await _categoriesService.GetCategoryLinksAsync(1);
+        var categoryLinks = _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(1));
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
@@ -135,20 +137,21 @@ public class AtbService : IAtbService
         return items;
     }
 
-    public async Task<List<PriceModel>> GetPrices(int categoryId, int filialId, int from = 0, int to = 10000)
+    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int proxyFilialId, int from = 0, int to = 10000)
     {
-        var proxyCategories = await _categoriesService.GetCategoryLinksAsync(ShopId, categoryId);
+        var proxyCategories =
+            _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
         var items = new List<AtbItemModel>();
         foreach (var proxyCategory in proxyCategories)
         {
-            items.AddRange(await GetItems(proxyCategory.Id, from, to));
+            items.AddRange(await GetItemsAsync(proxyCategory.Id, proxyFilialId, from, to));
         }
 
         return (from item in items
             join link in ItemLinks on item.id equals link.InShopId
             select new PriceModel()
             {
-                FilialId = filialId,
+                FilialId = proxyFilialId,
                 Price = item.price,
                 Quantity = item.quantity,
                 PriceFactor = null,
@@ -158,15 +161,14 @@ public class AtbService : IAtbService
             }).ToList();
     }
 
-    public async Task<List<FilialModel>> GetFilials()
+    public async Task<List<FilialModel>> GetFilialsAsync()
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = @$"select * from {TableFilials}";
 
         var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
         var result = (await connection.QueryAsync<AtbFilialModel>(query))
-            .Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id))
-            .ToList();
+            .Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id));
 
         return result.Select(x => new FilialModel()
         {
@@ -183,7 +185,25 @@ public class AtbService : IAtbService
         }).ToList();
     }
 
-    private async Task<List<AtbCategoryModel>> GetChildCategories(int proxyCategoryId)
+    public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync()
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+
+        const string query = $"select * from {TableCategories}";
+        var inTableItems = await _categoryLinksRepository.GetCategoryLinksAsync(ShopId);
+        return (await connection.QueryAsync<AtbCategoryModel>(query))
+            .Where(category => !inTableItems.Exists(x => x.categoryshopid == category.id))
+            .Select(x => new CategoryLinkModel()
+            {
+                Id = -1,
+                CategoryId = null,
+                CategoryShopId = x.id,
+                ShopCategoryLabel = x.label,
+                ShopId = ShopId
+            }).ToList();
+    }
+
+    private async Task<List<AtbCategoryModel>> GetChildCategoriesAsync(int proxyCategoryId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
 
@@ -209,9 +229,9 @@ public class AtbService : IAtbService
         return result;
     }
 
-    private async Task<List<AtbItemModel>> GetItems(int proxyCategoryId, int from, int to)
+    private async Task<List<AtbItemModel>> GetItemsAsync(int proxyCategoryId, int from, int to)
     {
-        var categoryIds = await GetChildCategories(proxyCategoryId);
+        var categoryIds = await GetChildCategoriesAsync(proxyCategoryId);
         using var connection = _mySqlDbConnectionFactory.Connect();
         var whereQueryCategories =
             DatabaseUtil.GetInQuery(categoryIds.Select(x => x.id).Prepend(proxyCategoryId), "t.category");
@@ -229,14 +249,12 @@ public class AtbService : IAtbService
         parameters.Add("@category", proxyCategoryId, DbType.Int32);
         parameters.Add("@limit", to - from, DbType.Int32);
         parameters.Add("@offset", from, DbType.Int32);
-        var resultItems = (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
-
-        return resultItems;
+        return (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
     }
 
-    private async Task<List<AtbItemModel>> GetItems(int proxyCategoryId, int proxyFilialId, int from, int to)
+    private async Task<List<AtbItemModel>> GetItemsAsync(int proxyCategoryId, int proxyFilialId, int from, int to)
     {
-        var categoryIds = await GetChildCategories(proxyCategoryId);
+        var categoryIds = await GetChildCategoriesAsync(proxyCategoryId);
         using var connection = _mySqlDbConnectionFactory.Connect();
         var whereQueryCategories =
             DatabaseUtil.GetInQuery(categoryIds.Select(x => x.id).Prepend(proxyCategoryId), "t.category");
@@ -258,8 +276,6 @@ public class AtbService : IAtbService
         parameters.Add("@category", proxyCategoryId, DbType.Int32);
         parameters.Add("@limit", to - from, DbType.Int32);
         parameters.Add("@offset", from, DbType.Int32);
-        var resultItems = (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
-
-        return resultItems;
+        return (await connection.QueryAsync<AtbItemModel>(query, parameters)).ToList();
     }
 }

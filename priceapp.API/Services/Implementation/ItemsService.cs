@@ -135,9 +135,12 @@ public class ItemsService : IItemsService
     {
         return shopId switch
         {
-            1 => _mapper.Map<List<ItemShopModel>>(await _silpoService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
-            2 => _mapper.Map<List<ItemShopModel>>(await _foraService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
-            3 => _mapper.Map<List<ItemShopModel>>(await _atbService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
+            1 => _mapper.Map<List<ItemShopModel>>(
+                await _silpoService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
+            2 => _mapper.Map<List<ItemShopModel>>(
+                await _foraService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
+            3 => _mapper.Map<List<ItemShopModel>>(
+                await _atbService.GetItemsByCategoryAsync(internalCategoryId, from, to)),
             _ => new List<ItemShopModel>()
         };
     }

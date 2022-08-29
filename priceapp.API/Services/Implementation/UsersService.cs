@@ -21,8 +21,7 @@ public class UsersService : IUsersService
     private readonly IUsersRepository _usersRepository;
 
     public UsersService(IUsersRepository usersRepository, IMapper mapper, ILogger<UsersService> logger,
-        IMailService mailService,
-        ITokensRepository tokensRepository, JWTSetting jwtSetting, ITokenService tokenService)
+        IMailService mailService, ITokensRepository tokensRepository, JWTSetting jwtSetting, ITokenService tokenService)
     {
         _usersRepository = usersRepository;
         _mapper = mapper;
@@ -218,7 +217,7 @@ public class UsersService : IUsersService
                 SecurityAlgorithms.HmacSha256));
 
         var token = new JwtSecurityTokenHandler().WriteToken(jwt);
-        var expires = (int) new DateTimeOffset(now).Add(TimeSpan.FromMinutes(_jwtSetting.Lifetime))
+        var expires = (int)new DateTimeOffset(now).Add(TimeSpan.FromMinutes(_jwtSetting.Lifetime))
             .ToUnixTimeSeconds();
 
         return (token, expires);

@@ -11,17 +11,19 @@ namespace priceapp.API.Controllers;
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoriesService _categoriesService;
+    private readonly ICategoryLinksService _categoryLinksService;
 
-    public CategoriesController(ICategoriesService categoriesService)
+    public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService)
     {
         _categoriesService = categoriesService;
+        _categoryLinksService = categoryLinksService;
     }
 
     [HttpGet("shop/{shopId:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> GetCategoryLinksByShopAsync([FromRoute] int shopId)
     {
-        return Ok(await _categoriesService.GetCategoryLinksAsync(shopId));
+        return Ok(await _categoryLinksService.GetCategoryLinksAsync(shopId));
     }
 
     [HttpGet("")]
@@ -43,7 +45,7 @@ public class CategoriesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> InsertCategoryLinkAsync([FromBody] CategoryLinkModel model)
     {
-        await _categoriesService.InsertCategoryLinkAsync(model);
+        await _categoryLinksService.InsertCategoryLinkAsync(model);
         return Ok();
     }
     
@@ -67,7 +69,7 @@ public class CategoriesController : ControllerBase
         {
             return BadRequest();
         }
-        await _categoriesService.UpdateCategoryLinkAsync(model);
+        await _categoryLinksService.UpdateCategoryLinkAsync(model);
         return Ok();
     }
 }

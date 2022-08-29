@@ -16,13 +16,14 @@ namespace priceapp.API.ShopServices.Implementation;
 public class SilpoService : ISilpoService
 {
     private readonly IBrandsService _brandsService;
-    private readonly ICategoriesService _categoriesService;
     private readonly RestClient _client;
     private readonly ICountriesService _countriesService;
     private readonly IItemLinksService _itemLinksService;
     private readonly ILogger<SilpoService> _logger;
     private readonly IFilialsRepository _filialsRepository;
     private readonly IMapper _mapper;
+    private readonly ICategoryLinksRepository _categoryLinksRepository;
+    private readonly ICategoriesService _categoriesService;
     private const int ShopId = 1;
 
     private List<ItemLinkModel> _itemLinks;
@@ -47,17 +48,17 @@ public class SilpoService : ISilpoService
 
 
     public SilpoService(IItemLinksService itemLinksService, IBrandsService brandsService,
-        ICategoriesService categoriesService,
         ICountriesService countriesService, ILogger<SilpoService> logger, IFilialsRepository filialsRepository,
-        IMapper mapper)
+        IMapper mapper, ICategoryLinksRepository categoryLinksRepository, ICategoriesService categoriesService)
     {
         _itemLinksService = itemLinksService;
         _brandsService = brandsService;
-        _categoriesService = categoriesService;
         _countriesService = countriesService;
         _logger = logger;
         _filialsRepository = filialsRepository;
         _mapper = mapper;
+        _categoryLinksRepository = categoryLinksRepository;
+        _categoriesService = categoriesService;
         var httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://api.catalog.ecom.silpo.ua/")
@@ -97,11 +98,12 @@ public class SilpoService : ISilpoService
 
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
+        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id));
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
-        var categoryLinks = await _categoriesService.GetCategoryLinksAsync(ShopId);
+        var categoryLinks =
+            _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
@@ -219,9 +221,11 @@ public class SilpoService : ISilpoService
         return items;
     }
 
-    public async Task<List<PriceModel>> GetPrices(int categoryId, int internalFilialId, int from = 0, int to = 10000)
+    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int internalFilialId, int from = 0,
+        int to = 10000)
     {
-        var internalCategories = await _categoriesService.GetCategoryLinksAsync(ShopId, categoryId);
+        var internalCategories =
+            _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
         var items = new List<SilpoItemModel>();
         foreach (var internalCategory in internalCategories)
         {
@@ -266,7 +270,7 @@ public class SilpoService : ISilpoService
             }).ToList();
     }
 
-    public async Task<List<FilialModel>> GetFilials()
+    public async Task<List<FilialModel>> GetFilialsAsync()
     {
         var json = JsonSerializer.Serialize(new
         {
@@ -288,7 +292,7 @@ public class SilpoService : ISilpoService
 
         var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
         var notHandledResult =
-            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id)).ToList();
+            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id));
 
         var filials = new List<FilialModel>();
 
@@ -311,5 +315,40 @@ public class SilpoService : ISilpoService
         }
 
         return filials;
+    }
+
+    public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int internalFilialId = 2043)
+    {
+        var json = JsonSerializer.Serialize(new
+        {
+            data = new { filialId = internalFilialId },
+            method = "GetCategories"
+        });
+
+        var request = new RestRequest("api/2.0/exec/EcomCatalogGlobal", Method.Post);
+        request.AddHeader("Content-Type", "application/json");
+        request.AddBody(json, "application/json");
+
+        var response = await _client.ExecuteAsync(request);
+
+        if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
+            throw new ConnectionAbortedException("Could not get data from Silpo");
+
+        var result = JsonSerializer.Deserialize<SilpoCategoriesRequest>(response.Content);
+        if (result == null) throw new ConnectionAbortedException("Could not parse data");
+
+        var inTableItems =
+            _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
+        var notHandledResult =
+            result.tree.Where(categories => !inTableItems.Exists(x => x.CategoryShopId == categories.id));
+
+        return notHandledResult.Select(x => new CategoryLinkModel
+        {
+            Id = -1,
+            ShopId = ShopId,
+            CategoryId = null,
+            CategoryShopId = x.id,
+            ShopCategoryLabel = x.name!
+        }).ToList();
     }
 }
