@@ -1,7 +1,9 @@
 using System.Data;
 using Dapper;
+using priceapp.API.Models;
 using priceapp.API.Repositories.Interfaces;
 using priceapp.API.Repositories.Models;
+using priceapp.API.Utils;
 
 namespace priceapp.API.Repositories.Implementation;
 
@@ -98,5 +100,31 @@ public class CategoryLinksRepository : ICategoryLinksRepository
         parameters.Add("@categoryId", categoryId, DbType.Int32);
 
         return (await connection.QueryAsync<CategoryLinkRepositoryModel>(query, parameters)).ToList();
+    }
+
+    public async Task InsertOrUpdateCategoryLinksAsync(List<CategoryLinkRepositoryModel> models)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        var tableQuery = DatabaseUtil.GetSelectStatementFromList(models, parameters);
+
+        var query = @$"insert into {TableLinks} select * from (
+									select pp.id, 
+										p.categoryid, 
+										p.shopid, 
+										p.categoryshopid, 
+										p.shopcategorylabel
+									from
+									(
+									   {tableQuery}
+									) p
+									left join {TableLinks} pp on p.categoryshopid = pp.categoryshopid 
+								) as pi
+								on duplicate key update 
+									categoryid = pi.categoryid, 
+								    shopid = pi.shopid, 
+								    categoryshopid = pi.categoryshopid, 
+								    shopcategorylabel = pi.shopcategorylabel";
+        await connection.ExecuteAsync(query, parameters);
     }
 }

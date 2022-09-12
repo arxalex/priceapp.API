@@ -35,7 +35,7 @@ public class PricesRepository : IPricesRepository
 									(
 									   {tableQuery}
 									) p
-									left join pa_prices pp on p.itemid = pp.itemid 
+									left join {Table} pp on p.itemid = pp.itemid 
 										and p.shopid = pp.shopid
 										and p.filialid = pp.filialid
 								) as pi
@@ -64,7 +64,7 @@ public class PricesRepository : IPricesRepository
 	    parameters.Add("@filialId", filialId, DbType.Int32);
 
 	    const string query = $"update {Table} set `quantity` = 0 where `filialid` = @filialId";
-	    await connection.ExecuteAsync(query);
+	    await connection.ExecuteAsync(query, parameters);
     }
 
     public async Task InsertOrUpdatePricesHistoryAsync(List<PriceHistoryRepositoryModel> models)
@@ -84,7 +84,7 @@ public class PricesRepository : IPricesRepository
 									(
 									   {tableQuery}
 									) p
-									left join pa_prices pp on p.itemid = pp.itemid 
+									left join {TableHistory} pp on p.itemid = pp.itemid 
 										and p.shopid = pp.shopid
 										and p.filialid = pp.filialid
 										and p.date = pp.date

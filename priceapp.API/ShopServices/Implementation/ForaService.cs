@@ -101,7 +101,7 @@ public class ForaService : IForaService
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
-        var categoryLinks = _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(1));
+        var categoryLinks = _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
@@ -344,7 +344,7 @@ public class ForaService : IForaService
         {
             Id = -1,
             ShopId = ShopId,
-            CategoryId = null,
+            CategoryId = 0,
             CategoryShopId = x.id,
             ShopCategoryLabel = x.name!
         }).ToList();

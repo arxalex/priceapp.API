@@ -13,11 +13,13 @@ public class ItemsController : ControllerBase
 {
     private readonly IItemsService _itemsService;
     private readonly IItemLinksService _itemLinksService;
+    private readonly proxy.Controllers.ItemsController _itemsController;
 
-    public ItemsController(IItemsService itemsService, IItemLinksService itemLinksService)
+    public ItemsController(IItemsService itemsService, IItemLinksService itemLinksService, proxy.Controllers.ItemsController itemsController)
     {
         _itemsService = itemsService;
         _itemLinksService = itemLinksService;
+        _itemsController = itemsController;
     }
 
     [HttpGet("{id}")]
@@ -160,5 +162,13 @@ public class ItemsController : ControllerBase
         }
 
         return BadRequest();
+    }
+    
+    [HttpPost("actualize/proxy/{shopId:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> ActualizeProxyItemsAsync([FromRoute] int shopId)
+    {
+        await _itemsController.ActualizeItems(shopId);
+        return Ok();
     }
 }

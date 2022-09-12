@@ -61,7 +61,7 @@ public class FilialsRepository : IFilialsRepository
 	    var parameters = new DynamicParameters();
 	    parameters.Add("@shopId", shopId, DbType.Int32);
 
-	    return (await connection.QueryAsync<FilialRepositoryModel>(query)).ToList();
+	    return (await connection.QueryAsync<FilialRepositoryModel>(query, parameters)).ToList();
     }
 
     public async Task InsertFilialsAsync(List<FilialRepositoryModel> models)
@@ -100,6 +100,6 @@ public class FilialsRepository : IFilialsRepository
 	    var parameters = new DynamicParameters();
 	    parameters.Add("@city", $"%{city}%", DbType.String);
 
-	    return await connection.QueryFirstAsync<string>(query);
+	    return await connection.QueryFirstOrDefaultAsync<string>(query, parameters);
     }
 }

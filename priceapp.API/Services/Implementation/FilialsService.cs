@@ -50,7 +50,7 @@ public class FilialsService : IFilialsService
         return filials;
     }
 
-    public async Task InsertFilialsAsync()
+    public async Task ActualizeFilialsAsync()
     {
         var shops = await _shopsService.GetShopsAsync();
         var filials = new List<FilialModel>();

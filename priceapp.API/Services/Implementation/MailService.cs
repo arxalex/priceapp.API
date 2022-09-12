@@ -7,15 +7,19 @@ namespace priceapp.API.Services.Implementation;
 
 public class MailService : IMailService
 {
-    private const string FromEmail = "info@arxalex.co";
-    private const string MailHost = "mail.arxalex.co";
-    private const string Domain = $"https://{DomainPretty}";
-    private const string DomainPretty = "priceapp.co";
+    private readonly string FromEmail;
+    private readonly string MailHost;
+    private readonly string Domain;
+    private readonly string DomainPretty;
     private readonly ILogger<MailService> _logger;
 
-    public MailService(ILogger<MailService> logger)
+    public MailService(ILogger<MailService> logger, IConfiguration configuration)
     {
         _logger = logger;
+        FromEmail = configuration["Mail:From"];
+        MailHost = configuration["Mail:Host"];
+        Domain = configuration["Domain:Host"];
+        DomainPretty = configuration["Domain:Pretty"];
     }
 
     public async Task SendRegistrationConfirmEmailAsync(int userId, string email, string token)

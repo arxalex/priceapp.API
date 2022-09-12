@@ -346,7 +346,7 @@ public class SilpoService : ISilpoService
         {
             Id = -1,
             ShopId = ShopId,
-            CategoryId = null,
+            CategoryId = 0,
             CategoryShopId = x.id,
             ShopCategoryLabel = x.name!
         }).ToList();

@@ -12,11 +12,13 @@ public class CategoriesController : ControllerBase
 {
     private readonly ICategoriesService _categoriesService;
     private readonly ICategoryLinksService _categoryLinksService;
+    private readonly proxy.Controllers.CategoriesController _categoriesController;
 
-    public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService)
+    public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService, proxy.Controllers.CategoriesController categoriesController)
     {
         _categoriesService = categoriesService;
         _categoryLinksService = categoryLinksService;
+        _categoriesController = categoriesController;
     }
 
     [HttpGet("shop/{shopId:int}")]
@@ -70,6 +72,22 @@ public class CategoriesController : ControllerBase
             return BadRequest();
         }
         await _categoryLinksService.UpdateCategoryLinkAsync(model);
+        return Ok();
+    }
+    
+    [HttpPost("link/actualize")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> ActualizeCategoryLinksAsync()
+    {
+        await _categoryLinksService.ActualizeCategoryLinksAsync();
+        return Ok();
+    }
+    
+    [HttpPost("actualize/proxy/{shopId:int}")]
+    [Authorize(Roles = "9")]
+    public async Task<IActionResult> ActualizeProxyCategoriesAsync([FromRoute] int shopId)
+    {
+        await _categoriesController.ActualizeCategoriesAsync(shopId);
         return Ok();
     }
 }

@@ -14,17 +14,19 @@ public class CategoryLinksService : ICategoryLinksService
     private readonly IAtbService _atbService;
     private readonly IMapper _mapper;
     private readonly ICategoryLinksRepository _categoryLinksRepository;
+    private readonly IShopsService _shopsService;
 
-    public CategoryLinksService(ISilpoService silpoService, IForaService foraService, IAtbService atbService, IMapper mapper, ICategoryLinksRepository categoryLinksRepository)
+    public CategoryLinksService(ISilpoService silpoService, IForaService foraService, IAtbService atbService, IMapper mapper, ICategoryLinksRepository categoryLinksRepository, IShopsService shopsService)
     {
         _silpoService = silpoService;
         _foraService = foraService;
         _atbService = atbService;
         _mapper = mapper;
         _categoryLinksRepository = categoryLinksRepository;
+        _shopsService = shopsService;
     }
 
-    public async Task<List<CategoryLinkModel>> GetCategoryLinksFromShopsAsync(int shopId)
+    public async Task<List<CategoryLinkModel>> GetNewCategoryLinksAsync(int shopId)
     {
         var categories = shopId switch
         {
@@ -57,5 +59,22 @@ public class CategoryLinksService : ICategoryLinksService
     public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int shopId)
     {
         return _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(shopId));
+    }
+
+    public async Task ActualizeCategoryLinksAsync()
+    {
+        var shops = await _shopsService.GetShopsAsync();
+        var links = new List<CategoryLinkModel>();
+        foreach (var shop in shops)
+        {
+            links.AddRange(await GetNewCategoryLinksAsync(shop.Id));
+        }
+
+        await InsertOrUpdateCategoryLinksAsync(links);
+    }
+
+    public async Task InsertOrUpdateCategoryLinksAsync(List<CategoryLinkModel> links)
+    {
+        await _categoryLinksRepository.InsertOrUpdateCategoryLinksAsync(_mapper.Map<List<CategoryLinkRepositoryModel>>(links));
     }
 }

@@ -1,3 +1,4 @@
+using priceapp.API.Models;
 using priceapp.API.Repositories.Models;
 
 namespace priceapp.API.Repositories.Interfaces;
@@ -9,4 +10,5 @@ public interface ICategoryLinksRepository
     Task InsertCategoryLinkAsync(CategoryLinkRepositoryModel model);
     Task UpdateCategoryLinkAsync(CategoryLinkRepositoryModel model);
     Task<List<CategoryLinkRepositoryModel>> GetCategoryLinksAsync(int shopId, int categoryId);
+    Task InsertOrUpdateCategoryLinksAsync(List<CategoryLinkRepositoryModel> models);
 }
