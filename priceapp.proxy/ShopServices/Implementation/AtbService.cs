@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text.Json;
 using HtmlAgilityPack;
@@ -105,7 +106,7 @@ public class AtbService : IAtbService
 
         const string xpathPriceQuery =
             "//div[@class='catalog-item__bottom']/div[contains(@class, 'catalog-item__product-price')]/data";
-        const string xpathItemLinkQuery = "//div[@class='catalog-item__title']/a";
+        const string xpathItemLinkQuery = "//div[@class='b-addToCart']";
         const string xpathItem = "//article";
 
         if (category == null)
@@ -135,16 +136,18 @@ public class AtbService : IAtbService
 
             html.LoadHtml(result.markup);
             var htmlNodeRoot = html.DocumentNode;
-            var arrayOfProducts = htmlNodeRoot!.SelectNodes(xpathItem);
+            var arrayOfProducts = htmlNodeRoot.SelectNodes(xpathItem);
 
-            foreach (var product in arrayOfProducts!)
+            foreach (var productNode in arrayOfProducts)
             {
-                if (!int.TryParse(
-                        product
-                            .SelectSingleNode(xpathItemLinkQuery)
-                            .GetAttributeValue("href", "///")
-                            .Split('/')[3],
-                        out var internalItemId))
+                var productHtml = new HtmlDocument();
+                productHtml.LoadHtml(productNode.InnerHtml);
+                var product = productHtml.DocumentNode;
+                
+                var internalItemId = product
+                    .SelectSingleNode(xpathItemLinkQuery)
+                    .GetAttributeValue("data-productid", 0);
+                if (internalItemId == 0)
                 {
                     continue;
                 }
@@ -172,7 +175,7 @@ public class AtbService : IAtbService
                 {
                     ItemId = item.Id,
                     ShopId = ShopId,
-                    Price = product.SelectSingleNode(xpathPriceQuery).GetAttributeValue("value", 0.0),
+                    Price = double.Parse(product.SelectSingleNode(xpathPriceQuery).GetAttributeValue("value", "0"), CultureInfo.InvariantCulture),
                     FilialId = filialId,
                     Id = -1,
                     Quantity = 1,
@@ -206,8 +209,11 @@ public class AtbService : IAtbService
 
         var regionNodes = htmlNodeRoot.SelectNodes(xpathRegionQuery);
 
-        foreach (var regionNode in regionNodes)
+        foreach (var region in regionNodes)
         {
+            var regionHtml = new HtmlDocument();
+            regionHtml.LoadHtml(region.OuterHtml);
+            var regionNode = regionHtml.DocumentNode.SelectSingleNode(xpathCitiesQuery);
             var internalRegionId = regionNode.GetAttributeValue("value", 0);
 
             if (internalRegionId == 0)
@@ -227,11 +233,14 @@ public class AtbService : IAtbService
 
             var htmlRegion = new HtmlDocument();
             htmlRegion.LoadHtml(responseRegion.Content);
-            var htmlNodeRootRegion = html.DocumentNode;
+            var htmlNodeRootRegion = htmlRegion.DocumentNode;
 
             var cityNodes = htmlNodeRootRegion.SelectNodes(xpathCitiesQuery);
-            foreach (var cityNode in cityNodes)
+            foreach (var city in cityNodes)
             {
+                var cityHtml = new HtmlDocument();
+                cityHtml.LoadHtml(city.OuterHtml);
+                var cityNode = cityHtml.DocumentNode.SelectSingleNode(xpathCitiesQuery);
                 var internalCityId = cityNode.GetAttributeValue("value", 0);
 
                 if (internalCityId == 0)
@@ -302,8 +311,11 @@ public class AtbService : IAtbService
                     var htmlCityNodeRoot = htmlCity.DocumentNode;
 
                     var filialNodes = htmlCityNodeRoot.SelectNodes(xpathCitiesQuery);
-                    foreach (var filialNode in filialNodes)
+                    foreach (var filial in filialNodes)
                     {
+                        var filialHtml = new HtmlDocument();
+                        filialHtml.LoadHtml(filial.OuterHtml);
+                        var filialNode = filialHtml.DocumentNode.SelectSingleNode(xpathCitiesQuery);
                         var internalFilialId = filialNode.GetAttributeValue("value", 0);
 
                         if (internalFilialId == 0)
@@ -326,7 +338,7 @@ public class AtbService : IAtbService
                             .Split(' ', 2)[1]
                             .Split(", ", 2);
 
-                        var filial = new AtbFilialModel()
+                        var filialModel = new AtbFilialModel()
                         {
                             Id = -1,
                             City = cityNode.InnerText,
@@ -335,11 +347,11 @@ public class AtbService : IAtbService
                             Label = resultFilial.@out.address.Split(" ", 2)[0],
                             Region = regionNode.InnerText + " обл.",
                             Street = streetAndHouse[0],
-                            XCord = double.Parse(resultCity.coordinates.First(x => x.id == internalFilialId).lng),
-                            YCord = double.Parse(resultCity.coordinates.First(x => x.id == internalFilialId).lat)
+                            XCord = double.Parse(resultCity.coordinates.First(x => x.id == internalFilialId).lng, CultureInfo.InvariantCulture),
+                            YCord = double.Parse(resultCity.coordinates.First(x => x.id == internalFilialId).lat, CultureInfo.InvariantCulture)
                         };
 
-                        filials.Add(filial);
+                        filials.Add(filialModel);
                     }
                 }
             }
@@ -366,12 +378,16 @@ public class AtbService : IAtbService
 
         var categoryNodes = htmlNodeRoot.SelectNodes(xpathCategoryQuery);
 
-        foreach (var categoryNode in categoryNodes)
+        foreach (var category in categoryNodes)
         {
+            var categoryHtml = new HtmlDocument();
+            categoryHtml.LoadHtml(category.InnerHtml);
+            var categoryNode = categoryHtml.DocumentNode;
             var categoryLinkNode = categoryNode.SelectSingleNode(xpathCategoryLinkQuery);
             if (!int.TryParse(categoryLinkNode
                     .GetAttributeValue("href", "///")
-                    .Split('/')[3], out var internalCategoryId) 
+                    .Split('/')[2]
+                    .Split('-')[0], out var internalCategoryId) 
                 || internalCategoryId == 388)
             {
                 continue;
@@ -405,11 +421,17 @@ public class AtbService : IAtbService
             const string xpathSubCategoryQuery = "//a[@class='submenu__link']";
             var subCategoriesLinkNodes = categoryNode.SelectNodes(xpathSubCategoryQuery);
 
+            if (subCategoriesLinkNodes == null)
+            {
+                continue;
+            }
+            
             foreach (var subCategoryLinkNode in subCategoriesLinkNodes)
             {
                 if (!int.TryParse(subCategoryLinkNode
                         .GetAttributeValue("href", "///")
-                        .Split('/')[3], out var internalSubCategoryId) 
+                        .Split('/')[2]
+                        .Split('-')[0], out var internalSubCategoryId) 
                     || internalSubCategoryId == 388)
                 {
                     continue;
@@ -456,7 +478,7 @@ public class AtbService : IAtbService
         var i = 0;
         var nextPage = true;
         
-        const string xpathItemLinkQuery = "//div[@class='catalog-item__title']/a";
+        const string xpathItemLinkQuery = "//div[@class='b-addToCart']";
         const string xpathItem = "//article";
         
         while (nextPage) {
@@ -482,14 +504,16 @@ public class AtbService : IAtbService
             var htmlNodeRoot = html.DocumentNode;
             var arrayOfProducts = htmlNodeRoot!.SelectNodes(xpathItem);
 
-            foreach (var product in arrayOfProducts!)
+            foreach (var productNode in arrayOfProducts!)
             {
-                if (!int.TryParse(
-                        product
-                            .SelectSingleNode(xpathItemLinkQuery)
-                            .GetAttributeValue("href", "///")
-                            .Split('/')[3],
-                        out var internalItemId))
+                var productHtml = new HtmlDocument();
+                productHtml.LoadHtml(productNode.InnerHtml);
+                var product = productHtml.DocumentNode;
+                
+                var internalItemId = product
+                    .SelectSingleNode(xpathItemLinkQuery)
+                    .GetAttributeValue("data-productid", 0);
+                if (internalItemId == 0)
                 {
                     continue;
                 }
@@ -529,7 +553,8 @@ public class AtbService : IAtbService
 
         if (!int.TryParse(categoryNode
                 .GetAttributeValue("href", "///")
-                .Split('/')[3], out var internalCategoryId))
+                .Split('/')[2]
+                .Split('-')[0], out var internalCategoryId))
         {
             throw new Exception("InternalId is not valid");
         }

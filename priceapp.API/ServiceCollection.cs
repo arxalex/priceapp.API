@@ -10,6 +10,7 @@ using priceapp.API.ShopServices.Implementation;
 using priceapp.API.ShopServices.Interfaces;
 using priceapp.API.Utils;
 using priceapp.proxy;
+using priceapp.tasks;
 
 namespace priceapp.API;
 
@@ -102,5 +103,6 @@ public static class ServiceCollection
         });
         
         services.RegisterProxyServices(configuration);
+        services.RegisterTasksServices();
     }
 }

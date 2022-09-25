@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\priceapp.proxy\priceapp.proxy.csproj" />
+      <ProjectReference Include="..\priceapp.tasks\priceapp.tasks.csproj" />
     </ItemGroup>
 
 </Project>

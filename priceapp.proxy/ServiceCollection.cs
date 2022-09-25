@@ -14,13 +14,14 @@ public static class ServiceCollection
 {
     public static void RegisterProxyServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAutoMapper(typeof(MapperProfile));
+        services.AddSingleton(new MySQLDbConnectionFactory(configuration["ConnectionStrings:Proxy"]));
+        services.AddSingleton<SessionParameters>();
+
         services.AddScoped<CategoriesController>();
         services.AddScoped<FilialsController>();
         services.AddScoped<ItemsController>();
         services.AddScoped<PricesController>();
-        
-        services.AddAutoMapper(typeof(MapperProfile));
-        services.AddSingleton(new MySQLDbConnectionFactory(configuration["ConnectionStrings:Proxy"]));
 
         services.AddSingleton<IAtbService, AtbService>();
 

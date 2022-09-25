@@ -95,4 +95,12 @@ public class CategoriesRepository : ICategoriesRepository
 								    parent = pi.parent";
         await connection.ExecuteAsync(query, parameters);
     }
+
+    public async Task<List<AtbCategoryRepositoryModel>> GetAtbBaseCategoriesAsync()
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+
+        const string query = $"select * from {Table} where parent is null";
+        return (await connection.QueryAsync<AtbCategoryRepositoryModel>(query)).ToList();
+    }
 }

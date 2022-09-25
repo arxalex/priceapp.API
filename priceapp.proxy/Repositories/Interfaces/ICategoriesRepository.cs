@@ -8,4 +8,5 @@ public interface ICategoriesRepository
     Task<List<AtbCategoryRepositoryModel>> GetAtbCategoriesAsync();
     Task InsertAsync(AtbCategoryRepositoryModel model);
     Task InsertOrUpdateAsync(List<AtbCategoryRepositoryModel> models);
+    Task<List<AtbCategoryRepositoryModel>> GetAtbBaseCategoriesAsync();
 }

@@ -23,11 +23,15 @@ public class PricesService : IPricesService
     {
         var categoryIds = await _categoriesService.GetAtbChildCategoriesAsync(categoryId);
 
-        return _mapper.Map<List<PriceModel>>(await _pricesRepository.GetPrices(categoryIds.Select(x => x.Id), shopId, filialId));
+        return _mapper.Map<List<PriceModel>>(
+            (await _pricesRepository.GetPrices(categoryIds.Select(x => x.Id), shopId, filialId))
+            .Where(x => x.updatetime >= DateTimeOffset.Now.ToUnixTimeSeconds() - 60 * 60 * 24 * 3)
+            );
     }
 
     public async Task InsertAsync(List<PriceModel> models)
     {
+        if (models.Count < 1) return;
         await _pricesRepository.InsertOrUpdateAsync(_mapper.Map<List<PriceRepositoryModel>>(models));
     }
 }

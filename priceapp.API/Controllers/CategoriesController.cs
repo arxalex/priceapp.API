@@ -14,7 +14,8 @@ public class CategoriesController : ControllerBase
     private readonly ICategoryLinksService _categoryLinksService;
     private readonly proxy.Controllers.CategoriesController _categoriesController;
 
-    public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService, proxy.Controllers.CategoriesController categoriesController)
+    public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService,
+        proxy.Controllers.CategoriesController categoriesController)
     {
         _categoriesService = categoriesService;
         _categoryLinksService = categoryLinksService;
@@ -34,7 +35,7 @@ public class CategoriesController : ControllerBase
     {
         return Ok(await _categoriesService.GetCategoriesAsync());
     }
-    
+
     [HttpPost("")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> InsertCategoryAsync([FromBody] CategoryModel model)
@@ -42,7 +43,7 @@ public class CategoriesController : ControllerBase
         await _categoriesService.InsertCategoryAsync(model);
         return Ok();
     }
-    
+
     [HttpPost("link/")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> InsertCategoryLinkAsync([FromBody] CategoryLinkModel model)
@@ -50,7 +51,7 @@ public class CategoriesController : ControllerBase
         await _categoryLinksService.InsertCategoryLinkAsync(model);
         return Ok();
     }
-    
+
     [HttpPost("{id:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> UpdateCategoryAsync([FromBody] CategoryModel model, [FromRoute] int id)
@@ -59,10 +60,11 @@ public class CategoriesController : ControllerBase
         {
             return BadRequest();
         }
+
         await _categoriesService.UpdateCategoryAsync(model);
         return Ok();
     }
-    
+
     [HttpPost("link/{id:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> UpdateCategoryLinkAsync([FromBody] CategoryLinkModel model, [FromRoute] int id)
@@ -71,10 +73,11 @@ public class CategoriesController : ControllerBase
         {
             return BadRequest();
         }
+
         await _categoryLinksService.UpdateCategoryLinkAsync(model);
         return Ok();
     }
-    
+
     [HttpPost("link/actualize")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeCategoryLinksAsync()
@@ -82,7 +85,7 @@ public class CategoriesController : ControllerBase
         await _categoryLinksService.ActualizeCategoryLinksAsync();
         return Ok();
     }
-    
+
     [HttpPost("actualize/proxy/{shopId:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeProxyCategoriesAsync([FromRoute] int shopId)

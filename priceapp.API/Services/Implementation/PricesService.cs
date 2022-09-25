@@ -4,6 +4,8 @@ using priceapp.API.Repositories.Interfaces;
 using priceapp.API.Repositories.Models;
 using priceapp.API.Services.Interfaces;
 using priceapp.API.ShopServices.Interfaces;
+using priceapp.API.Utils;
+using priceapp.tasks;
 
 namespace priceapp.API.Services.Implementation;
 
@@ -16,10 +18,12 @@ public class PricesService : IPricesService
     private readonly IMapper _mapper;
     private readonly IFilialsService _filialsService;
     private readonly ICategoriesService _categoriesService;
+    private readonly ThreadsUtil _threadsUtil;
+    private readonly SessionParameters _sessionParameters;
 
     public PricesService(ISilpoService silpoService, IForaService foraService, IAtbService atbService,
         IPricesRepository pricesRepository, IMapper mapper, IFilialsService filialsService,
-        ICategoriesService categoriesService)
+        ICategoriesService categoriesService, ThreadsUtil threadsUtil, SessionParameters sessionParameters)
     {
         _silpoService = silpoService;
         _foraService = foraService;
@@ -28,6 +32,8 @@ public class PricesService : IPricesService
         _mapper = mapper;
         _filialsService = filialsService;
         _categoriesService = categoriesService;
+        _threadsUtil = threadsUtil;
+        _sessionParameters = sessionParameters;
     }
 
     public async Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int categoryId)
@@ -77,8 +83,15 @@ public class PricesService : IPricesService
         await _pricesRepository.SetPriceQuantitiesZeroAsync(filialId);
     }
 
-    public async Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
+    public async Task StartUpdatePricesTasksAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
     {
+        if (_sessionParameters.IsActualizePricesActive)
+        {
+            return;
+        }
+
+        _sessionParameters.IsActualizePricesActive = true;
+
         var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
         var filials = forceUpdate
             ? await _filialsService.GetFilialsAsync()
@@ -86,13 +99,62 @@ public class PricesService : IPricesService
 
         foreach (var filial in filials)
         {
-            if (!skipSetZeroQuantity)
+            async Task Action()
             {
-                await SetPriceQuantitiesZeroAsync(filial.Id);
+                try
+                {
+                    if (!skipSetZeroQuantity)
+                    {
+                        await SetPriceQuantitiesZeroAsync(filial.Id);
+                    }
+
+                    await UpdatePricesAsync(filial);
+                }
+                catch (Exception)
+                {
+                    // ignored
+                }
             }
 
-            await UpdatePricesAsync(filial);
+            await _threadsUtil.AddTask(Action(), Priority.Medium);
         }
+
+        await _threadsUtil.AddTask(new Task(() => _sessionParameters.IsActualizePricesActive = false), Priority.Medium);
+    }
+
+    public async Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
+    {
+        if (_sessionParameters.IsActualizePricesActive)
+        {
+            return;
+        }
+
+        _sessionParameters.IsActualizePricesActive = true;
+
+        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
+        var filials = forceUpdate
+            ? await _filialsService.GetFilialsAsync()
+            : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();
+
+        foreach (var filial in filials)
+        {
+            try
+            {
+                if (!skipSetZeroQuantity)
+                {
+                    await SetPriceQuantitiesZeroAsync(filial.Id);
+                }
+
+                await UpdatePricesAsync(filial);
+            }
+            catch (Exception)
+            {
+                _sessionParameters.IsActualizePricesActive = false;
+                throw;
+            }
+        }
+
+        _sessionParameters.IsActualizePricesActive = false;
     }
 
     public async Task RefactorPricesAsync()

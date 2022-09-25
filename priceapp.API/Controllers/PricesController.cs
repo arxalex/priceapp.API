@@ -22,7 +22,7 @@ public class PricesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizePricesAsync()
     {
-        await _pricesService.UpdatePricesAsync();
+        await _pricesService.StartUpdatePricesTasksAsync();
         return Ok();
     }
 
@@ -30,10 +30,10 @@ public class PricesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeProxyPricesAsync([FromRoute] int shopId)
     {
-        await _pricesController.ActualizePricesAsync(shopId);
+        await _pricesController.StartActualizePricesTasksAsync(shopId);
         return Ok();
     }
-    
+
     [HttpPost("refactor")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> RefactorPricesAsync()

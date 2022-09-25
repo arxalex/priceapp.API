@@ -7,7 +7,6 @@ namespace priceapp.API.Controllers;
 [ApiController]
 [Authorize]
 [Route("[controller]")]
-
 public class FilialsController : ControllerBase
 {
     private readonly IFilialsService _filialsService;
@@ -26,7 +25,7 @@ public class FilialsController : ControllerBase
         await _filialsService.ActualizeFilialsAsync();
         return Ok();
     }
-    
+
     [HttpPost("actualize/proxy/{shopId:int}")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeProxyFilialsAsync([FromRoute] int shopId)

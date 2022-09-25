@@ -2,10 +2,18 @@ namespace priceapp.API.Utils;
 
 public class SessionParameters
 {
-    public SessionParameters()
+    private readonly proxy.Utils.SessionParameters _sessionParameters;
+    public SessionParameters(proxy.Utils.SessionParameters sessionParameters)
     {
-        isActive = false;
+        _sessionParameters = sessionParameters;
+        IsActualizePricesActive = false;
     }
 
-    public bool isActive { get; set; }
+    public bool IsActualizePricesActive { get; set; }
+
+    public bool IsActualizeProxyAtbPricesActive
+    {
+        get => _sessionParameters.IsActualizeProxyAtbPricesActive;
+        set => _sessionParameters.IsActualizeProxyAtbPricesActive = value;
+    }
 }

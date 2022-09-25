@@ -27,12 +27,14 @@ public class ItemsController
         if (shopId == 3)
         {
             var items = new List<AtbItemModel>();
-            var categories = await _categoriesService.GetAtbCategoriesAsync();
+            var categories = await _categoriesService.GetAtbBaseCategoriesAsync();
 
             foreach (var category in categories)
             {
                 items.AddRange(await _atbService.GetItemsAsync(category.InternalId));
             }
+
+            items = items.DistinctBy(x => x.InternalId).ToList();
 
             await _itemsService.InsertAsync(items);
         }

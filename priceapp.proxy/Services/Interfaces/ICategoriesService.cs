@@ -1,3 +1,4 @@
+using System.Collections;
 using priceapp.proxy.Services.Models;
 
 namespace priceapp.proxy.Services.Interfaces;
@@ -8,4 +9,5 @@ public interface ICategoriesService
     Task InsertAsync(AtbCategoryModel model);
     Task<List<AtbCategoryModel>> GetAtbChildCategoriesAsync(int categoryId);
     Task InsertAsync(List<AtbCategoryModel> models);
+    Task<List<AtbCategoryModel>> GetAtbBaseCategoriesAsync();
 }

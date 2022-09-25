@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.API", "priceapp.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy", "priceapp.proxy\priceapp.proxy.csproj", "{E8945074-E3DA-4141-B92F-FD374781807C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.tasks", "priceapp.tasks\priceapp.tasks.csproj", "{435C66A0-5667-432D-BA2B-5E090ED51C57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{E8945074-E3DA-4141-B92F-FD374781807C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8945074-E3DA-4141-B92F-FD374781807C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8945074-E3DA-4141-B92F-FD374781807C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{435C66A0-5667-432D-BA2B-5E090ED51C57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{435C66A0-5667-432D-BA2B-5E090ED51C57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{435C66A0-5667-432D-BA2B-5E090ED51C57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{435C66A0-5667-432D-BA2B-5E090ED51C57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

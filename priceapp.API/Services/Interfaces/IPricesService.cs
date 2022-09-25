@@ -6,7 +6,7 @@ public interface IPricesService
 {
     Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int categoryId);
     Task UpdatePricesAsync(FilialModel filial);
-    Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false);
+    Task StartUpdatePricesTasksAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false);
     Task SetPriceQuantitiesZeroAsync();
     Task SetPriceQuantitiesZeroAsync(int filialId);
     Task RefactorPricesAsync();

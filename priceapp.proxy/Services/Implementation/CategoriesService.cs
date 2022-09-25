@@ -36,4 +36,9 @@ public class CategoriesService : ICategoriesService
     {
         await _categoriesRepository.InsertOrUpdateAsync(_mapper.Map<List<AtbCategoryRepositoryModel>>(models));
     }
+
+    public async Task<List<AtbCategoryModel>> GetAtbBaseCategoriesAsync()
+    {
+        return _mapper.Map<List<AtbCategoryModel>>(await _categoriesRepository.GetAtbBaseCategoriesAsync());
+    }
 }
