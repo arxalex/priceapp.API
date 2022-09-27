@@ -8,6 +8,6 @@ public interface IPricesRepository
     Task SetPriceQuantitiesZeroAsync();
     Task SetPriceQuantitiesZeroAsync(int filialId);
     Task InsertOrUpdatePricesHistoryAsync(List<PriceHistoryRepositoryModel> models);
-    Task<int> GetMaxFilialIdToday();
+    Task<int?> GetMaxFilialIdToday();
     Task<List<PriceRepositoryModel>> GetPricesAsync();
 }

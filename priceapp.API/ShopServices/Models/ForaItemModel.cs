@@ -2,7 +2,7 @@
 
 public class ForaItemModel
 {
-    public List<object> sets { get; set; }
+    public object? sets { get; set; }
     public List<ForaItemCategories> categories { get; set; }
     public int id { get; set; }
     public string name { get; set; }
@@ -11,12 +11,12 @@ public class ForaItemModel
     public double? oldPrice { get; set; }
     public string mainImage { get; set; }
     public double? division { get; set; }
-    public ForaPromotion? promotion { get; set; }
+    public object? promotion { get; set; }
     public string slug { get; set; }
     public double? storeQuantity { get; set; }
     public string? promoId { get; set; }
     public string? promoTitle { get; set; }
-    public List<ForaBubble> bubbles { get; set; }
+    public object? bubbles { get; set; }
     public string? priceStartFrom { get; set; }
     public string? priceStopAfter { get; set; }
     public double? calcStoreQuantity { get; set; }
@@ -24,8 +24,8 @@ public class ForaItemModel
     public string? recommendationBlockName { get; set; }
     public object? facings { get; set; }
     public List<ForaItemParameters>? parameters { get; set; }
-    public List<ForaItemPrices> prices { get; set; }
-    public List<ForaPromotion> promotions { get; set; }
+    public object? prices { get; set; }
+    public object? promotions { get; set; }
     public double? rating { get; set; }
     public int? votesCount { get; set; }
     public object? complexSku { get; set; }

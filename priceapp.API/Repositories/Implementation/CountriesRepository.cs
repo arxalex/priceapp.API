@@ -26,12 +26,13 @@ public class CountriesRepository : ICountriesRepository
     public async Task<List<CountryRepositoryModel>> GetCountriesByKeywordsAsync(List<string> keywords)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table} where ";
+        var query = $"select * from {Table}";
         var parameters = new DynamicParameters();
 
-        var whereQueryKeywords = DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
-
-        query += whereQueryKeywords;
+        if (keywords.Count != 0)
+        {
+            query += " where " + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
+        }
 
         return (await connection.QueryAsync<CountryRepositoryModel>(query, parameters)).ToList();
     }

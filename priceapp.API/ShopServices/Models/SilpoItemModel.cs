@@ -2,7 +2,7 @@
 
 public class SilpoItemModel
 {
-    public List<object> sets { get; set; }
+    public object? sets { get; set; }
     public List<SilpoItemCategories> categories { get; set; }
     public int id { get; set; }
     public string name { get; set; }
@@ -11,12 +11,12 @@ public class SilpoItemModel
     public double? oldPrice { get; set; }
     public string mainImage { get; set; }
     public double? division { get; set; }
-    public SilpoPromotion? promotion { get; set; }
+    public object? promotion { get; set; }
     public string slug { get; set; }
     public double? storeQuantity { get; set; }
     public string? promoId { get; set; }
     public string? promoTitle { get; set; }
-    public List<SilpoBubble> bubbles { get; set; }
+    public object? bubbles { get; set; }
     public string? priceStartFrom { get; set; }
     public string? priceStopAfter { get; set; }
     public double? calcStoreQuantity { get; set; }
@@ -24,8 +24,8 @@ public class SilpoItemModel
     public string? recommendationBlockName { get; set; }
     public object? facings { get; set; }
     public List<SilpoItemParameters>? parameters { get; set; }
-    public List<SilpoItemPrices> prices { get; set; }
-    public List<SilpoPromotion> promotions { get; set; }
+    public object? prices { get; set; }
+    public object? promotions { get; set; }
     public double? rating { get; set; }
     public int? votesCount { get; set; }
     public object? complexSku { get; set; }

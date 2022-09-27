@@ -98,7 +98,7 @@ public class PricesRepository : IPricesRepository
         await connection.ExecuteAsync(query, parameters);
     }
 
-    public async Task<int> GetMaxFilialIdToday()
+    public async Task<int?> GetMaxFilialIdToday()
     {
 	    using var connection = _mySqlDbConnectionFactory.Connect();
 	    var parameters = new DynamicParameters();
@@ -106,7 +106,7 @@ public class PricesRepository : IPricesRepository
 
 	    const string query = $"select max(filialid) from {TableHistory} where date = @date";
 
-	    return await connection.QueryFirstAsync<int>(query, parameters);
+	    return await connection.QueryFirstAsync<int?>(query, parameters);
     }
 
     public async Task<List<PriceRepositoryModel>> GetPricesAsync()

@@ -128,7 +128,7 @@ public class CategoriesRepository : ICategoriesRepository
     public async Task<List<CategoryRepositoryModel>> GetBaseCategoriesAsync()
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        const string query = $"select * from {Table} where `parent` is null";
+        const string query = $"select * from {Table} where `parent` is null and `id` <> 0";
 
         return (await connection.QueryAsync<CategoryRepositoryModel>(query)).ToList();
     }

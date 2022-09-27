@@ -92,7 +92,7 @@ public class PricesService : IPricesService
 
         _sessionParameters.IsActualizePricesActive = true;
 
-        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
+        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday() ?? 0;
         var filials = forceUpdate
             ? await _filialsService.GetFilialsAsync()
             : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();
@@ -131,7 +131,7 @@ public class PricesService : IPricesService
 
         _sessionParameters.IsActualizePricesActive = true;
 
-        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday();
+        var lastFilial = forceUpdate ? 0 : await _pricesRepository.GetMaxFilialIdToday() ?? 0;
         var filials = forceUpdate
             ? await _filialsService.GetFilialsAsync()
             : (await _filialsService.GetFilialsAsync()).Where(x => x.Id >= lastFilial).ToList();

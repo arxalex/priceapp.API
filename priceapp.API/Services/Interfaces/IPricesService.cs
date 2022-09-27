@@ -11,4 +11,5 @@ public interface IPricesService
     Task SetPriceQuantitiesZeroAsync(int filialId);
     Task RefactorPricesAsync();
     Task<List<PriceModel>> GetPricesAsync();
+    Task UpdatePricesAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false);
 }

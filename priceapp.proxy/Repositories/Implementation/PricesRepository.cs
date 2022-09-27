@@ -20,19 +20,25 @@ public class PricesRepository : IPricesRepository
     public async Task<List<PriceRepositoryModel>> GetPrices(IEnumerable<int> categoryIds, int shopId, int filialId)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "t.category");
 
         var query = @$"select tp.id, tp.itemid, tp.shopid, tp.price, tp.filialid, tp.quantity, tp.updatetime
                                 from {Table} tp 
                                 left join {TableItems} t on tp.itemid = t.id
                                 where tp.shopid = @shopId
                                 and tp.filialid = @filialId
-                                and {whereQueryCategories}
-                                order by tp.id";
+                                and tp.updatetime > @updateTime";
+
+        if (categoryIds.ToList().Count != 0)
+        {
+	        query += " and " + DatabaseUtil.GetInQuery(categoryIds, "t.category");
+        }
+
+        query += " order by tp.id";
 
         var parameters = new DynamicParameters();
         parameters.Add("@filialId", filialId, DbType.Int32);
         parameters.Add("@shopId", shopId, DbType.Int32);
+        parameters.Add("@updateTime", DateTimeOffset.Now.ToUnixTimeSeconds() - 60 * 60 * 24 * 3, DbType.Int64);
         return (await connection.QueryAsync<PriceRepositoryModel>(query, parameters)).ToList();
     }
 

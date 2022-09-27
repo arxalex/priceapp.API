@@ -10,6 +10,10 @@ public static class DatabaseUtil
     public static string GetLikeQuery(IEnumerable<string> likeArray, string field, DynamicParameters dynamicParameters,
         string parameterPrefix = "like")
     {
+        if (likeArray.ToList().Count == 0)
+        {
+            return "";
+        }
         var i = 0;
         var query = "";
 
@@ -24,6 +28,10 @@ public static class DatabaseUtil
 
     public static string GetInQuery(IEnumerable<int> inArray, string field)
     {
+        if (inArray.ToList().Count == 0)
+        {
+            return "";
+        }
         var query = $"{field} in (";
         query = inArray.Aggregate(query, (current, value) => current + $"{value}, ");
         query = query[..^2];

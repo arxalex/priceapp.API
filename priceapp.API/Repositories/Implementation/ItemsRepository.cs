@@ -40,13 +40,24 @@ public class ItemsRepository : IItemsRepository
         IEnumerable<int> categoryIds)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table} where ";
+        var query = $"select * from {Table}";
         var parameters = new DynamicParameters();
-
-        var whereQueryKeywords = DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "`category`");
-
-        query += whereQueryCategories + " AND (" + whereQueryKeywords + ")";
+        
+        if (keywords.ToList().Count != 0)
+        {
+            query += " where (" + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword") + ")";
+            if (categoryIds.ToList().Count != 0)
+            {
+                query += " and " + DatabaseUtil.GetInQuery(categoryIds, "`category`");
+            }
+        }
+        else
+        {
+            if (categoryIds.ToList().Count != 0)
+            {
+                query += " where " + DatabaseUtil.GetInQuery(categoryIds, "`category`");
+            }
+        }
 
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
@@ -54,12 +65,13 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<ItemRepositoryModel>> GetItemsAsync(List<string> keywords)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table} where ";
+        var query = $"select * from {Table}";
         var parameters = new DynamicParameters();
 
-        var whereQueryKeywords = DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
-
-        query += whereQueryKeywords;
+        if (keywords.Count != 0)
+        {
+            query += " where " + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
+        }
 
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
@@ -82,13 +94,11 @@ public class ItemsRepository : IItemsRepository
             where pr.price is not null
             and pr.quantity > 0 ";
 
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "c.id");
-
-        query += "and " + whereQueryCategories + @$"
-            group by i.id
-            order by i.id
-            limit {to - from} offset {from};
-        ";
+        if (categoryIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "c.id");
+        }
+        query += $" group by i.id order by i.id limit {to - from} offset {from};";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query)).ToList();
     }
@@ -109,17 +119,18 @@ public class ItemsRepository : IItemsRepository
             left join pa_package p on p.id = i.package
             left join pa_prices pr on pr.itemid = i.id
             where pr.price is not null
-            and pr.quantity > 0 ";
+            and pr.quantity > 0";
+        
+        if (categoryIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "c.id");
+        }
+        if (filialIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
+        }
 
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "c.id");
-        var whereQueryFilials = DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
-
-        query += "and " + whereQueryCategories + " and " + whereQueryFilials +
-                 @$"
-            group by i.id
-            order by i.id
-            limit {to - from} offset {from};
-        ";
+        query += $" group by i.id order by i.id limit {to - from} offset {from};";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query)).ToList();
     }
@@ -142,13 +153,12 @@ public class ItemsRepository : IItemsRepository
             and pr.quantity > 0 ";
 
         var parameters = new DynamicParameters();
-        var whereQueryKeywords = DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword");
-
-        query += "and (" + whereQueryKeywords +
-                 @")
-            group by i.id
-            order by i.id;
-        ";
+        if (search.Count != 0)
+        {
+            query += " and (" + DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + ")";
+        }
+        
+        query += " group by i.id order by i.id;";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query, parameters)).ToList();
     }
@@ -172,14 +182,18 @@ public class ItemsRepository : IItemsRepository
             and pr.quantity > 0 ";
 
         var parameters = new DynamicParameters();
-        var whereQueryKeywords = DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword");
-        var whereQueryFilials = DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
 
-        query += "and (" + whereQueryKeywords + ") and " + whereQueryFilials +
-                 @"
-            group by i.id
-            order by i.id;
-        ";
+        if (filialIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
+        }
+
+        if (search.Count != 0)
+        {
+            query += " and (" + DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + ")";
+        }
+
+        query += " group by i.id order by i.id;";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query, parameters)).ToList();
     }
@@ -229,13 +243,13 @@ public class ItemsRepository : IItemsRepository
 
         var parameters = new DynamicParameters();
         parameters.Add("@id", id, DbType.Int32);
+        
+        if (filialIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
+        }
 
-        var whereQueryFilials = DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
-
-        query += " and " + whereQueryFilials +
-                 @"
-            group by i.id;
-        ";
+        query += " group by i.id;";
 
         return await connection.QueryFirstAsync<ItemExtendedRepositoryModel>(query, parameters);
     }
@@ -436,15 +450,15 @@ public class ItemsRepository : IItemsRepository
         var query = @$"select il.id, il.itemid, il.shopid, il.inshopid, il.pricefactor 
                        from {TableLink} il 
                            left join {Table} i on il.itemid = i.id 
-                       where il.shopid = @shopId
-                         and ";
+                       where il.shopid = @shopId";
 
         var parameters = new DynamicParameters();
-
         parameters.Add("@shopId", shopId, DbType.Int32);
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "i.category");
-
-        query += whereQueryCategories;
+        
+        if (categoryIds.ToList().Count != 0)
+        {
+            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "i.category");
+        }
 
         return (await connection.QueryAsync<ItemLinkRepositoryModel>(query, parameters)).ToList();
     }

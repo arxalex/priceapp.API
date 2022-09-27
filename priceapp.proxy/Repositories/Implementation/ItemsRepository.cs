@@ -19,14 +19,15 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<AtbItemRepositoryModel>> GetAtbItemsAsync(IEnumerable<int> categoryIds, int from, int to)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var whereQueryCategories = DatabaseUtil.GetInQuery(categoryIds, "category");
 
-        var query = @$"select *
-                                from {Table} 
-                                where {whereQueryCategories}
-                                order by id
-                                limit @limit 
-                                offset @offset";
+        var query = $"select * from {Table}";
+        
+        if (categoryIds.ToList().Count != 0)
+        {
+	        query += " where " + DatabaseUtil.GetInQuery(categoryIds, "category");
+        }
+
+        query += " order by id limit @limit offset @offset";
 
         var parameters = new DynamicParameters();
         parameters.Add("@limit", to - from, DbType.Int32);
