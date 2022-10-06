@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using priceapp.API.Models;
-using priceapp.API.Services.Interfaces;
+using priceapp.Models;
+using priceapp.Services.Interfaces;
+using priceapp.ShopsServices.Interfaces;
 
 namespace priceapp.API.Controllers;
 
@@ -13,13 +14,21 @@ public class CategoriesController : ControllerBase
     private readonly ICategoriesService _categoriesService;
     private readonly ICategoryLinksService _categoryLinksService;
     private readonly proxy.Controllers.CategoriesController _categoriesController;
+    private readonly ISilpoService _silpoService;
+    private readonly IForaService _foraService;
+    private readonly IAtbService _atbService;
+    private readonly IShopsService _shopsService;
 
     public CategoriesController(ICategoriesService categoriesService, ICategoryLinksService categoryLinksService,
-        proxy.Controllers.CategoriesController categoriesController)
+        proxy.Controllers.CategoriesController categoriesController, ISilpoService silpoService, IForaService foraService, IAtbService atbService, IShopsService shopsService)
     {
         _categoriesService = categoriesService;
         _categoryLinksService = categoryLinksService;
         _categoriesController = categoriesController;
+        _silpoService = silpoService;
+        _foraService = foraService;
+        _atbService = atbService;
+        _shopsService = shopsService;
     }
 
     [HttpGet("shop/{shopId:int}")]
@@ -82,7 +91,21 @@ public class CategoriesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeCategoryLinksAsync()
     {
-        await _categoryLinksService.ActualizeCategoryLinksAsync();
+        var shops = await _shopsService.GetShopsAsync();
+        var links = new List<CategoryLinkModel>();
+        foreach (var shop in shops)
+        {
+            var categories = shop.Id switch
+            {
+                1 => await _silpoService.GetCategoryLinksAsync(),
+                2 => await _foraService.GetCategoryLinksAsync(),
+                3 => await _atbService.GetCategoryLinksAsync(),
+                _ => new List<CategoryLinkModel>()
+            };
+            links.AddRange(categories);
+        }
+
+        await _categoryLinksService.InsertOrUpdateCategoryLinksAsync(links);
         return Ok();
     }
 

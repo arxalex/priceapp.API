@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using priceapp.API.Controllers.Models.Request;
-using priceapp.API.Models;
-using priceapp.API.Services.Interfaces;
+using priceapp.Models;
+using priceapp.Services.Interfaces;
+using priceapp.ShopsServices.Interfaces;
 
 namespace priceapp.API.Controllers;
 
@@ -14,13 +15,19 @@ public class ItemsController : ControllerBase
     private readonly IItemsService _itemsService;
     private readonly IItemLinksService _itemLinksService;
     private readonly proxy.Controllers.ItemsController _itemsController;
+    private readonly ISilpoService _silpoService;
+    private readonly IAtbService _atbService;
+    private readonly IForaService _foraService;
 
     public ItemsController(IItemsService itemsService, IItemLinksService itemLinksService,
-        proxy.Controllers.ItemsController itemsController)
+        proxy.Controllers.ItemsController itemsController, IForaService foraService, IAtbService atbService, ISilpoService silpoService)
     {
         _itemsService = itemsService;
         _itemLinksService = itemLinksService;
         _itemsController = itemsController;
+        _foraService = foraService;
+        _atbService = atbService;
+        _silpoService = silpoService;
     }
 
     [HttpGet("{id}")]
@@ -120,7 +127,14 @@ public class ItemsController : ControllerBase
         [FromQuery] int to
     )
     {
-        return Ok(await _itemsService.GetShopItemsAsync(shopId, internalCategoryId, from, to));
+        var shopItems = shopId switch
+        {
+            1 => await _silpoService.GetItemsByCategoryAsync(internalCategoryId, from, to),
+            2 => await _foraService.GetItemsByCategoryAsync(internalCategoryId, from, to),
+            3 => await _atbService.GetItemsByCategoryAsync(internalCategoryId, from, to),
+            _ => new List<ItemShopModel>()
+        };
+        return Ok(shopItems);
     }
 
     [HttpPost("")]

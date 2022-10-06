@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using priceapp.API.Controllers.Models.Request;
 using priceapp.API.Controllers.Models.Response;
-using priceapp.API.Models;
-using priceapp.API.Services.Interfaces;
+using priceapp.Models;
+using priceapp.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
 

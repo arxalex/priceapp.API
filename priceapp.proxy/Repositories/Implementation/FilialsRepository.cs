@@ -2,6 +2,7 @@ using Dapper;
 using priceapp.proxy.Repositories.Interfaces;
 using priceapp.proxy.Repositories.Models;
 using priceapp.proxy.Utils;
+using priceapp.Utils;
 
 namespace priceapp.proxy.Repositories.Implementation;
 

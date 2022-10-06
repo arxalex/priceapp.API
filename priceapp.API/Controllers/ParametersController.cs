@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using priceapp.API.Controllers.Models.Response;
-using priceapp.API.Utils;
 
 namespace priceapp.API.Controllers;
 

@@ -1,16 +1,13 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using priceapp.API.Repositories;
-using priceapp.API.Repositories.Implementation;
-using priceapp.API.Repositories.Interfaces;
-using priceapp.API.Services.Implementation;
-using priceapp.API.Services.Interfaces;
-using priceapp.API.ShopServices.Implementation;
-using priceapp.API.ShopServices.Interfaces;
-using priceapp.API.Utils;
 using priceapp.proxy;
+using priceapp.Repositories;
+using priceapp.Services;
+using priceapp.Services.Interfaces;
+using priceapp.ShopsServices;
 using priceapp.tasks;
+using priceapp.Utils;
 
 namespace priceapp.API;
 
@@ -47,9 +44,6 @@ public static class ServiceCollection
         });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
-
-        services.AddAutoMapper(typeof(MapperProfile));
-        services.AddSingleton(new MySQLDbConnectionFactory(configuration["ConnectionStrings:Default"]));
         services.AddSingleton(new JWTSetting
         {
             SecretKey = configuration["JWTSetting:SecretKey"],
@@ -59,38 +53,6 @@ public static class ServiceCollection
         });
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         services.AddSingleton<SessionParameters>();
-
-        services.AddScoped<IBrandsService, BrandsService>();
-        services.AddScoped<ICategoriesService, CategoriesService>();
-        services.AddScoped<ICategoryLinksService, CategoryLinksService>();
-        services.AddScoped<IConsistsService, ConsistsService>();
-        services.AddScoped<ICountriesService, CountriesService>();
-        services.AddScoped<IFilialsService, FilialsService>();
-        services.AddScoped<IItemLinksService, ItemLinksService>();
-        services.AddScoped<IItemsService, ItemsService>();
-        services.AddScoped<IMailService, MailService>();
-        services.AddScoped<IPackagesService, PackagesService>();
-        services.AddScoped<IPricesService, PricesService>();
-        services.AddScoped<IShopsService, ShopsService>();
-        services.AddScoped<ITokenService, TokenService>();
-        services.AddScoped<IUsersService, UsersService>();
-
-        services.AddScoped<ISilpoService, SilpoService>();
-        services.AddScoped<IAtbService, AtbService>();
-        services.AddScoped<IForaService, ForaService>();
-
-        services.AddScoped<IBrandsRepository, BrandsRepository>();
-        services.AddScoped<ICategoriesRepository, CategoriesRepository>();
-        services.AddScoped<ICategoryLinksRepository, CategoryLinksRepository>();
-        services.AddScoped<IConsistsRepository, ConsistsRepository>();
-        services.AddScoped<ICountriesRepository, CountriesRepository>();
-        services.AddScoped<IFilialsRepository, FilialsRepository>();
-        services.AddScoped<IItemsRepository, ItemsRepository>();
-        services.AddScoped<IPackagesRepository, PackagesRepository>();
-        services.AddScoped<IPricesRepository, PricesRepository>();
-        services.AddScoped<IShopsRepository, ShopsRepository>();
-        services.AddScoped<ITokensRepository, TokensRepository>();
-        services.AddScoped<IUsersRepository, UsersRepository>();
 
         services.AddCors(options =>
         {
@@ -104,5 +66,8 @@ public static class ServiceCollection
         
         services.RegisterProxyServices(configuration);
         services.RegisterTasksServices();
+        services.RegisterServicesServices();
+        services.RegisterRepositoryServices(configuration);
+        services.RegisterShopServicesServices();
     }
 }

@@ -1,3 +1,5 @@
+using Microsoft.Extensions.DependencyInjection;
+
 namespace priceapp.tasks;
 
 public static class ServiceCollection
