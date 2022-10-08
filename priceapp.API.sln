@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.API", "priceapp.API\priceapp.API.csproj", "{F1BBF80D-85C7-496D-8887-4247D1D560BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy", "priceapp.proxy\priceapp.proxy.csproj", "{E8945074-E3DA-4141-B92F-FD374781807C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.Repositories.Models", "priceapp.Repositories.Models\priceapp.Repositories.Models.csproj", "{44AE95E6-7D84-466D-AA8F-76534E0516C8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.Repositories", "priceapp.Repositories\priceapp.Repositories.csproj", "{312E6A0F-142F-4969-B4FC-2549DF9A61CF}"
@@ -21,6 +19,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.ShopsServices", "p
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.ShopsServices.Models", "priceapp.ShopsServices.Models\priceapp.ShopsServices.Models.csproj", "{106AD1C7-6830-40D8-9506-0DEBEFD2E3EF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.Services", "priceapp.proxy.Services\priceapp.proxy.Services.csproj", "{B98CB5D6-3A85-4AC7-A11A-4B323A768ED6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.Models", "priceapp.proxy.Models\priceapp.proxy.Models.csproj", "{6A8C4C85-0524-423A-AAC5-25D349748B10}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.Repositories", "priceapp.proxy.Repositories\priceapp.proxy.Repositories.csproj", "{764FD7AB-CEF2-43C2-8C84-D8C3F4ADC389}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.Repositories.Models", "priceapp.proxy.Repositories.Models\priceapp.proxy.Repositories.Models.csproj", "{4DC0BE48-983B-43D7-A0FF-2BD0825E4477}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.ShopServices", "priceapp.proxy.ShopServices\priceapp.proxy.ShopServices.csproj", "{AE5A8F9D-AA16-4388-88FE-0DCCFD87F2E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.API", "priceapp.proxy.API\priceapp.proxy.API.csproj", "{F5053CE0-6719-44F9-B242-10BD4527FC4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy", "priceapp.proxy\priceapp.proxy.csproj", "{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,10 +43,6 @@ Global
 		{F1BBF80D-85C7-496D-8887-4247D1D560BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1BBF80D-85C7-496D-8887-4247D1D560BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1BBF80D-85C7-496D-8887-4247D1D560BF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8945074-E3DA-4141-B92F-FD374781807C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8945074-E3DA-4141-B92F-FD374781807C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8945074-E3DA-4141-B92F-FD374781807C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8945074-E3DA-4141-B92F-FD374781807C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44AE95E6-7D84-466D-AA8F-76534E0516C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44AE95E6-7D84-466D-AA8F-76534E0516C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44AE95E6-7D84-466D-AA8F-76534E0516C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -67,5 +75,33 @@ Global
 		{106AD1C7-6830-40D8-9506-0DEBEFD2E3EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{106AD1C7-6830-40D8-9506-0DEBEFD2E3EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{106AD1C7-6830-40D8-9506-0DEBEFD2E3EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B98CB5D6-3A85-4AC7-A11A-4B323A768ED6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B98CB5D6-3A85-4AC7-A11A-4B323A768ED6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B98CB5D6-3A85-4AC7-A11A-4B323A768ED6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B98CB5D6-3A85-4AC7-A11A-4B323A768ED6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A8C4C85-0524-423A-AAC5-25D349748B10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A8C4C85-0524-423A-AAC5-25D349748B10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A8C4C85-0524-423A-AAC5-25D349748B10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A8C4C85-0524-423A-AAC5-25D349748B10}.Release|Any CPU.Build.0 = Release|Any CPU
+		{764FD7AB-CEF2-43C2-8C84-D8C3F4ADC389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{764FD7AB-CEF2-43C2-8C84-D8C3F4ADC389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{764FD7AB-CEF2-43C2-8C84-D8C3F4ADC389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{764FD7AB-CEF2-43C2-8C84-D8C3F4ADC389}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DC0BE48-983B-43D7-A0FF-2BD0825E4477}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DC0BE48-983B-43D7-A0FF-2BD0825E4477}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DC0BE48-983B-43D7-A0FF-2BD0825E4477}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DC0BE48-983B-43D7-A0FF-2BD0825E4477}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE5A8F9D-AA16-4388-88FE-0DCCFD87F2E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE5A8F9D-AA16-4388-88FE-0DCCFD87F2E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE5A8F9D-AA16-4388-88FE-0DCCFD87F2E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE5A8F9D-AA16-4388-88FE-0DCCFD87F2E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5053CE0-6719-44F9-B242-10BD4527FC4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5053CE0-6719-44F9-B242-10BD4527FC4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5053CE0-6719-44F9-B242-10BD4527FC4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5053CE0-6719-44F9-B242-10BD4527FC4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

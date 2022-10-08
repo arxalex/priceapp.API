@@ -4,6 +4,7 @@ using priceapp.Models;
 using priceapp.Services.Interfaces;
 using priceapp.ShopsServices.Interfaces;
 using priceapp.tasks;
+using RestSharp;
 
 namespace priceapp.API.Controllers;
 
@@ -21,8 +22,14 @@ public class PricesController : ControllerBase
     private readonly SessionParameters _sessionParameters;
     private readonly IFilialsService _filialsService;
     private readonly ThreadsUtil _threadsUtil;
+    private readonly IConfiguration _configuration;
+    private readonly RestClient _client;
+    private readonly ITokenService _tokenService;
 
-    public PricesController(IPricesService pricesService, proxy.Controllers.PricesController pricesController, ISilpoService silpoService, IForaService foraService, IAtbService atbService, ICategoriesService categoriesService, SessionParameters sessionParameters, IFilialsService filialsService, ThreadsUtil threadsUtil)
+    public PricesController(IPricesService pricesService, proxy.Controllers.PricesController pricesController,
+        ISilpoService silpoService, IForaService foraService, IAtbService atbService,
+        ICategoriesService categoriesService, SessionParameters sessionParameters, IFilialsService filialsService,
+        ThreadsUtil threadsUtil, IConfiguration configuration, ITokenService tokenService)
     {
         _pricesService = pricesService;
         _pricesController = pricesController;
@@ -33,13 +40,27 @@ public class PricesController : ControllerBase
         _sessionParameters = sessionParameters;
         _filialsService = filialsService;
         _threadsUtil = threadsUtil;
+        _configuration = configuration;
+        _tokenService = tokenService;
+        var httpClient = new HttpClient
+        {
+            BaseAddress = new Uri($"{_configuration["Domain:ProxyApi"]}/")
+        };
+
+        _client = new RestClient(httpClient);
     }
 
     [HttpPost("actualize")]
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizePricesAsync()
     {
-        await StartUpdatePricesTasksAsync();
+        if (bool.Parse(_configuration["Threads:UseMultiThreading"]))
+        {
+            await StartUpdatePricesTasksAsync();
+            return Ok();
+        }
+
+        await UpdatePricesAsync();
         return Ok();
     }
 
@@ -47,7 +68,14 @@ public class PricesController : ControllerBase
     [Authorize(Roles = "9")]
     public async Task<IActionResult> ActualizeProxyPricesAsync([FromRoute] int shopId)
     {
-        await _pricesController.StartActualizePricesTasksAsync(shopId);
+        if (bool.Parse(_configuration["Proxy:MultiInstance"]))
+        {
+            await StartUpdateProxyPricesAsync(shopId);
+            return Ok();
+        }
+
+        await _pricesController.ActualizeProxyPricesAsync(shopId);
+
         return Ok();
     }
 
@@ -58,7 +86,7 @@ public class PricesController : ControllerBase
         await _pricesService.RefactorPricesAsync();
         return Ok();
     }
-    
+
     private async Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int categoryId)
     {
         var prices = shopId switch
@@ -94,7 +122,7 @@ public class PricesController : ControllerBase
         await _pricesService.InsertOrUpdatePricesAsync(prices);
         await _pricesService.InsertOrUpdatePricesHistoryAsync(pricesHistory);
     }
-    
+
     private async Task StartUpdatePricesTasksAsync(bool forceUpdate = false, bool skipSetZeroQuantity = false)
     {
         if (_sessionParameters.IsActualizePricesActive)
@@ -167,5 +195,13 @@ public class PricesController : ControllerBase
         }
 
         _sessionParameters.IsActualizePricesActive = false;
+    }
+
+    private async Task StartUpdateProxyPricesAsync(int shopId)
+    {
+        var request = new RestRequest($"Prices/actualize/{shopId}", Method.Post);
+
+        request.AddHeader("Authorization", $"Bearer {_tokenService.GetCurrentAsync()}");
+        _client.Execute(request);
     }
 }

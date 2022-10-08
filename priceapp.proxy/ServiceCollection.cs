@@ -1,12 +1,8 @@
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using priceapp.proxy.Controllers;
-using priceapp.proxy.Repositories;
-using priceapp.proxy.Repositories.Implementation;
-using priceapp.proxy.Repositories.Interfaces;
-using priceapp.proxy.Services.Implementation;
-using priceapp.proxy.Services.Interfaces;
-using priceapp.proxy.ShopServices.Implementation;
-using priceapp.proxy.ShopServices.Interfaces;
-using priceapp.proxy.Utils;
+using priceapp.proxy.Services;
+using priceapp.proxy.ShopServices;
 
 namespace priceapp.proxy;
 
@@ -14,8 +10,6 @@ public static class ServiceCollection
 {
     public static void RegisterProxyServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAutoMapper(typeof(MapperProfile));
-        services.AddSingleton(new MySQLDbConnectionFactory(configuration["ConnectionStrings:Proxy"]));
         services.AddSingleton<SessionParameters>();
 
         services.AddScoped<CategoriesController>();
@@ -23,16 +17,7 @@ public static class ServiceCollection
         services.AddScoped<ItemsController>();
         services.AddScoped<PricesController>();
 
-        services.AddSingleton<IAtbService, AtbService>();
-
-        services.AddSingleton<ICategoriesService, CategoriesService>();
-        services.AddSingleton<IFilialsService, FilialsService>();
-        services.AddSingleton<IItemsService, ItemsService>();
-        services.AddSingleton<IPricesService, PricesService>();
-
-        services.AddSingleton<ICategoriesRepository, CategoriesRepository>();
-        services.AddSingleton<IFilialsRepository, FilialsRepository>();
-        services.AddSingleton<IItemsRepository, ItemsRepository>();
-        services.AddSingleton<IPricesRepository, PricesRepository>();
+        services.RegisterProxyServicesServices(configuration);
+        services.RegisterProxyShopServicesServices();
     }
 }

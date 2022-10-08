@@ -38,7 +38,7 @@ public class TokenService : ITokenService
         await _tokensRepository.InsertTokenAsync(userId, token, expires);
     }
 
-    private string GetCurrentAsync()
+    public string GetCurrentAsync()
     {
         if (_httpContextAccessor.HttpContext == null) throw new NullReferenceException("HttpContext is null");
         var authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["authorization"];

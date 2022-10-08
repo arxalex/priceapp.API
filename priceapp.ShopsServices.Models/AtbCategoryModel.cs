@@ -1,4 +1,4 @@
-namespace priceapp.API.ShopServices.Models;
+namespace priceapp.ShopsServices.Models;
 
 public class AtbCategoryModel
 {

@@ -6,4 +6,5 @@ public interface ITokenService
     Task DeactivateTokensForUserAsync(int userId);
     Task DeactivateTokenAsync();
     Task InsertTokenAsync(int userId, string token, int expires);
+    string GetCurrentAsync();
 }

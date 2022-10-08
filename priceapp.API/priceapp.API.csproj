@@ -9,10 +9,8 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.9" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-        <ProjectReference Include="..\priceapp.proxy\priceapp.proxy.csproj" />
         <ProjectReference Include="..\priceapp.Services\priceapp.Services.csproj" />
         <ProjectReference Include="..\priceapp.ShopsServices\priceapp.ShopsServices.csproj" />
-        <ProjectReference Include="..\priceapp.Utils\priceapp.Utils.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
+using priceapp.proxy.Models;
 using priceapp.proxy.Services.Interfaces;
-using priceapp.proxy.Services.Models;
 using priceapp.proxy.ShopServices.Interfaces;
 
 namespace priceapp.proxy.Controllers;

@@ -7,16 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\priceapp.Models\priceapp.Models.csproj" />
-      <ProjectReference Include="..\priceapp.proxy\priceapp.proxy.csproj" />
-      <ProjectReference Include="..\priceapp.Services\priceapp.Services.csproj" />
-      <ProjectReference Include="..\priceapp.ShopsServices.Models\priceapp.ShopsServices.Models.csproj" />
+        <ProjectReference Include="..\priceapp.Models\priceapp.Models.csproj"/>
+        <ProjectReference Include="..\priceapp.proxy.Models\priceapp.proxy.Models.csproj"/>
+        <ProjectReference Include="..\priceapp.proxy\priceapp.proxy.csproj"/>
+        <ProjectReference Include="..\priceapp.Services\priceapp.Services.csproj"/>
+        <ProjectReference Include="..\priceapp.ShopsServices.Models\priceapp.ShopsServices.Models.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Reference Include="Microsoft.Extensions.Logging.Abstractions">
-        <HintPath>..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.9\ref\net6.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
-      </Reference>
+        <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+            <HintPath>..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.9\ref\net6.0\Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+        </Reference>
+        <Reference Include="Microsoft.AspNetCore.Connections.Abstractions">
+            <HintPath>..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.9\ref\net6.0\Microsoft.AspNetCore.Connections.Abstractions.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="RestSharp" Version="108.0.3-alpha.0.5"/>
     </ItemGroup>
 
 </Project>

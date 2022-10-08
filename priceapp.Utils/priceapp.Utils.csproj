@@ -12,11 +12,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\priceapp.Models\priceapp.Models.csproj" />
-      <ProjectReference Include="..\priceapp.Repositories.Models\priceapp.Repositories.Models.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
         <HintPath>..\..\..\..\..\usr\local\share\dotnet\packs\Microsoft.AspNetCore.App.Ref\6.0.9\ref\net6.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
       </Reference>

@@ -1,4 +1,6 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using priceapp.Repositories;
 using priceapp.Services.Implementation;
 using priceapp.Services.Interfaces;
 
@@ -6,7 +8,7 @@ namespace priceapp.Services;
 
 public static class ServiceCollection
 {
-    public static void RegisterServicesServices(this IServiceCollection services)
+    public static void RegisterServicesServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAutoMapper(typeof(MapperProfile));
 
@@ -24,5 +26,7 @@ public static class ServiceCollection
         services.AddScoped<IShopsService, ShopsService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();
+        
+        services.RegisterRepositoryServices(configuration);
     }
 }

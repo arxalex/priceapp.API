@@ -4,11 +4,11 @@ using System.Text.Json;
 using AutoMapper;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.Extensions.Logging;
-using priceapp.API.ShopServices.Models;
 using priceapp.Models;
 using priceapp.Repositories.Interfaces;
 using priceapp.Services.Interfaces;
 using priceapp.ShopsServices.Interfaces;
+using priceapp.ShopsServices.Models;
 using priceapp.Utils;
 using RestSharp;
 

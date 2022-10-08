@@ -1,10 +1,19 @@
+using Microsoft.Extensions.Configuration;
+
 namespace priceapp.tasks;
 
 public class ThreadsUtil
 {
-    private static readonly int ThreadsCount = Environment.ProcessorCount;
+    private readonly int _threadsCount;
     private List<(Task Task, Priority Priority)> _actions = new();
     private bool _isRunning;
+
+    public ThreadsUtil(IConfiguration configuration)
+    {
+        _threadsCount = bool.Parse(configuration["Threads:UseSystem"])
+            ? Environment.ProcessorCount
+            : int.Parse(configuration["Threads:DefaultCount"]);
+    }
 
     public async Task AddTask(Task action, Priority priority = Priority.Low)
     {
@@ -22,9 +31,10 @@ public class ThreadsUtil
                     index = _actions.FindLastIndex(x => x.Priority == Priority.High);
                 }
             }
-            
+
             _actions.Insert(index + 1, (action, priority));
         }
+
         if (_isRunning) return;
         _isRunning = true;
         Process();
@@ -33,7 +43,7 @@ public class ThreadsUtil
 
     private async Task Process()
     {
-        for (var j = 0; j < ThreadsCount - 1; j++)
+        for (var j = 0; j < _threadsCount - 1; j++)
         {
             Console.WriteLine("Start thread " + j);
             ProcessPerThread();

@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using priceapp.proxy;
-using priceapp.Repositories;
 using priceapp.Services;
 using priceapp.Services.Interfaces;
 using priceapp.ShopsServices;
@@ -66,8 +65,7 @@ public static class ServiceCollection
         
         services.RegisterProxyServices(configuration);
         services.RegisterTasksServices();
-        services.RegisterServicesServices();
-        services.RegisterRepositoryServices(configuration);
+        services.RegisterServicesServices(configuration);
         services.RegisterShopServicesServices();
     }
 }

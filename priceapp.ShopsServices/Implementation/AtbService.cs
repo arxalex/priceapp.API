@@ -149,7 +149,7 @@ public class AtbService : IAtbService
         var proxyCategories =
             _mapper.Map<List<CategoryLinkModel>>(
                 await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
-        var prices = new List<proxy.Services.Models.PriceModel>();
+        var prices = new List<proxy.Models.PriceModel>();
         foreach (var proxyCategory in proxyCategories)
         {
             prices.AddRange(await _pricesController.GetPricesAsync(proxyCategory.Id, ShopId, proxyFilialId));

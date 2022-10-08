@@ -9,7 +9,6 @@
     <ItemGroup>
       <ProjectReference Include="..\priceapp.Models\priceapp.Models.csproj" />
       <ProjectReference Include="..\priceapp.Repositories\priceapp.Repositories.csproj" />
-      <ProjectReference Include="..\priceapp.tasks\priceapp.tasks.csproj" />
       <ProjectReference Include="..\priceapp.Utils\priceapp.Utils.csproj" />
     </ItemGroup>
 
