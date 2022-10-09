@@ -57,7 +57,9 @@ public static class ServiceCollection
         {
             options.AddPolicy(
                 "CorsPolicy",
-                corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
+                corsPolicyBuilder => corsPolicyBuilder.WithOrigins(configuration["Cors:Url"],
+                        configuration["Cors:UrlSSL"],
+                        configuration["Cors:UrlLocal"])
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());

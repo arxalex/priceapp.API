@@ -19,12 +19,9 @@ public class SessionParameters
 
     public bool IsActualizeProxyAtbPricesActive
     {
-        get
-        {
-            if (!bool.Parse(_configuration["Proxy:MultiInstance"])) return _isActualizeProxyAtbPricesActive;
-            return bool.Parse(_constantsService.GetConstantAsync("ACTUALIZE_PROXY_ATB_PRICES_ACTIVE").Result.Value);
-
-        }
+        get => !bool.Parse(_configuration["Proxy:MultiInstance"])
+            ? _isActualizeProxyAtbPricesActive
+            : bool.Parse(_constantsService.GetConstantAsync("ACTUALIZE_PROXY_ATB_PRICES_ACTIVE").Result.Value);
         set
         {
             if (bool.Parse(_configuration["Proxy:MultiInstance"]))

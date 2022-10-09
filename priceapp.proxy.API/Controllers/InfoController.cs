@@ -6,6 +6,13 @@ namespace priceapp.proxy.API.Controllers;
 [Route("[controller]")]
 public class InfoController : ControllerBase
 {
+    private readonly IConfiguration _configuration;
+
+    public InfoController(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
+
     [HttpGet("")]
     public async Task<IActionResult> GetVersion()
     {
@@ -13,6 +20,19 @@ public class InfoController : ControllerBase
         {
             Name = "Priceapp.API",
             Version = "1.1"
+        });
+    }
+
+    [HttpGet("cores")]
+    public async Task<IActionResult> GetCores()
+    {
+        return Ok(new
+        {
+            Count = bool.Parse(_configuration["Threads:UseSystem"])
+                ? Environment.ProcessorCount
+                : int.Parse(_configuration["Threads:DefaultCount"]),
+            UseSystem = bool.Parse(_configuration["Threads:UseSystem"]),
+            SystemCores = Environment.ProcessorCount
         });
     }
 }
