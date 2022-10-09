@@ -57,12 +57,12 @@ public static class ServiceCollection
         {
             options.AddPolicy(
                 "CorsPolicy",
-                corsPolicyBuilder => corsPolicyBuilder.WithOrigins(configuration["Cors:Url"])
+                corsPolicyBuilder => corsPolicyBuilder.AllowAnyOrigin()
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
         });
-        
+
         services.RegisterProxyServices(configuration);
         services.RegisterTasksServices();
         services.RegisterServicesServices(configuration);

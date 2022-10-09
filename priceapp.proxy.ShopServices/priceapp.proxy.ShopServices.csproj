@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+      <PackageReference Include="Microsoft.AspNetCore.Connections.Abstractions" Version="6.0.9"/>
       <PackageReference Include="RestSharp" Version="108.0.3-alpha.0.5" />
     </ItemGroup>
 
