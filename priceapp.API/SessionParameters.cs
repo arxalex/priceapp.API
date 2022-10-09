@@ -1,19 +1,44 @@
+using priceapp.proxy.Models;
+using priceapp.proxy.Services.Interfaces;
+
 namespace priceapp.API;
 
 public class SessionParameters
 {
-    private readonly proxy.SessionParameters _sessionParameters;
-    public SessionParameters(proxy.SessionParameters sessionParameters)
-    {
-        _sessionParameters = sessionParameters;
-        IsActualizePricesActive = false;
-    }
+    private readonly IConfiguration _configuration;
+    private readonly IConstantsService _constantsService;
+    private bool _isActualizeProxyAtbPricesActive;
 
-    public bool IsActualizePricesActive { get; set; }
+    public SessionParameters(IConfiguration configuration, IConstantsService constantsService)
+    {
+        _configuration = configuration;
+        _constantsService = constantsService;
+        IsActualizeProxyAtbPricesActive = false;
+    }
 
     public bool IsActualizeProxyAtbPricesActive
     {
-        get => _sessionParameters.IsActualizeProxyAtbPricesActive;
-        set => _sessionParameters.IsActualizeProxyAtbPricesActive = value;
+        get
+        {
+            if (!bool.Parse(_configuration["Proxy:MultiInstance"])) return _isActualizeProxyAtbPricesActive;
+            return bool.Parse(_constantsService.GetConstantAsync("ACTUALIZE_PROXY_ATB_PRICES_ACTIVE").Result.Value);
+
+        }
+        set
+        {
+            if (bool.Parse(_configuration["Proxy:MultiInstance"]))
+            {
+                _constantsService.SetConstantAsync(new ConstantModel
+                {
+                    Id = -1,
+                    Label = "ACTUALIZE_PROXY_ATB_PRICES_ACTIVE",
+                    Value = $"{value}"
+                }).Wait();
+            }
+            else
+            {
+                _isActualizeProxyAtbPricesActive = value;
+            }
+        }
     }
 }
