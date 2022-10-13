@@ -33,6 +33,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy.API", "price
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.proxy", "priceapp.proxy\priceapp.proxy.csproj", "{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.Background", "priceapp.Background\priceapp.Background.csproj", "{4F0896A0-E0DE-4DD4-B503-BB19F4961906}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "priceapp.ControllersLogic", "priceapp.ControllersLogic\priceapp.ControllersLogic.csproj", "{A3DBA3A1-7E60-49F7-8D11-7597D46B15E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -103,5 +107,13 @@ Global
 		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5776E735-A6C4-4A9D-BF5E-27BCB42B99F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F0896A0-E0DE-4DD4-B503-BB19F4961906}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F0896A0-E0DE-4DD4-B503-BB19F4961906}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F0896A0-E0DE-4DD4-B503-BB19F4961906}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F0896A0-E0DE-4DD4-B503-BB19F4961906}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3DBA3A1-7E60-49F7-8D11-7597D46B15E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3DBA3A1-7E60-49F7-8D11-7597D46B15E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3DBA3A1-7E60-49F7-8D11-7597D46B15E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3DBA3A1-7E60-49F7-8D11-7597D46B15E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

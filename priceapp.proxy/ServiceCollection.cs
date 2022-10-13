@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using priceapp.proxy.Controllers;
+using priceapp.proxy.Controllers.Logic;
 using priceapp.proxy.Services;
 using priceapp.proxy.ShopServices;
+using priceapp.tasks;
 
 namespace priceapp.proxy;
 
@@ -16,8 +18,10 @@ public static class ServiceCollection
         services.AddScoped<FilialsController>();
         services.AddScoped<ItemsController>();
         services.AddScoped<PricesController>();
+        services.AddScoped<PricesControllerLogic>();
 
         services.RegisterProxyServicesServices(configuration);
         services.RegisterProxyShopServicesServices();
+        services.RegisterTasksServices();
     }
 }

@@ -46,6 +46,7 @@ public class PricesRepository : IPricesRepository
 								    filialid = pi.filialid, 
 								    quantity = pi.quantity,
 								    pricefactor = pi.pricefactor";
+        // TODO:  MySqlConnector.MySqlException (0x80004005): Thread stack overrun:  242184 bytes used of a 262144 byte stack, and 20000 bytes needed.  Use 'mysqld --thread_stack=#' to specify a bigger stack.
         await connection.ExecuteAsync(query, parameters);
     }
 
@@ -56,15 +57,15 @@ public class PricesRepository : IPricesRepository
         const string query = $"update {Table} set `quantity` = 0";
         await connection.ExecuteAsync(query);
     }
-    
+
     public async Task SetPriceQuantitiesZeroAsync(int filialId)
     {
-	    using var connection = _mySqlDbConnectionFactory.Connect();
-	    var parameters = new DynamicParameters();
-	    parameters.Add("@filialId", filialId, DbType.Int32);
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@filialId", filialId, DbType.Int32);
 
-	    const string query = $"update {Table} set `quantity` = 0 where `filialid` = @filialId";
-	    await connection.ExecuteAsync(query, parameters);
+        const string query = $"update {Table} set `quantity` = 0 where `filialid` = @filialId";
+        await connection.ExecuteAsync(query, parameters);
     }
 
     public async Task InsertOrUpdatePricesHistoryAsync(List<PriceHistoryRepositoryModel> models)
@@ -100,20 +101,20 @@ public class PricesRepository : IPricesRepository
 
     public async Task<int?> GetMaxFilialIdToday()
     {
-	    using var connection = _mySqlDbConnectionFactory.Connect();
-	    var parameters = new DynamicParameters();
-	    parameters.Add("@date", DateTime.Now, DbType.DateTime);
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@date", DateTime.Now, DbType.DateTime);
 
-	    const string query = $"select max(filialid) from {TableHistory} where date = @date";
+        const string query = $"select max(filialid) from {TableHistory} where date = @date";
 
-	    return await connection.QueryFirstAsync<int?>(query, parameters);
+        return await connection.QueryFirstAsync<int?>(query, parameters);
     }
 
     public async Task<List<PriceRepositoryModel>> GetPricesAsync()
     {
-	    using var connection = _mySqlDbConnectionFactory.Connect();
-	    const string query = $"select * from {Table}";
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {Table}";
 
-	    return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
+        return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
     }
 }

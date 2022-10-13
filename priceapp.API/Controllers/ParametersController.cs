@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using priceapp.API.Controllers.Models.Response;
+using priceapp.ControllersLogic;
 
 namespace priceapp.API.Controllers;
 
 [ApiController]
-[Authorize]
 [Route("[controller]")]
 public class ParametersController : ControllerBase
 {
@@ -17,7 +17,6 @@ public class ParametersController : ControllerBase
     }
 
     [HttpGet("status")]
-    [Authorize(Roles = "9")]
     public async Task<IActionResult> GetStatus()
     {
         var status = new List<StatusResponseModel>
