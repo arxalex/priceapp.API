@@ -144,7 +144,7 @@ public class AtbService : IAtbService
         return items;
     }
 
-    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int proxyFilialId)
+    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int proxyFilialId, int filialId)
     {
         var proxyCategories =
             _mapper.Map<List<CategoryLinkModel>>(
@@ -159,7 +159,7 @@ public class AtbService : IAtbService
             join link in ItemLinks on price.ItemId equals link.InShopId
             select new PriceModel()
             {
-                FilialId = proxyFilialId,
+                FilialId = filialId,
                 Price = price.Price,
                 Quantity = price.Quantity,
                 PriceFactor = null,

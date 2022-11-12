@@ -56,13 +56,13 @@ public class PricesControllerUpdateLogic
         await UpdatePricesAsync();
     }
 
-    private async Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int categoryId)
+    private async Task<List<PriceModel>> GetPricesAsync(int shopId, int internalFilialId, int filialId, int categoryId)
     {
         var prices = shopId switch
         {
-            1 => await _silpoService.GetPricesAsync(categoryId, internalFilialId),
-            2 => await _foraService.GetPricesAsync(categoryId, internalFilialId),
-            3 => await _atbService.GetPricesAsync(categoryId, internalFilialId),
+            1 => await _silpoService.GetPricesAsync(categoryId, internalFilialId, filialId),
+            2 => await _foraService.GetPricesAsync(categoryId, internalFilialId, filialId),
+            3 => await _atbService.GetPricesAsync(categoryId, internalFilialId, filialId),
             _ => new List<PriceModel>()
         };
 
@@ -75,7 +75,7 @@ public class PricesControllerUpdateLogic
         var prices = new List<PriceModel>();
         foreach (var category in categories)
         {
-            prices.AddRange(await GetPricesAsync(filial.ShopId, filial.InShopId, category.Id));
+            prices.AddRange(await GetPricesAsync(filial.ShopId, filial.InShopId, filial.Id, category.Id));
         }
 
         var pricesHistory = prices.Select(x => new PriceHistoryModel()

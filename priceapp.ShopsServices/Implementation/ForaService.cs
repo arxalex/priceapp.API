@@ -220,7 +220,7 @@ public class ForaService : IForaService
         return items;
     }
 
-    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int internalFilialId, int from = 0,
+    public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int internalFilialId, int filialId, int from = 0,
         int to = 10000)
     {
         var internalCategories =
@@ -259,7 +259,7 @@ public class ForaService : IForaService
             join link in ItemLinks on item.id equals link.InShopId
             select new PriceModel()
             {
-                FilialId = internalFilialId,
+                FilialId = filialId,
                 Price = item.price,
                 Quantity = item.quantity ?? 0,
                 PriceFactor = null,

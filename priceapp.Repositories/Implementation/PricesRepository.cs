@@ -20,10 +20,16 @@ public class PricesRepository : IPricesRepository
     public async Task InsertOrUpdatePricesAsync(List<PriceRepositoryModel> models)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var parameters = new DynamicParameters();
-        var tableQuery = DatabaseUtil.GetSelectStatementFromList(models, parameters);
 
-        var query = @$"insert into {Table} select * from (
+        var i = 0;
+        var modelGroups = models.GroupBy(x => i++ / 100);
+        
+        foreach (var modelGroup in modelGroups)
+        {
+	        var parameters = new DynamicParameters();
+	        var tableQuery = DatabaseUtil.GetSelectStatementFromList(modelGroup.ToList(), parameters);
+
+	        var query = @$"insert into {Table} select * from (
 									select pp.id, 
 										p.itemid, 
 										p.shopid, 
@@ -46,8 +52,8 @@ public class PricesRepository : IPricesRepository
 								    filialid = pi.filialid, 
 								    quantity = pi.quantity,
 								    pricefactor = pi.pricefactor";
-        // TODO:  MySqlConnector.MySqlException (0x80004005): Thread stack overrun:  242184 bytes used of a 262144 byte stack, and 20000 bytes needed.  Use 'mysqld --thread_stack=#' to specify a bigger stack.
-        await connection.ExecuteAsync(query, parameters);
+	        await connection.ExecuteAsync(query, parameters);
+        }
     }
 
     public async Task SetPriceQuantitiesZeroAsync()
@@ -71,10 +77,16 @@ public class PricesRepository : IPricesRepository
     public async Task InsertOrUpdatePricesHistoryAsync(List<PriceHistoryRepositoryModel> models)
     {
         using var connection = _mySqlDbConnectionFactory.Connect();
-        var parameters = new DynamicParameters();
-        var tableQuery = DatabaseUtil.GetSelectStatementFromList(models, parameters);
+        
+        var i = 0;
+        var modelGroups = models.GroupBy(x => i++ / 100);
 
-        var query = @$"insert into {TableHistory} select * from (
+        foreach (var modelGroup in modelGroups)
+        {
+	        var parameters = new DynamicParameters();
+	        var tableQuery = DatabaseUtil.GetSelectStatementFromList(modelGroup.ToList(), parameters);
+
+	        var query = @$"insert into {TableHistory} select * from (
 									select pp.id, 
 										p.itemid, 
 										p.shopid, 
@@ -96,7 +108,8 @@ public class PricesRepository : IPricesRepository
 								    price = pi.price, 
 								    date = pi.date,
 								    filialid = pi.filialid";
-        await connection.ExecuteAsync(query, parameters);
+	        await connection.ExecuteAsync(query, parameters);
+        }
     }
 
     public async Task<int?> GetMaxFilialIdToday()
