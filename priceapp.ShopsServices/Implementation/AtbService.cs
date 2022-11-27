@@ -68,11 +68,12 @@ public class AtbService : IAtbService
 
     public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int proxyCategoryId, int from, int to)
     {
+        _logger.LogInformation("Start Atb GetItemsByCategoryAsync. proxyCategoryId: {ProxyCategoryId}", proxyCategoryId);
         var resultItems = await _itemsController.GetAtbItemsAsync(proxyCategoryId, from, to);
 
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var handledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.Id));
+        var notHandledResult = resultItems.Where(item => !inTableItems.Exists(x => x.InShopId == item.Id));
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
@@ -81,7 +82,7 @@ public class AtbService : IAtbService
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
-        foreach (var value in handledResult)
+        foreach (var value in notHandledResult)
         {
             CategoryModel? categoryModel = null;
             CategoryLinkModel? categoryLinkModel = null;
@@ -92,7 +93,7 @@ public class AtbService : IAtbService
             }
             catch (Exception e)
             {
-                _logger.LogInformation(e.Message);
+                _logger.LogWarning(e.Message);
             }
 
             var brandModel = value.Brand is { Length: > 0 }
@@ -140,22 +141,25 @@ public class AtbService : IAtbService
                 ShopId = ShopId
             });
         }
+        _logger.LogInformation("End Atb GetItemsByCategoryAsync. Total items {ItemsCount}", items.Count);
 
         return items;
     }
 
     public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int proxyFilialId, int filialId)
     {
+        _logger.LogInformation("Start Atb GetPricesAsync. categoryId: {CategoryId}, filialId: {FilialId}", categoryId, filialId);
+
         var proxyCategories =
             _mapper.Map<List<CategoryLinkModel>>(
                 await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
-        var prices = new List<proxy.Models.PriceModel>();
+        var items = new List<proxy.Models.PriceModel>();
         foreach (var proxyCategory in proxyCategories)
         {
-            prices.AddRange(await _pricesController.GetPricesAsync(proxyCategory.Id, ShopId, proxyFilialId));
+            items.AddRange(await _pricesController.GetPricesAsync(proxyCategory.Id, ShopId, proxyFilialId));
         }
-
-        return (from price in prices
+        
+        var prices = (from price in items
             join link in ItemLinks on price.ItemId equals link.InShopId
             select new PriceModel()
             {
@@ -167,16 +171,22 @@ public class AtbService : IAtbService
                 Id = -1,
                 ItemId = link.ItemId
             }).ToList();
+        
+        _logger.LogInformation("End Atb GetPricesAsync. Total items {PricesCount}", prices.Count);
+
+        return prices;
     }
 
     public async Task<List<FilialModel>> GetFilialsAsync()
     {
+        _logger.LogInformation("Start Atb GetFilialsAsync");
+
         var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
         var result = (await _filialsController.GetAtbFilialsAsync())
             .Where(filial => !inTableItems.Exists(x => x.InShopId == filial.Id) && filial.XCord != null &&
                              filial.YCord != null);
-
-        return result.Select(x => new FilialModel()
+        
+        var filials = result.Select(x => new FilialModel()
         {
             Id = -1,
             City = x.City,
@@ -189,12 +199,19 @@ public class AtbService : IAtbService
             XCord = x.XCord ?? 0,
             YCord = x.YCord ?? 0
         }).ToList();
+        
+        _logger.LogInformation("End Atb GetFilialsAsync. Total items {FilialsCount}", filials.Count);
+
+        return filials;
     }
 
     public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync()
     {
+        _logger.LogInformation("Start Atb GetCategoryLinksAsync");
+
         var inTableItems = await _categoryLinksRepository.GetCategoryLinksAsync(ShopId);
-        return (await _categoriesController.GetAtbCategoriesAsync())
+        
+        var categoryLinks = (await _categoriesController.GetAtbCategoriesAsync())
             .Where(category => !inTableItems.Exists(x => x.categoryshopid == category.Id))
             .Select(x => new CategoryLinkModel()
             {
@@ -204,5 +221,9 @@ public class AtbService : IAtbService
                 ShopCategoryLabel = x.Label,
                 ShopId = ShopId
             }).ToList();
+        
+        _logger.LogInformation("End Atb GetCategoryLinksAsync. Total items {CategoryLinksCount}", categoryLinks.Count);
+
+        return categoryLinks;
     }
 }

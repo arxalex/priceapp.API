@@ -72,6 +72,8 @@ public class ForaService : IForaService
     public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int internalCategoryId, int from, int to,
         int internalFilialId = 310)
     {
+        _logger.LogInformation("Start Fora GetItemsByCategoryAsync. internalCategoryId: {InternalCategoryId}", internalCategoryId);
+
         var json = JsonSerializer.Serialize(new
         {
             data = new
@@ -89,16 +91,21 @@ public class ForaService : IForaService
         request.AddBody(json, "application/json");
 
         var response = await _client.ExecuteAsync(request);
+        _logger.LogInformation("GetSimpleCatalogItems request send. Response is {ResponseStatusCode}", response.StatusCode);
 
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
-            throw new ConnectionAbortedException("Could not get data from Silpo");
+            throw new ConnectionAbortedException("Could not get data from Fora");
 
         var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
+        _logger.LogInformation("Data Deserialized. Count is {ItemsCount}", result.items.Count);
+
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var handledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id));
+        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
+        
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
@@ -106,7 +113,7 @@ public class ForaService : IForaService
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
-        foreach (var value in handledResult)
+        foreach (var value in notHandledResult)
         {
             var packageObject = value.parameters?.FirstOrDefault(x => x.key == "packageType");
             var packageLabel = packageObject != null ? packageObject.value : "";
@@ -212,10 +219,12 @@ public class ForaService : IForaService
                 Package = packageLabel,
                 Country = country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : value.categories[^1].name,
-                Url = "https://shop.silpo.ua/product/" + value.slug,
+                Url = "https://shop.fora.ua/product/" + value.slug,
                 ShopId = ShopId
             });
         }
+        
+        _logger.LogInformation("End GetItemsByCategoryAsync. Total items {ItemsCount}", items.Count);
 
         return items;
     }
@@ -223,6 +232,8 @@ public class ForaService : IForaService
     public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int internalFilialId, int filialId, int from = 0,
         int to = 10000)
     {
+        _logger.LogInformation("Start Fora GetPricesAsync. categoryId: {CategoryId}, filialId: {FilialId}", categoryId, filialId);
+
         var internalCategories =
             _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
         var items = new List<ForaItemModel>();
@@ -245,17 +256,20 @@ public class ForaService : IForaService
             request.AddBody(json, "application/json");
 
             var response = await _client.ExecuteAsync(request);
+            _logger.LogInformation("GetSimpleCatalogItems request send. Response is {ResponseStatusCode}", response.StatusCode);
 
             if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
-                throw new ConnectionAbortedException("Could not get data from Silpo");
+                throw new ConnectionAbortedException("Could not get data from Fora");
 
             var result = JsonSerializer.Deserialize<ForaCatalogItems>(response.Content);
             if (result == null) throw new ConnectionAbortedException("Could not parse data");
+            
+            _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.items.Count);
 
             items.AddRange(result.items);
         }
-
-        return (from item in items
+        
+        var prices = (from item in items
             join link in ItemLinks on item.id equals link.InShopId
             select new PriceModel()
             {
@@ -267,10 +281,16 @@ public class ForaService : IForaService
                 Id = -1,
                 ItemId = link.ItemId
             }).ToList();
+
+        _logger.LogInformation("End Fora GetPricesAsync. Total count {PricesCount}", prices.Count);
+
+        return prices;
     }
 
     public async Task<List<FilialModel>> GetFilialsAsync()
     {
+        _logger.LogInformation("Start Fora GetFilialsAsync");
+
         var json = JsonSerializer.Serialize(new
         {
             data = new { businessId = 4 },
@@ -282,16 +302,21 @@ public class ForaService : IForaService
         request.AddBody(json, "application/json");
 
         var response = await _client.ExecuteAsync(request);
+        _logger.LogInformation("GetPickupFilials request send. Response is {ResponseStatusCode}", response.StatusCode);
 
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
-            throw new ConnectionAbortedException("Could not get data from Silpo");
+            throw new ConnectionAbortedException("Could not get data from Fora");
 
         var result = JsonSerializer.Deserialize<ForaFilialResponse>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
+        
+        _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.items.Count);
 
         var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
         var notHandledResult =
-            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id));
+            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id)).ToList();
+        
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
 
         var filials = new List<FilialModel>();
 
@@ -312,12 +337,16 @@ public class ForaService : IForaService
                 YCord = filial.lat
             });
         }
+        
+        _logger.LogInformation("End GetFilialsAsync. Total count: {FilialsCount}", filials.Count);
 
         return filials;
     }
 
     public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int internalFilialId = 310)
     {
+        _logger.LogInformation("Start Fora GetCategoryLinksAsync");
+
         var json = JsonSerializer.Serialize(new
         {
             data = new { filialId = internalFilialId },
@@ -330,18 +359,24 @@ public class ForaService : IForaService
 
         var response = await _client.ExecuteAsync(request);
 
+        _logger.LogInformation("GetCategories request send. Response is {ResponseStatusCode}", response.StatusCode);
+
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
-            throw new ConnectionAbortedException("Could not get data from Silpo");
+            throw new ConnectionAbortedException("Could not get data from Fora");
 
         var result = JsonSerializer.Deserialize<ForaCategoriesRequest>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
+        
+        _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.tree.Count);
 
         var inTableItems =
             _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
         var notHandledResult =
-            result.tree.Where(categories => !inTableItems.Exists(x => x.CategoryShopId == categories.id));
-
-        return notHandledResult.Select(x => new CategoryLinkModel
+            result.tree.Where(categories => !inTableItems.Exists(x => x.CategoryShopId == categories.id)).ToList();
+        
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
+        
+        var categoryLinks = notHandledResult.Select(x => new CategoryLinkModel
         {
             Id = -1,
             ShopId = ShopId,
@@ -349,5 +384,9 @@ public class ForaService : IForaService
             CategoryShopId = x.id,
             ShopCategoryLabel = x.name!
         }).ToList();
+        
+        _logger.LogInformation("End GetCategoryLinksAsync. Total count: {CategoriesCount}", categoryLinks.Count);
+
+        return categoryLinks;
     }
 }

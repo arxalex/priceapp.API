@@ -47,7 +47,6 @@ public class SilpoService : ISilpoService
         }
     }
 
-
     public SilpoService(IItemLinksService itemLinksService, IBrandsService brandsService,
         ICountriesService countriesService, ILogger<SilpoService> logger, IFilialsRepository filialsRepository,
         IMapper mapper, ICategoryLinksRepository categoryLinksRepository, ICategoriesService categoriesService)
@@ -73,6 +72,8 @@ public class SilpoService : ISilpoService
     public async Task<List<ItemShopModel>> GetItemsByCategoryAsync(int internalCategoryId, int from, int to,
         int internalFilialId = 2043)
     {
+        _logger.LogInformation("Start Silpo GetItemsByCategoryAsync. internalCategoryId: {InternalCategoryId}", internalCategoryId);
+
         var json = JsonSerializer.Serialize(new
         {
             data = new
@@ -90,6 +91,7 @@ public class SilpoService : ISilpoService
         request.AddBody(json, "application/json");
 
         var response = await _client.ExecuteAsync(request);
+        _logger.LogInformation("GetSimpleCatalogItems request send. Response is {ResponseStatusCode}", response.StatusCode);
 
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
             throw new ConnectionAbortedException("Could not get data from Silpo");
@@ -97,14 +99,17 @@ public class SilpoService : ISilpoService
         var result = JsonSerializer.Deserialize<SilpoCatalogItems>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
+        _logger.LogInformation("Data Deserialized. Count is {ItemsCount}", result.items.Count);
+
         var inTableItems = await _itemLinksService.GetItemLinksAsync(ShopId);
         ItemLinks = inTableItems;
-        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id));
+        var notHandledResult = result.items.Where(item => !inTableItems.Exists(x => x.InShopId == item.id)).ToList();
+
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
 
         var items = new List<ItemShopModel>();
         var categories = await _categoriesService.GetCategoriesAsync();
-        var categoryLinks =
-            _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
+        var categoryLinks = _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
         var brands = await _brandsService.GetBrandsAsync();
         var countries = await _countriesService.GetCountriesAsync();
 
@@ -218,6 +223,8 @@ public class SilpoService : ISilpoService
                 ShopId = ShopId
             });
         }
+        
+        _logger.LogInformation("End GetItemsByCategoryAsync. Total items {ItemsCount}", items.Count);
 
         return items;
     }
@@ -225,6 +232,8 @@ public class SilpoService : ISilpoService
     public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int internalFilialId, int filialId, int from = 0,
         int to = 10000)
     {
+        _logger.LogInformation("Start Silpo GetPricesAsync. categoryId: {CategoryId}, filialId: {FilialId}", categoryId, filialId);
+
         var internalCategories =
             _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId, categoryId));
         var items = new List<SilpoItemModel>();
@@ -247,17 +256,20 @@ public class SilpoService : ISilpoService
             request.AddBody(json, "application/json");
 
             var response = await _client.ExecuteAsync(request);
+            _logger.LogInformation("GetSimpleCatalogItems request send. Response is {ResponseStatusCode}", response.StatusCode);
 
             if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
                 throw new ConnectionAbortedException("Could not get data from Silpo");
 
             var result = JsonSerializer.Deserialize<SilpoCatalogItems>(response.Content);
             if (result == null) throw new ConnectionAbortedException("Could not parse data");
+            
+            _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.items.Count);
 
             items.AddRange(result.items);
         }
 
-        return (from item in items
+        var prices = (from item in items
             join link in ItemLinks on item.id equals link.InShopId
             select new PriceModel
             {
@@ -269,10 +281,16 @@ public class SilpoService : ISilpoService
                 Id = -1,
                 ItemId = link.ItemId
             }).ToList();
+        
+        _logger.LogInformation("End Fora GetPricesAsync. Total count {PricesCount}", prices.Count);
+
+        return prices;
     }
 
     public async Task<List<FilialModel>> GetFilialsAsync()
     {
+        _logger.LogInformation("Start Silpo GetFilialsAsync");
+
         var json = JsonSerializer.Serialize(new
         {
             data = new { businessId = 1 },
@@ -284,6 +302,7 @@ public class SilpoService : ISilpoService
         request.AddBody(json, "application/json");
 
         var response = await _client.ExecuteAsync(request);
+        _logger.LogInformation("GetPickupFilials request send. Response is {ResponseStatusCode}", response.StatusCode);
 
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
             throw new ConnectionAbortedException("Could not get data from Silpo");
@@ -291,9 +310,13 @@ public class SilpoService : ISilpoService
         var result = JsonSerializer.Deserialize<SilpoFilialResponse>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
 
+        _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.items.Count);
+
         var inTableItems = _mapper.Map<List<FilialModel>>(await _filialsRepository.GetFilialsAsync(ShopId));
         var notHandledResult =
-            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id));
+            result.items.Where(filial => !inTableItems.Exists(x => x.InShopId == filial.id)).ToList();
+        
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
 
         var filials = new List<FilialModel>();
 
@@ -315,11 +338,15 @@ public class SilpoService : ISilpoService
             });
         }
 
+        _logger.LogInformation("End GetFilialsAsync. Total count: {FilialsCount}", filials.Count);
+
         return filials;
     }
 
     public async Task<List<CategoryLinkModel>> GetCategoryLinksAsync(int internalFilialId = 2043)
     {
+        _logger.LogInformation("Start Silpo GetCategoryLinksAsync");
+
         var json = JsonSerializer.Serialize(new
         {
             data = new { filialId = internalFilialId },
@@ -332,18 +359,24 @@ public class SilpoService : ISilpoService
 
         var response = await _client.ExecuteAsync(request);
 
+        _logger.LogInformation("GetCategories request send. Response is {ResponseStatusCode}", response.StatusCode);
+
         if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
             throw new ConnectionAbortedException("Could not get data from Silpo");
 
         var result = JsonSerializer.Deserialize<SilpoCategoriesRequest>(response.Content);
         if (result == null) throw new ConnectionAbortedException("Could not parse data");
+        
+        _logger.LogInformation("Items deserialized. Count: {ItemsCount}", result.tree.Count);
 
         var inTableItems =
             _mapper.Map<List<CategoryLinkModel>>(await _categoryLinksRepository.GetCategoryLinksAsync(ShopId));
         var notHandledResult =
-            result.tree.Where(categories => !inTableItems.Exists(x => x.CategoryShopId == categories.id));
+            result.tree.Where(categories => !inTableItems.Exists(x => x.CategoryShopId == categories.id)).ToList();
 
-        return notHandledResult.Select(x => new CategoryLinkModel
+        _logger.LogInformation("New items count is {Count}", notHandledResult.Count);
+
+        var categoryLinks = notHandledResult.Select(x => new CategoryLinkModel
         {
             Id = -1,
             ShopId = ShopId,
@@ -351,5 +384,9 @@ public class SilpoService : ISilpoService
             CategoryShopId = x.id,
             ShopCategoryLabel = x.name!
         }).ToList();
+        
+        _logger.LogInformation("End GetCategoryLinksAsync. Total count: {CategoriesCount}", categoryLinks.Count);
+
+        return categoryLinks;
     }
 }
