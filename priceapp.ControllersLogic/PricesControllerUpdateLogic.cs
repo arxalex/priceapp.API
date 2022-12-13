@@ -19,11 +19,11 @@ public class PricesControllerUpdateLogic
     private readonly IConfiguration _configuration;
     private readonly IPricesService _pricesService;
     private readonly proxy.Controllers.PricesController _pricesController;
-    private readonly Logger<PricesControllerUpdateLogic> _logger;
+    private readonly ILogger<PricesControllerUpdateLogic> _logger;
 
     public PricesControllerUpdateLogic(ISilpoService silpoService, IForaService foraService, IAtbService atbService,
         ICategoriesService categoriesService, SessionParameters sessionParameters, IFilialsService filialsService,
-        ThreadsUtil threadsUtil, IConfiguration configuration, IPricesService pricesService, proxy.Controllers.PricesController pricesController, Logger<PricesControllerUpdateLogic> logger)
+        ThreadsUtil threadsUtil, IConfiguration configuration, IPricesService pricesService, proxy.Controllers.PricesController pricesController, ILogger<PricesControllerUpdateLogic> logger)
     {
         _silpoService = silpoService;
         _foraService = foraService;
