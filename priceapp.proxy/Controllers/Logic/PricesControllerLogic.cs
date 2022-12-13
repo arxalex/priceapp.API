@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using priceapp.proxy.Services.Interfaces;
 using priceapp.proxy.ShopServices.Interfaces;
 using priceapp.tasks;
@@ -14,8 +15,9 @@ public class PricesControllerLogic
     private readonly IAtbService _atbService;
     private readonly IPricesService _pricesService;
     private readonly IConfiguration _configuration;
+    private readonly ILogger<PricesControllerLogic> _logger;
 
-    public PricesControllerLogic(ICategoriesService categoriesService, ThreadsUtil threadsUtil, SessionParameters sessionParameters, IFilialsService filialsService, IAtbService atbService, IPricesService pricesService, IConfiguration configuration)
+    public PricesControllerLogic(ICategoriesService categoriesService, ThreadsUtil threadsUtil, SessionParameters sessionParameters, IFilialsService filialsService, IAtbService atbService, IPricesService pricesService, IConfiguration configuration, ILogger<PricesControllerLogic> logger)
     {
         _categoriesService = categoriesService;
         _threadsUtil = threadsUtil;
@@ -24,6 +26,7 @@ public class PricesControllerLogic
         _atbService = atbService;
         _pricesService = pricesService;
         _configuration = configuration;
+        _logger = logger;
     }
     
     public async Task ActualizeProxyPricesAsync(int shopId)
@@ -61,9 +64,10 @@ public class PricesControllerLogic
                             var prices = await _atbService.GetPricesAsync(category.Id, filial.Id);
                             await _pricesService.InsertAsync(prices);
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            // ignored
+                            _logger.LogWarning("Process of actualizing prices for category {CategoryId} throw exception: {EMessage}", category.Id, e.Message);
+                            _logger.LogInformation("Continue after error");
                         }
                     }
 
@@ -97,10 +101,10 @@ public class PricesControllerLogic
                         var prices = await _atbService.GetPricesAsync(category.Id, filial.Id);
                         await _pricesService.InsertAsync(prices);
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
-                        _sessionParameters.IsActualizeProxyAtbPricesActive = false;
-                        throw;
+                        _logger.LogWarning("Process of actualizing prices for category {CategoryId} throw exception: {EMessage}", category.Id, e.Message);
+                        _logger.LogInformation("Continue after error");
                     }
                 }
             }

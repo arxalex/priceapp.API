@@ -3,6 +3,7 @@ using System.Net;
 using System.Text.Json;
 using HtmlAgilityPack;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.Extensions.Logging;
 using priceapp.proxy.Models;
 using priceapp.proxy.Services.Interfaces;
 using priceapp.proxy.ShopServices.Interfaces;
@@ -17,6 +18,7 @@ public class AtbService : IAtbService
     private readonly IFilialsService _filialsService;
     private readonly IItemsService _itemsService;
     private readonly ICategoriesService _categoriesService;
+    private readonly ILogger<AtbService> _logger;
 
     private const int ShopId = 3;
     private DateTime _filialsLastUpdatedTime;
@@ -77,14 +79,15 @@ public class AtbService : IAtbService
         }
     }
 
-    public AtbService(IFilialsService filialsService, IItemsService itemsService, ICategoriesService categoriesService)
+    public AtbService(IFilialsService filialsService, IItemsService itemsService, ICategoriesService categoriesService, ILogger<AtbService> logger)
     {
         _filialsService = filialsService;
         _itemsService = itemsService;
         _categoriesService = categoriesService;
+        _logger = logger;
         var httpClient = new HttpClient
         {
-            BaseAddress = new Uri("https://zakaz.atbmarket.com/")
+            BaseAddress = new Uri("https://www.atbmarket.com/")
         };
 
         _client = new RestClient(httpClient);
@@ -98,6 +101,8 @@ public class AtbService : IAtbService
 
     public async Task<List<PriceModel>> GetPricesAsync(int categoryId, int filialId)
     {
+        _logger.LogInformation("Start Atb GetPricesAsync. categoryId: {CategoryId}, filialId: {FilialId}", categoryId, filialId);
+
         var filial = Filials.First(x => x.Id == filialId);
         var i = 0;
         var nextPage = true;
@@ -121,12 +126,27 @@ public class AtbService : IAtbService
             request.AddHeader("Cookie", $"store_id={filial.InShopId}");
 
             var response = await _client.ExecuteAsync(request);
+            _logger.LogInformation("Get shop catalog request with cat = {Category}, store = {Store}, page = {Iteration} send. Response is {ResponseStatusCode}", category.InternalId, filial.InShopId, i, response.StatusCode);
 
             if (response.StatusCode != HttpStatusCode.OK || response.Content == null)
                 throw new ConnectionAbortedException("Could not get data from Atb");
 
-            var result = JsonSerializer.Deserialize<AtbItemsResponseModel>(response.Content);
-            if (result == null) throw new ConnectionAbortedException("Could not parse data");
+            AtbItemsResponseModel? result;
+            try
+            {
+                result = JsonSerializer.Deserialize<AtbItemsResponseModel>(response.Content);
+            }
+            catch (Exception)
+            {
+                result = null;
+            }
+            if (result == null)
+            {
+                _logger.LogWarning("Could not parse data");
+                break;
+            }
+
+            _logger.LogInformation("Response deserialized");
 
             var html = new HtmlDocument();
             if (result.markup == "")
@@ -137,6 +157,7 @@ public class AtbService : IAtbService
             html.LoadHtml(result.markup);
             var htmlNodeRoot = html.DocumentNode;
             var arrayOfProducts = htmlNodeRoot.SelectNodes(xpathItem);
+            _logger.LogInformation("Items parsed. Count: {ItemsCount}", arrayOfProducts.Count);
 
             foreach (var productNode in arrayOfProducts)
             {
@@ -182,10 +203,14 @@ public class AtbService : IAtbService
                     UpdateTime = DateTime.Now
                 });
             }
+            
+            _logger.LogInformation("Items added. Total count: {ItemsCount}", prices.Count);
 
             i++;
             nextPage = result.next_page;
         }
+        
+        _logger.LogInformation("End Atb GetPricesAsync. Total items {PricesCount}", prices.Count);
 
         return prices;
     }

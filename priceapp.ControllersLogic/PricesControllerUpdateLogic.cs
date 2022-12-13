@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using priceapp.Models;
 using priceapp.Services.Interfaces;
 using priceapp.ShopsServices.Interfaces;
@@ -18,10 +19,11 @@ public class PricesControllerUpdateLogic
     private readonly IConfiguration _configuration;
     private readonly IPricesService _pricesService;
     private readonly proxy.Controllers.PricesController _pricesController;
+    private readonly Logger<PricesControllerUpdateLogic> _logger;
 
     public PricesControllerUpdateLogic(ISilpoService silpoService, IForaService foraService, IAtbService atbService,
         ICategoriesService categoriesService, SessionParameters sessionParameters, IFilialsService filialsService,
-        ThreadsUtil threadsUtil, IConfiguration configuration, IPricesService pricesService, proxy.Controllers.PricesController pricesController)
+        ThreadsUtil threadsUtil, IConfiguration configuration, IPricesService pricesService, proxy.Controllers.PricesController pricesController, Logger<PricesControllerUpdateLogic> logger)
     {
         _silpoService = silpoService;
         _foraService = foraService;
@@ -33,6 +35,7 @@ public class PricesControllerUpdateLogic
         _configuration = configuration;
         _pricesService = pricesService;
         _pricesController = pricesController;
+        _logger = logger;
     }
 
     public async Task ActualizeProxyPricesAsync(int shopId)
@@ -119,9 +122,10 @@ public class PricesControllerUpdateLogic
 
                     await UpdatePricesAsync(filial);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // ignored
+                    _logger.LogWarning("Process of actualizing prices for category {FilialId} throw exception: {EMessage}", filial.Id, e.Message);
+                    _logger.LogInformation("Continue after error");
                 }
             }
 
@@ -156,10 +160,10 @@ public class PricesControllerUpdateLogic
 
                 await UpdatePricesAsync(filial);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                _sessionParameters.IsActualizePricesActive = false;
-                throw;
+                _logger.LogWarning("Process of actualizing prices for filial {FilialId} throw exception: {EMessage}", filial.Id, e.Message);
+                _logger.LogInformation("Continue after error");
             }
         }
 

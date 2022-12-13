@@ -137,7 +137,7 @@ public class AtbService : IAtbService
                 Brand = value.Brand,
                 Country = value.Country,
                 Category = categoryLinkModel != null ? categoryLinkModel.ShopCategoryLabel : internalCategoryLabel,
-                Url = "https://zakaz.atbmarket.com/product/1154/" + value.InternalId,
+                Url = "https://www.atbmarket.com/product/1154/" + value.InternalId,
                 ShopId = ShopId
             });
         }
