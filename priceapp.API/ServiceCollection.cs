@@ -22,17 +22,18 @@ public static class ServiceCollection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        services.AddCors(options =>
-        {
-            options.AddPolicy(
-                "CorsPolicy",
-                corsPolicyBuilder => corsPolicyBuilder.WithOrigins(configuration["Cors:Url"],
-                        configuration["Cors:UrlSSL"],
-                        configuration["Cors:UrlLocal"])
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-        });
+        // services.AddCors(options =>
+        // {
+        //     options.AddPolicy(
+        //         "CorsPolicy",
+        //         corsPolicyBuilder => corsPolicyBuilder.WithOrigins(configuration["Cors:Url"],
+        //                 configuration["Cors:UrlSSL"],
+        //                 configuration["Cors:UrlLocal"])
+        //             .AllowAnyMethod()
+        //             .AllowAnyHeader()
+        //             .AllowCredentials());
+        // });
+        services.AddCors();
         
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
