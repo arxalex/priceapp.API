@@ -8,4 +8,5 @@ public interface IBrandsService
     Task<BrandModel?> SearchBrandAsync(string search);
     Task InsertBrandAsync(BrandModel model);
     Task UpdateBrandAsync(BrandModel model);
+    Task<List<BrandAlertModel>> GetBrandAlertsAsync(int brandId);
 }

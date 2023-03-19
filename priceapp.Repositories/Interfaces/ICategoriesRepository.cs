@@ -10,4 +10,5 @@ public interface ICategoriesRepository
     Task InsertCategoryAsync(CategoryRepositoryModel model);
     Task UpdateCategoryAsync(CategoryRepositoryModel model);
     Task<List<CategoryRepositoryModel>> GetBaseCategoriesAsync();
+    Task<List<CategoryRepositoryModel>> GetChildLevelCategoriesAsync(int id);
 }

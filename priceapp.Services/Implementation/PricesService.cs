@@ -9,12 +9,14 @@ namespace priceapp.Services.Implementation;
 public class PricesService : IPricesService
 {
     private readonly IPricesRepository _pricesRepository;
+    private readonly IFilialsService _filialsService;
     private readonly IMapper _mapper;
 
-    public PricesService(IPricesRepository pricesRepository, IMapper mapper)
+    public PricesService(IPricesRepository pricesRepository, IMapper mapper, IFilialsService filialsService)
     {
         _pricesRepository = pricesRepository;
         _mapper = mapper;
+        _filialsService = filialsService;
     }
 
     public async Task SetPriceQuantitiesZeroAsync()
@@ -78,7 +80,19 @@ public class PricesService : IPricesService
     {
         return _mapper.Map<List<PriceModel>>(await _pricesRepository.GetPricesAsync());
     }
+    
+    public async Task<List<PriceModel>> GetPricesAsync(int itemId, double xCord, double yCord, double radius)
+    {
+        var filials = await _filialsService.GetFilialsAsync(xCord, yCord, radius);
+        return _mapper.Map<List<PriceModel>>(await _pricesRepository.GetPricesAsync(itemId, filials.Select(x => x.Id)));
+    }
 
+    public async Task<List<PriceModel>> GetPricesAsync(IEnumerable<int> itemIds, double xCord, double yCord, double radius)
+    {
+        var filials = await _filialsService.GetFilialsAsync(xCord, yCord, radius);
+        return _mapper.Map<List<PriceModel>>(await _pricesRepository.GetPricesAsync(itemIds, filials.Select(x => x.Id)));
+    }
+    
     public async Task<int?> GetMaxFilialIdToday()
     {
         return await _pricesRepository.GetMaxFilialIdToday();

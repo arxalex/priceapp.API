@@ -9,6 +9,7 @@ namespace priceapp.Repositories.Implementation;
 public class BrandsRepository : IBrandsRepository
 {
     private const string Table = "pa_brand";
+    private const string TableAlerts = "pa_brand_alerts";
     private readonly MySQLDbConnectionFactory _mySqlDbConnectionFactory;
 
     public BrandsRepository(MySQLDbConnectionFactory mySqlDbConnectionFactory)
@@ -25,15 +26,15 @@ public class BrandsRepository : IBrandsRepository
 
     public async Task<List<BrandRepositoryModel>> GetBrandsByKeywordsAsync(List<string> keywords)
     {
-        using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table}";
-        var parameters = new DynamicParameters();
-
-        if (keywords.Count != 0)
+        if (!keywords.Any())
         {
-            query += " where " + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
+            return new List<BrandRepositoryModel>();
         }
-
+        
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        var query = $"select * from {Table} where " + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
+        
         return (await connection.QueryAsync<BrandRepositoryModel>(query, parameters)).ToList();
     }
 
@@ -64,5 +65,17 @@ public class BrandsRepository : IBrandsRepository
         {
             throw new IOException("Error updating");
         }
+    }
+
+    public async Task<List<BrandAlertRepositoryModel>> GetBrandAlertsAsync(int brandId)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        const string query = $"select * from {TableAlerts} where `brandid` = @brandId";
+        
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@brandId", brandId, DbType.Int32);
+        
+        return (await connection.QueryAsync<BrandAlertRepositoryModel>(query, parameters)).ToList();
     }
 }

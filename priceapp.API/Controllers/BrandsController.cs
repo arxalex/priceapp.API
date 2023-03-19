@@ -43,4 +43,11 @@ public class BrandsController : ControllerBase
         await _brandsService.UpdateBrandAsync(model);
         return Ok();
     }
+
+    [HttpGet("{id:int}/alerts")]
+    [Authorize(Roles = "1")]
+    public async Task<IActionResult> GetBrandAlertsAsync([FromRoute] int id)
+    {
+        return Ok(await _brandsService.GetBrandAlertsAsync(id));
+    }
 }

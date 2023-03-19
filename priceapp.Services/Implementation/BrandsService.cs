@@ -43,4 +43,9 @@ public class BrandsService : IBrandsService
         await _brandsRepository.UpdateBrandAsync(_mapper.Map<BrandRepositoryModel>(model));
 
     }
+
+    public async Task<List<BrandAlertModel>> GetBrandAlertsAsync(int brandId)
+    {
+        return _mapper.Map<List<BrandAlertModel>>(await _brandsRepository.GetBrandAlertsAsync(brandId));
+    }
 }

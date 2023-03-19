@@ -49,6 +49,17 @@ public class CategoriesRepository : ICategoriesRepository
 
         return (await connection.QueryAsync<CategoryRepositoryModel>(query)).ToList();
     }
+    
+    public async Task<List<CategoryRepositoryModel>> GetChildLevelCategoriesAsync(int id)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        
+        const string query = $"select * from {Table} where `parent` = @parent";
+        var parameters = new DynamicParameters();
+        parameters.Add("@parent", id, DbType.Int32);
+
+        return (await connection.QueryAsync<CategoryRepositoryModel>(query, parameters)).ToList();
+    }
 
     public async Task<CategoryRepositoryModel> GetCategoryAsync(int shopId, int inShopId)
     {

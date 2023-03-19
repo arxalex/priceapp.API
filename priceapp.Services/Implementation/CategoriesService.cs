@@ -21,6 +21,11 @@ public class CategoriesService : ICategoriesService
     {
         return _mapper.Map<List<CategoryModel>>(await _categoriesRepository.GetChildCategoriesAsync(baseCategoryId));
     }
+    
+    public async Task<List<CategoryModel>> GetChildLevelCategoriesAsync(int id)
+    {
+        return _mapper.Map<List<CategoryModel>>(await _categoriesRepository.GetChildLevelCategoriesAsync(id));
+    }
 
     public async Task<List<CategoryModel>> GetCategoriesAsync()
     {

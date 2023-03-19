@@ -9,4 +9,5 @@ public class PriceModel
     public int FilialId { get; set; }
     public double Quantity { get; set; }
     public double? PriceFactor { get; set; }
+    public double PriceFinal => Price * PriceFactor ?? 1;
 }

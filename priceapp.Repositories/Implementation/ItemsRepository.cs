@@ -39,39 +39,32 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<ItemRepositoryModel>> GetItemsAsync(IEnumerable<string> keywords,
         IEnumerable<int> categoryIds)
     {
-        using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table}";
-        var parameters = new DynamicParameters();
+        if (!categoryIds.Any() || !keywords.Any())
+        {
+            return new List<ItemRepositoryModel>();
+        }
         
-        if (keywords.ToList().Count != 0)
-        {
-            query += " where (" + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword") + ")";
-            if (categoryIds.ToList().Count != 0)
-            {
-                query += " and " + DatabaseUtil.GetInQuery(categoryIds, "`category`");
-            }
-        }
-        else
-        {
-            if (categoryIds.ToList().Count != 0)
-            {
-                query += " where " + DatabaseUtil.GetInQuery(categoryIds, "`category`");
-            }
-        }
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        var query = $"select * from {Table} where (" + 
+                    DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword") + 
+                    ") and " + 
+                    DatabaseUtil.GetInQuery(categoryIds, "`category`");
 
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
 
     public async Task<List<ItemRepositoryModel>> GetItemsAsync(List<string> keywords)
     {
-        using var connection = _mySqlDbConnectionFactory.Connect();
-        var query = $"select * from {Table}";
-        var parameters = new DynamicParameters();
-
-        if (keywords.Count != 0)
+        if (!keywords.Any())
         {
-            query += " where " + DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
+            return new List<ItemRepositoryModel>();
         }
+        
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        var query = $"select * from {Table} where " + 
+                    DatabaseUtil.GetLikeQuery(keywords, "`label`", parameters, "keyword");
 
         return (await connection.QueryAsync<ItemRepositoryModel>(query, parameters)).ToList();
     }
@@ -79,6 +72,11 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<ItemExtendedRepositoryModel>> GetItemExtendedAsync(IEnumerable<int> categoryIds,
         int from, int to)
     {
+        if (!categoryIds.Any())
+        {
+            return new List<ItemExtendedRepositoryModel>();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = $@"
             select i.id, i.label, i.image, i.category, c.label as categoryLabel, i.brand, b.label as brandLabel,
@@ -92,13 +90,9 @@ public class ItemsRepository : IItemsRepository
             left join pa_package p on p.id = i.package
             left join pa_prices pr on pr.itemid = i.id
             where pr.price is not null
-            and pr.quantity > 0 ";
-
-        if (categoryIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "c.id");
-        }
-        query += $" group by i.id order by i.id limit {to - from} offset {from};";
+            and pr.quantity > 0 and " + 
+                    DatabaseUtil.GetInQuery(categoryIds, "c.id") + 
+                    $" group by i.id order by i.id limit {to - from} offset {from};";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query)).ToList();
     }
@@ -106,6 +100,11 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<ItemExtendedRepositoryModel>> GetItemsExtendedAsync(
         IEnumerable<int> categoryIds, IEnumerable<int> filialIds, int from, int to)
     {
+        if (!categoryIds.Any() || !filialIds.Any())
+        {
+            return new List<ItemExtendedRepositoryModel>();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = $@"
             select i.id, i.label, i.image, i.category, c.label as categoryLabel, i.brand, b.label as brandLabel,
@@ -119,25 +118,24 @@ public class ItemsRepository : IItemsRepository
             left join pa_package p on p.id = i.package
             left join pa_prices pr on pr.itemid = i.id
             where pr.price is not null
-            and pr.quantity > 0";
-        
-        if (categoryIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "c.id");
-        }
-        if (filialIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
-        }
-
-        query += $" group by i.id order by i.id limit {to - from} offset {from};";
+            and pr.quantity > 0 and " + 
+                    DatabaseUtil.GetInQuery(categoryIds, "c.id") + 
+                    " and " + 
+                    DatabaseUtil.GetInQuery(filialIds, "pr.filialid") +
+                    $" group by i.id order by i.id limit {to - from} offset {from};";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query)).ToList();
     }
 
     public async Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedAsync(List<string> search)
     {
+        if (!search.Any())
+        {
+            return new List<ItemExtendedRepositoryModel>();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
         var query = $@"
             select i.id, i.label, i.image, i.category, c.label as categoryLabel, i.brand, b.label as brandLabel,
                    i.package, p.label as packageLabel, p.short as packageUnits, i.units, i.term, i.consist, i.calorie,
@@ -150,15 +148,9 @@ public class ItemsRepository : IItemsRepository
             left join pa_package p on p.id = i.package
             left join pa_prices pr on pr.itemid = i.id
             where pr.price is not null
-            and pr.quantity > 0 ";
-
-        var parameters = new DynamicParameters();
-        if (search.Count != 0)
-        {
-            query += " and (" + DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + ")";
-        }
-        
-        query += " group by i.id order by i.id;";
+            and pr.quantity > 0 and (" + 
+                    DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + 
+                    ") group by i.id order by i.id;";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query, parameters)).ToList();
     }
@@ -166,7 +158,13 @@ public class ItemsRepository : IItemsRepository
     public async Task<List<ItemExtendedRepositoryModel>> SearchItemsExtendedAsync(List<string> search,
         IEnumerable<int> filialIds)
     {
+        if (!filialIds.Any() || !search.Any())
+        {
+            return new List<ItemExtendedRepositoryModel>();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
         var query = $@"
             select i.id, i.label, i.image, i.category, c.label as categoryLabel, i.brand, b.label as brandLabel,
                    i.package, p.label as packageLabel, p.short as packageUnits, i.units, i.term, i.consist, i.calorie,
@@ -179,21 +177,11 @@ public class ItemsRepository : IItemsRepository
             left join pa_package p on p.id = i.package
             left join pa_prices pr on pr.itemid = i.id
             where pr.price is not null
-            and pr.quantity > 0 ";
-
-        var parameters = new DynamicParameters();
-
-        if (filialIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
-        }
-
-        if (search.Count != 0)
-        {
-            query += " and (" + DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + ")";
-        }
-
-        query += " group by i.id order by i.id;";
+            and pr.quantity > 0 and " + 
+                    DatabaseUtil.GetInQuery(filialIds, "pr.filialid") + 
+                    " and (" + 
+                    DatabaseUtil.GetLikeQuery(search, "i.label", parameters, "keyword") + 
+                    ") group by i.id order by i.id;";
 
         return (await connection.QueryAsync<ItemExtendedRepositoryModel>(query, parameters)).ToList();
     }
@@ -225,6 +213,11 @@ public class ItemsRepository : IItemsRepository
 
     public async Task<ItemExtendedRepositoryModel> GetItemExtendedAsync(int id, IEnumerable<int> filialIds)
     {
+        if (!filialIds.Any())
+        {
+            return new ItemExtendedRepositoryModel();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = $@"
             select i.id, i.label, i.image, i.category, c.label as categoryLabel, i.brand, b.label as brandLabel,
@@ -239,17 +232,12 @@ public class ItemsRepository : IItemsRepository
             left join pa_prices pr on pr.itemid = i.id
             where i.id = @id
             and pr.price is not null
-            and pr.quantity > 0 ";
+            and pr.quantity > 0 and " + 
+                    DatabaseUtil.GetInQuery(filialIds, "pr.filialid") +
+                    " group by i.id;";
 
         var parameters = new DynamicParameters();
         parameters.Add("@id", id, DbType.Int32);
-        
-        if (filialIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(filialIds, "pr.filialid");
-        }
-
-        query += " group by i.id;";
 
         return await connection.QueryFirstAsync<ItemExtendedRepositoryModel>(query, parameters);
     }
@@ -446,19 +434,20 @@ public class ItemsRepository : IItemsRepository
 
     public async Task<List<ItemLinkRepositoryModel>> GetItemLinksAsync(int shopId, IEnumerable<int> categoryIds)
     {
+        if (!categoryIds.Any())
+        {
+            return new List<ItemLinkRepositoryModel>();
+        }
+        
         using var connection = _mySqlDbConnectionFactory.Connect();
         var query = @$"select il.id, il.itemid, il.shopid, il.inshopid, il.pricefactor 
                        from {TableLink} il 
                            left join {Table} i on il.itemid = i.id 
-                       where il.shopid = @shopId";
+                       where il.shopid = @shopId and " + 
+                    DatabaseUtil.GetInQuery(categoryIds, "i.category");
 
         var parameters = new DynamicParameters();
         parameters.Add("@shopId", shopId, DbType.Int32);
-        
-        if (categoryIds.ToList().Count != 0)
-        {
-            query += " and " + DatabaseUtil.GetInQuery(categoryIds, "i.category");
-        }
 
         return (await connection.QueryAsync<ItemLinkRepositoryModel>(query, parameters)).ToList();
     }

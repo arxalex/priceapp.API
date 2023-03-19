@@ -118,7 +118,7 @@ public class PricesRepository : IPricesRepository
         var parameters = new DynamicParameters();
         parameters.Add("@date", DateTime.Now, DbType.DateTime);
 
-        const string query = $"select max(filialid) from {TableHistory} where date = @date";
+        const string query = $"select max(`filialid`) from {TableHistory} where `date` = @date";
 
         return await connection.QueryFirstAsync<int?>(query, parameters);
     }
@@ -129,5 +129,35 @@ public class PricesRepository : IPricesRepository
         const string query = $"select * from {Table}";
 
         return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
+    }
+    
+    public async Task<List<PriceRepositoryModel>> GetPricesAsync(int itemId, IEnumerable<int> filialIds)
+    {
+	    if (!filialIds.Any())
+	    {
+		    return new List<PriceRepositoryModel>();
+	    }
+	    
+	    using var connection = _mySqlDbConnectionFactory.Connect();
+	    var query = $"select * from {Table} where `itemid` = @itemId and " + DatabaseUtil.GetInQuery(filialIds, "`filialid`");
+
+	    var parameters = new DynamicParameters();
+	    parameters.Add("@itemId", itemId);
+
+	    return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
+    }
+    public async Task<List<PriceRepositoryModel>> GetPricesAsync(IEnumerable<int> itemIds, IEnumerable<int> filialIds)
+    {
+	    if (!itemIds.Any() || !filialIds.Any())
+	    {
+		    return new List<PriceRepositoryModel>();
+	    }
+	    using var connection = _mySqlDbConnectionFactory.Connect();
+	    var query = $"select * from {Table} where " + 
+	                DatabaseUtil.GetInQuery(filialIds, "`filialid`") +
+	                " and " +
+	                DatabaseUtil.GetInQuery(itemIds, "`itemid`");
+
+	    return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
     }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Controllers.Models.Response;
 
 namespace priceapp.API.Controllers;
 
@@ -34,5 +37,12 @@ public class InfoController : ControllerBase
             UseSystem = bool.Parse(_configuration["Threads:UseSystem"]),
             SystemCores = Environment.ProcessorCount
         });
+    }
+    
+    [HttpGet("authorize-check")]
+    [Authorize]
+    public async Task<IActionResult> CheckAuthorize()
+    {
+        return Ok();
     }
 }

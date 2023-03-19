@@ -63,4 +63,11 @@ public class FilialsController : ControllerBase
         await _filialsController.ActualizeFilialsAsync(shopId);
         return Ok();
     }
+
+    [HttpGet]
+    [Authorize(Roles = "1")]
+    public async Task<IActionResult> GetFilials()
+    {
+        return Ok(await _filialsService.GetFilialsAsync());
+    }
 }

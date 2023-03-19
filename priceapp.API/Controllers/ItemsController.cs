@@ -38,13 +38,14 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet("{id}/extended")]
-    [Authorize(Roles = "9")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> GetItemExtended([FromRoute] int id)
     {
         return Ok(await _itemsService.GetItemExtendedAsync(id));
     }
 
     [HttpPost("{id}/location/extended")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> GetItemExtended([FromRoute] int id,
         [FromBody] LocationRequestModel model)
     {
@@ -52,6 +53,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet("category/{categoryId:int}/extended")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> GetItemsExtended([FromRoute] int categoryId,
         [FromQuery] int from,
         [FromQuery] int to)
@@ -60,6 +62,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("category/{categoryId:int}/location/extended")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> GetItemsExtended([FromRoute] int categoryId,
         [FromQuery] int from,
         [FromQuery] int to,
@@ -81,6 +84,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("search/extended")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> SearchItemsExtended(
         [FromQuery] int from,
         [FromQuery] int to,
@@ -90,6 +94,7 @@ public class ItemsController : ControllerBase
     }
 
     [HttpPost("search/location/extended")]
+    [Authorize(Roles = "1")]
     public async Task<IActionResult> SearchItemsExtended(
         [FromQuery] int from,
         [FromQuery] int to,

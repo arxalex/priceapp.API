@@ -116,7 +116,7 @@ public class UsersService : IUsersService
         {
             _logger.LogInformation(
                 $"UserService: User with username {username} and email {email} try to register with user that already exists");
-            throw new InvalidDataException($"User with username {username} or email {email} already exists");
+            throw new InvalidDataException($"User with this username or email already exists");
         }
 
         await _usersRepository.RegisterUserAsync(username, email, password, 0);

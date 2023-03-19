@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Controllers.Models.Request;
 using priceapp.ControllersLogic;
 using priceapp.Services.Interfaces;
 
@@ -41,5 +42,13 @@ public class PricesController : ControllerBase
     {
         await _pricesService.RefactorPricesAsync();
         return Ok();
+    }
+    
+    [HttpPost("{itemId:int}/location/")]
+    [Authorize(Roles = "1")]
+    public async Task<IActionResult> GetPricesAndFilialsAsync([FromRoute] int itemId,
+        [FromBody] LocationRequestModel model)
+    {
+        return Ok(await _pricesService.GetPricesAsync(itemId, model.XCord, model.YCord, model.Radius));
     }
 }

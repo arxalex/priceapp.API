@@ -8,4 +8,5 @@ public interface IBrandsRepository
     Task<List<BrandRepositoryModel>> GetBrandsByKeywordsAsync(List<string> keywords);
     Task InsertBrandAsync(BrandRepositoryModel model);
     Task UpdateBrandAsync(BrandRepositoryModel model);
+    Task<List<BrandAlertRepositoryModel>> GetBrandAlertsAsync(int brandId);
 }
