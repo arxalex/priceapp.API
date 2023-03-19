@@ -34,6 +34,7 @@ public static class ServiceCollection
         services.AddScoped<IPackagesService, PackagesService>();
         services.AddScoped<IPricesService, PricesService>();
         services.AddScoped<IShopsService, ShopsService>();
+        services.AddScoped<IShoppingListService, ShoppingListService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();
         

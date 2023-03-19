@@ -44,5 +44,6 @@ public class MapperProfile : Profile
         CreateMap<PriceHistoryModel, PriceHistoryRepositoryModel>().ReverseMap();
         CreateMap<ShopModel, ShopRepositoryModel>().ReverseMap();
         CreateMap<UserModel, UserRepositoryModel>().ReverseMap();
+        CreateMap<BrandAlertModel, BrandAlertRepositoryModel>().ReverseMap();
     }
 }
