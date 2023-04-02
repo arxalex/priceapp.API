@@ -17,7 +17,7 @@ public class ShopsController : ControllerBase
     }
 
     [HttpGet("")]
-    [Authorize(Roles = "1")]
+    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetShopsAsync()
     {
         return Ok(await _shopsService.GetShopsAsync());

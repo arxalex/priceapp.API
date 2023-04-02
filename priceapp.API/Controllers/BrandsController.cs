@@ -45,7 +45,7 @@ public class BrandsController : ControllerBase
     }
 
     [HttpGet("{id:int}/alerts")]
-    [Authorize(Roles = "1")]
+    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetBrandAlertsAsync([FromRoute] int id)
     {
         return Ok(await _brandsService.GetBrandAlertsAsync(id));

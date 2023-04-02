@@ -45,7 +45,7 @@ public class PricesController : ControllerBase
     }
     
     [HttpPost("{itemId:int}/location/")]
-    [Authorize(Roles = "1")]
+    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetPricesAndFilialsAsync([FromRoute] int itemId,
         [FromBody] LocationRequestModel model)
     {
