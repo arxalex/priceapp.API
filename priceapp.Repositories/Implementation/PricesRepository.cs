@@ -144,7 +144,7 @@ public class PricesRepository : IPricesRepository
 	    var parameters = new DynamicParameters();
 	    parameters.Add("@itemId", itemId);
 
-	    return (await connection.QueryAsync<PriceRepositoryModel>(query)).ToList();
+	    return (await connection.QueryAsync<PriceRepositoryModel>(query, parameters)).ToList();
     }
     public async Task<List<PriceRepositoryModel>> GetPricesAsync(IEnumerable<int> itemIds, IEnumerable<int> filialIds)
     {
