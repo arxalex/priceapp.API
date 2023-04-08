@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using priceapp.API.Controllers.Models.Request;
+using priceapp.API.Controllers.Models.Response;
 using priceapp.Models.Enums;
 using priceapp.Services.Interfaces;
 
@@ -23,7 +24,15 @@ public class ShoppingListController : ControllerBase
     [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> ProcessShoppingList([FromQuery] CartProcessingType method,
         [FromBody] LocationAndItemsRequestModel model)
-    { 
-        return Ok(await _shoppingListService.ProcessShoppingList(method, model.Items, model.XCord, model.YCord, model.Radius));
+    {
+        var (prices, economy, notfound) =
+            await _shoppingListService.ProcessShoppingList(method, model.Items, model.XCord, model.YCord, model.Radius);
+        var result = new ShoppingListResponseModel()
+        {
+            ShoppingList = prices,
+            Economy = economy,
+            ItemIdsNotFound = notfound
+        };
+        return Ok(result);
     }
 }

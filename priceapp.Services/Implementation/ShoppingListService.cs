@@ -14,7 +14,7 @@ public class ShoppingListService : IShoppingListService
         _pricesService = pricesService;
     }
 
-    public async Task<(List<PriceModel>, double)> ProcessShoppingList(CartProcessingType type,
+    public async Task<(List<PriceModel>, double, List<int>)> ProcessShoppingList(CartProcessingType type,
         List<ShoppingListModel> items,
         double xCord, double yCord, double radius)
     {
@@ -37,9 +37,12 @@ public class ShoppingListService : IShoppingListService
                 throw new ArgumentOutOfRangeException(nameof(type), type, null);
         }
 
+        var notFoundItemIds = new List<int>();
         if (result.Count != items.Count)
         {
-            throw new Exception("Cant find all items from shopping list");
+            notFoundItemIds.AddRange(items
+                .Where(x => result.All(y => y.ItemId != x.ItemId))
+                .Select(x => x.ItemId));
         }
 
         var maxPriceModels = itemsFromFilials
@@ -50,10 +53,10 @@ public class ShoppingListService : IShoppingListService
 
         var economy = GetEconomy(items, result, maxPriceModels);
 
-        return (result, economy);
+        return (result, economy, notFoundItemIds);
     }
 
-    private static double GetEconomy(IReadOnlyCollection<ShoppingListModel> shoppingList,
+    private static double GetEconomy(IList<ShoppingListModel> shoppingList,
         IEnumerable<PriceModel> minPrices,
         IEnumerable<PriceModel> maxPrices)
     {
@@ -65,7 +68,7 @@ public class ShoppingListService : IShoppingListService
                        .First(y => y.ItemId == x.ItemId).Count);
     }
 
-    private static List<PriceModel> GetPricesOneMarket(IReadOnlyCollection<ShoppingListModel> shoppingList,
+    private static List<PriceModel> GetPricesOneMarket(IList<ShoppingListModel> shoppingList,
         IEnumerable<PriceModel> priceModels, int filialId)
     {
         var pricesModelsCopy = priceModels.ToList();
@@ -73,7 +76,8 @@ public class ShoppingListService : IShoppingListService
 
         var fixedPrices = pricesModelsCopy
             .Where(x =>
-                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId));
+                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId))
+            .ToList();
         pricesModelsCopy.RemoveAll(x => fixedPrices.Any(y => y.ItemId == x.ItemId));
         result.AddRange(fixedPrices);
 
@@ -85,7 +89,7 @@ public class ShoppingListService : IShoppingListService
         return result;
     }
 
-    private static List<PriceModel> GetPricesOneMarketLowest(IReadOnlyCollection<ShoppingListModel> shoppingList,
+    private static List<PriceModel> GetPricesOneMarketLowest(IList<ShoppingListModel> shoppingList,
         IEnumerable<PriceModel> priceModels)
     {
         var pricesModelsCopy = priceModels.ToList();
@@ -93,7 +97,8 @@ public class ShoppingListService : IShoppingListService
 
         var fixedPrices = pricesModelsCopy
             .Where(x =>
-                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId));
+                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId))
+            .ToList();
         pricesModelsCopy.RemoveAll(x => fixedPrices.Any(y => y.ItemId == x.ItemId));
         result.AddRange(fixedPrices);
 
@@ -118,7 +123,7 @@ public class ShoppingListService : IShoppingListService
         return result;
     }
 
-    private static List<PriceModel> GetPricesMultipleMarkets(IReadOnlyCollection<ShoppingListModel> shoppingList,
+    private static List<PriceModel> GetPricesMultipleMarkets(IList<ShoppingListModel> shoppingList,
         IEnumerable<PriceModel> priceModels)
     {
         var pricesModelsCopy = priceModels.ToList();
@@ -126,7 +131,8 @@ public class ShoppingListService : IShoppingListService
 
         var fixedPrices = pricesModelsCopy
             .Where(x =>
-                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId));
+                shoppingList.Any(y => y.FilialId != null && y.ItemId == x.ItemId && y.FilialId == x.FilialId))
+            .ToList();
         pricesModelsCopy.RemoveAll(x => fixedPrices.Any(y => y.ItemId == x.ItemId));
 
         var itemsMinPrices = pricesModelsCopy
@@ -175,7 +181,7 @@ public class ShoppingListService : IShoppingListService
         return result;
     }
 
-    private static List<PriceModel> GetPricesMultipleMarketsInUse(IReadOnlyCollection<ShoppingListModel> shoppingList,
+    private static List<PriceModel> GetPricesMultipleMarketsInUse(IList<ShoppingListModel> shoppingList,
         IEnumerable<PriceModel> priceModels)
     {
         var pricesModelsCopy = priceModels.ToList();
@@ -198,7 +204,7 @@ public class ShoppingListService : IShoppingListService
         return result;
     }
 
-    private static IEnumerable<PriceModel> GetRestItems(IReadOnlyCollection<PriceModel> rest)
+    private static IEnumerable<PriceModel> GetRestItems(IList<PriceModel> rest)
     {
         var filialsAfter = rest
             .Select(x => x.FilialId)
@@ -233,8 +239,8 @@ public class ShoppingListService : IShoppingListService
         return result;
     }
 
-    private static List<PriceModel> GetViaCombination(IReadOnlyCollection<PriceModel> rest, int totalCycles,
-        List<int> filials)
+    private static List<PriceModel> GetViaCombination(IList<PriceModel> rest, int totalCycles,
+        IList<int> filials)
     {
         for (var i = 1; i <= totalCycles; i++)
         {
@@ -245,10 +251,10 @@ public class ShoppingListService : IShoppingListService
                 var restCopy = rest.ToList();
                 foreach (var filialId in combination)
                 {
-                    var itemsFromThisFilial = restCopy.Where(x => x.FilialId == filialId);
+                    var itemsFromThisFilial = restCopy.Where(x => x.FilialId == filialId).ToList();
                     restCopy.RemoveAll(x => itemsFromThisFilial.Any(y => y.ItemId == x.ItemId));
                     final.AddRange(itemsFromThisFilial);
-                    if (restCopy.Count < 0)
+                    if (restCopy.Count <= 0)
                     {
                         return final;
                     }
