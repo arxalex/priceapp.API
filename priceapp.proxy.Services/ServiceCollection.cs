@@ -17,6 +17,7 @@ public static class ServiceCollection
         services.AddScoped<IFilialsService, FilialsService>();
         services.AddScoped<IItemsService, ItemsService>();
         services.AddScoped<IPricesService, PricesService>();
+        services.AddScoped<ISystemService, SystemService>();
 
         services.RegisterProxyRepositoriesServices(configuration);
     }

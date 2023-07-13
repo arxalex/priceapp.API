@@ -35,9 +35,10 @@ public static class ServiceCollection
         services.AddScoped<IPricesService, PricesService>();
         services.AddScoped<IShopsService, ShopsService>();
         services.AddScoped<IShoppingListService, ShoppingListService>();
+        services.AddScoped<ISystemService, SystemService>();
         services.AddScoped<ITokenService, TokenService>();
         services.AddScoped<IUsersService, UsersService>();
-        
+
         services.RegisterRepositoryServices(configuration);
     }
 }

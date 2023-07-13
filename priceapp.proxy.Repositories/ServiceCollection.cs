@@ -16,5 +16,6 @@ public static class ServiceCollection
         services.AddScoped<IFilialsRepository, FilialsRepository>();
         services.AddScoped<IItemsRepository, ItemsRepository>();
         services.AddScoped<IPricesRepository, PricesRepository>();
+        services.AddScoped<ISystemRepository, SystemRepository>();
     }
 }
