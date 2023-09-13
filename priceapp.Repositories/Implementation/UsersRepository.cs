@@ -51,7 +51,7 @@ public class UsersRepository : IUsersRepository
         parameters.Add("@password", BCrypt.Net.BCrypt.HashPassword(password), DbType.String);
         parameters.Add("@role", role, DbType.Int32);
 
-        const string query = $"insert into {Table} values (DEFAULT, @username, @email, @password, @role)";
+        const string query = $"insert into {Table} values (DEFAULT, @username, @email, @password, @role, DEFAULT)";
         if (await connection.ExecuteAsync(query, parameters) != 1)
         {
             _logger.LogCritical(
