@@ -61,7 +61,7 @@ public class InfoController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("update")]
+    [HttpGet("check-update")]
     public async Task<IActionResult> CheckUpdate([FromQuery] string version)
     {
         try
@@ -70,7 +70,7 @@ public class InfoController : ControllerBase
         }
         catch (FormatException e)
         {
-            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "IIU1"});
+            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "IICu1"});
         }
     }
 }

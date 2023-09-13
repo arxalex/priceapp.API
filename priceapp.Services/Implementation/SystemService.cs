@@ -47,6 +47,6 @@ public class SystemService : ISystemService
         }
 
         var minVersion = _mapper.Map<VersionModel>(await _versionsRepository.GetMinVersion());
-        return versionObj >= minVersion;
+        return versionObj < minVersion;
     }
 }
