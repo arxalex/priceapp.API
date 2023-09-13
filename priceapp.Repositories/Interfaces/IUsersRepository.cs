@@ -12,4 +12,5 @@ public interface IUsersRepository
     Task<UserRepositoryModel> GetUserByIdAsync(int id);
     Task UpdateUserRole(int id, int role);
     Task ChangePasswordAsync(int id, string password);
+    Task DeleteAsync(UserRepositoryModel user);
 }

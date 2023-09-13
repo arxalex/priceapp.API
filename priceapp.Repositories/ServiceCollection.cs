@@ -24,5 +24,6 @@ public static class ServiceCollection
         services.AddScoped<ISystemRepository, SystemRepository>();
         services.AddScoped<ITokensRepository, TokensRepository>();
         services.AddScoped<IUsersRepository, UsersRepository>();
+        services.AddScoped<IVersionsRepository, VersionsRepository>();
     }
 }

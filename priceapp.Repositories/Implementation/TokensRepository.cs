@@ -52,6 +52,15 @@ public class TokensRepository : ITokensRepository
         const string query = $"delete from {ConfirmEmailTable} where `userid` = @userId and `token` = @token";
         if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Confirmation went wrong");
     }
+    
+    public async Task DeleteConfirmEmailTokenAsync(int userId)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@userId", userId, DbType.Int32);
+        const string query = $"delete from {ConfirmEmailTable} where `userid` = @userId";
+        if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Delete confirmation went wrong");
+    }
 
     public async Task<bool> IsJWTTokenExistsAsync(string token)
     {

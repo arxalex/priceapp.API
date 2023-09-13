@@ -111,6 +111,21 @@ public class UsersRepository : IUsersRepository
         parameters.Add("@id", id, DbType.Int32);
         parameters.Add("@password", BCrypt.Net.BCrypt.HashPassword(password), DbType.String);
         const string query = $"update {Table} set `password` = @password where `id` = @id";
-        if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Updating role went wrong");
+        if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Updating password went wrong");
+    }
+
+    public async Task DeleteAsync(UserRepositoryModel user)
+    {
+        using var connection = _mySqlDbConnectionFactory.Connect();
+        var parameters = new DynamicParameters();
+        parameters.Add("@id", user.id, DbType.Int32);
+        parameters.Add("@username", user.username, DbType.String);
+        parameters.Add("@email", user.email, DbType.String);
+        parameters.Add("@password", user.password, DbType.String);
+        parameters.Add("@role", user.role, DbType.String);
+        parameters.Add("@protected", user.@protected, DbType.Boolean);
+
+        const string query = $"delete from {Table} where `id` = @id and `username` = @username and `email` = @email and `password` = @password and `role` = @role and `protected` = @protected";
+        if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Deleting user went wrong");
     }
 }

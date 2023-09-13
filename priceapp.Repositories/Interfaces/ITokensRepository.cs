@@ -9,4 +9,5 @@ public interface ITokensRepository
     Task DeleteTokensForUserAsync(int userId);
     Task DeleteTokenAsync(string token);
     Task InsertTokenAsync(int userId, string token, int expires);
+    Task DeleteConfirmEmailTokenAsync(int userId);
 }

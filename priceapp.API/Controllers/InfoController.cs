@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using priceapp.API.Controllers.Models.Response;
 using priceapp.Services.Interfaces;
 
 namespace priceapp.API.Controllers;
@@ -58,5 +59,18 @@ public class InfoController : ControllerBase
     public async Task<IActionResult> CheckAuthorize()
     {
         return Ok();
+    }
+
+    [HttpGet("update")]
+    public async Task<IActionResult> CheckUpdate([FromQuery] string version)
+    {
+        try
+        {
+            return Ok(await _systemService.IsNeedUpdate(version));
+        }
+        catch (FormatException e)
+        {
+            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "IIU1"});
+        }
     }
 }

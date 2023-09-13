@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security;
 using System.Security.Claims;
 using AutoMapper;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using priceapp.Models;
 using priceapp.Repositories.Interfaces;
+using priceapp.Repositories.Models;
 using priceapp.Services.Interfaces;
 using priceapp.Utils;
 
@@ -43,17 +45,7 @@ public class UsersService : IUsersService
 
         var user = _mapper.Map<UserModel>(await _usersRepository.GetUserByEmailAsync(email));
 
-        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-        {
-            _logger.LogWarning($"UserService: User with username {user.Username} try to login with invalid password");
-            throw new ArgumentException("Password is incorrect");
-        }
-
-        var identity = GetClaimIdentity(user);
-
-        var (token, expires) = GenerateToken(identity);
-
-        return (user, token, expires);
+        return await GetUserAndTokenAsync(user, password);
     }
 
     public async Task<(UserModel, string token, int expires)> GetUserAndTokenByUsernameAsync(string username,
@@ -67,20 +59,10 @@ public class UsersService : IUsersService
 
         var user = _mapper.Map<UserModel>(await _usersRepository.GetUserByUsernameAsync(username));
 
-        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-        {
-            _logger.LogWarning($"UserService: User with username {user.Username} try to login with invalid password");
-            throw new ArgumentException("Password is incorrect");
-        }
-
-        var identity = GetClaimIdentity(user);
-
-        var (token, expires) = GenerateToken(identity);
-
-        return (user, token, expires);
+        return await GetUserAndTokenAsync(user, password);
     }
 
-    public async Task<(UserModel, string token, int expires)> GetUserAndTokenAsync(int userId, string password)
+    public async Task<(UserModel, string token, int expires)> GetUserAndTokenByIdAsync(int userId, string password)
     {
         if (password.Length < 1)
         {
@@ -90,17 +72,7 @@ public class UsersService : IUsersService
 
         var user = _mapper.Map<UserModel>(await _usersRepository.GetUserByIdAsync(userId));
 
-        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
-        {
-            _logger.LogWarning($"UserService: User with username {user.Username} try to login with invalid password");
-            throw new ArgumentException("Password is incorrect");
-        }
-
-        var identity = GetClaimIdentity(user);
-
-        var (token, expires) = GenerateToken(identity);
-
-        return (user, token, expires);
+        return await GetUserAndTokenAsync(user, password);
     }
 
     public async Task RegisterUserAsync(string username, string email, string password)
@@ -170,11 +142,56 @@ public class UsersService : IUsersService
             throw new ArgumentException("Password is incorrect");
         }
 
+        if (user.Protected)
+        {
+            _logger.LogWarning($"UserService: User with username {user.Username} try to change protected user");
+            throw new ValidationException("You cant change protected user");
+        }
+
         await _tokenService.DeactivateTokensForUserAsync(userId);
         await _usersRepository.ChangePasswordAsync(userId, password);
 
         _logger.LogInformation(
             $"UserService: User {userId} change password succesfull");
+    }
+    
+    public async Task DeleteUserByEmailAsync(string email, string password)
+    {
+        if (password.Length < 1 && !StringUtil.IsValidEmail(email))
+        {
+            _logger.LogInformation($"UserService: User with email {email} try to delete account with invalid arguments");
+            throw new ArgumentException("Email or password invalid");
+        }
+
+        var user = _mapper.Map<UserModel>(await _usersRepository.GetUserByEmailAsync(email));
+
+        await DeleteUserAsync(user, password);
+    }
+
+    public async Task DeleteUserByUsernameAsync(string username, string password)
+    {
+        if (password.Length < 1 && !StringUtil.IsValidUsername(username))
+        {
+            _logger.LogInformation($"UserService: User with username {username} try to delete account with invalid arguments");
+            throw new ArgumentException("Username or password invalid");
+        }
+
+        var user = _mapper.Map<UserModel>(await _usersRepository.GetUserByUsernameAsync(username));
+
+        await DeleteUserAsync(user, password);
+    }
+    
+    public async Task DeleteUserByIdAsync(int id, string password)
+    {
+        if (password.Length < 1)
+        {
+            _logger.LogInformation($"UserService: User with id {id} try to delete account with invalid arguments");
+            throw new ArgumentException("Password invalid");
+        }
+
+        var user = await GetUserByIdAsync(id);
+
+        await DeleteUserAsync(user, password);
     }
 
     private async Task<string> CreateEmailConfirmTokenAsync(int userId)
@@ -222,5 +239,39 @@ public class UsersService : IUsersService
             .ToUnixTimeSeconds();
 
         return (token, expires);
+    }
+    
+    private async Task<(UserModel, string token, int expires)> GetUserAndTokenAsync(UserModel user, string password)
+    {
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            _logger.LogWarning($"UserService: User with username {user.Username} try to login with invalid password");
+            throw new ArgumentException("Password is incorrect");
+        }
+
+        var identity = GetClaimIdentity(user);
+
+        var (token, expires) = GenerateToken(identity);
+
+        return (user, token, expires);
+    }
+
+    private async Task DeleteUserAsync(UserModel user, string password)
+    {
+        if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+        {
+            _logger.LogWarning($"UserService: User with username {user.Username} try to delete account with invalid password");
+            throw new ArgumentException("Password is incorrect");
+        }
+        
+        if (user.Protected)
+        {
+            _logger.LogWarning($"UserService: User with username {user.Username} try to delete protected user");
+            throw new ValidationException("You cant change protected user");
+        }
+
+        await _tokensRepository.DeleteConfirmEmailTokenAsync(user.Id);
+        await _tokenService.DeactivateTokensForUserAsync(user.Id);
+        await _usersRepository.DeleteAsync(_mapper.Map<UserRepositoryModel>(user));
     }
 }

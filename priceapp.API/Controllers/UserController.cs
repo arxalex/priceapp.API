@@ -49,7 +49,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            var response = new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUL1"};
+            var response = new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUL1" };
             return BadRequest(response);
         }
     }
@@ -60,7 +60,7 @@ public class UserController : ControllerBase
         try
         {
             await _usersService.RegisterUserAsync(model.Username, model.Email, model.Password);
-            var response = new SuccessResponseModel {Status = true};
+            var response = new SuccessResponseModel { Status = true };
             return Ok(response);
         }
         catch (MySqlException e)
@@ -73,7 +73,7 @@ public class UserController : ControllerBase
                 code = "IUR1";
             }
 
-            var response = new ErrorResponseModel {Status = false, Message = message, Code = code};
+            var response = new ErrorResponseModel { Status = false, Message = message, Code = code };
             return BadRequest(response);
         }
         catch (InvalidDataException e)
@@ -86,12 +86,12 @@ public class UserController : ControllerBase
                 code = "IUR1";
             }
 
-            var response = new ErrorResponseModel {Status = false, Message = message, Code = code};
+            var response = new ErrorResponseModel { Status = false, Message = message, Code = code };
             return BadRequest(response);
         }
         catch (Exception e)
         {
-            var response = new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUR3"};
+            var response = new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUR3" };
             return BadRequest(response);
         }
     }
@@ -102,14 +102,14 @@ public class UserController : ControllerBase
         try
         {
             if ((await _usersService.GetUserByIdAsync(model.UserId)).Role != 0)
-                return Ok(new SuccessResponseModel {Status = false, Message = "Already verified", Code = "IUVe2"});
+                return Ok(new SuccessResponseModel { Status = false, Message = "Already verified", Code = "IUVe2" });
 
             await _usersService.VerifyUserEmailAsync(model.UserId, model.Token);
-            return Ok(new SuccessResponseModel {Status = true, Message = "Verification successful", Code = "IUVe1"});
+            return Ok(new SuccessResponseModel { Status = true, Message = "Verification successful", Code = "IUVe1" });
         }
         catch (Exception e)
         {
-            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUVe3"});
+            return BadRequest(new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUVe3" });
         }
     }
 
@@ -121,7 +121,7 @@ public class UserController : ControllerBase
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.Sid).Value);
             await _usersService.ChangePasswordAsync(userId, model.Password, model.PasswordOld);
-            var (user, token, expires) = await _usersService.GetUserAndTokenAsync(userId, model.Password);
+            var (user, token, expires) = await _usersService.GetUserAndTokenByIdAsync(userId, model.Password);
 
             await _tokenService.InsertTokenAsync(user.Id, token, expires);
 
@@ -134,7 +134,7 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUCp1"});
+            return BadRequest(new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUCp1" });
         }
     }
 
@@ -145,11 +145,11 @@ public class UserController : ControllerBase
         try
         {
             await _tokenService.DeactivateTokenAsync();
-            return Ok(new SuccessResponseModel {Status = true});
+            return Ok(new SuccessResponseModel { Status = true });
         }
         catch (Exception e)
         {
-            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUL1"});
+            return BadRequest(new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUL1" });
         }
     }
 
@@ -165,7 +165,28 @@ public class UserController : ControllerBase
         }
         catch (Exception e)
         {
-            return BadRequest(new ErrorResponseModel {Status = false, Message = e.Message, Code = "WUUi1"});
+            return BadRequest(new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUUi1" });
+        }
+    }
+
+    [HttpPost("delete")]
+    [Authorize]
+    public async Task<IActionResult> DeleteAsync([FromBody] DeleteRequestModel model)
+    {
+        try
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == ClaimTypes.Sid).Value);
+            await _usersService.DeleteUserByIdAsync(userId, model.Password);
+            var response = new DeleteResponseModel
+            {
+                Status = true
+            };
+            return Ok(response);
+        }
+        catch (Exception e)
+        {
+            var response = new ErrorResponseModel { Status = false, Message = e.Message, Code = "WUD1" };
+            return BadRequest(response);
         }
     }
 }

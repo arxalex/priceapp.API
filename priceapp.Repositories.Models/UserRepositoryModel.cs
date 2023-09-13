@@ -7,4 +7,5 @@ public class UserRepositoryModel
     public string email { get; set; }
     public string password { get; set; }
     public int role { get; set; }
+    public bool @protected { get; set; }
 }
