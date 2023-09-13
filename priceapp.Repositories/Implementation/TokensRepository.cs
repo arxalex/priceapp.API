@@ -59,7 +59,7 @@ public class TokensRepository : ITokensRepository
         var parameters = new DynamicParameters();
         parameters.Add("@userId", userId, DbType.Int32);
         const string query = $"delete from {ConfirmEmailTable} where `userid` = @userId";
-        if (await connection.ExecuteAsync(query, parameters) != 1) throw new DataException("Delete confirmation went wrong");
+        await connection.ExecuteAsync(query, parameters);
     }
 
     public async Task<bool> IsJWTTokenExistsAsync(string token)
