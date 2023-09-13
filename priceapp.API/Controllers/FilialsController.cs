@@ -65,7 +65,7 @@ public class FilialsController : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
+    [Authorize(Roles = "0, 1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetFilials()
     {
         return Ok(await _filialsService.GetFilialsAsync());

@@ -39,14 +39,14 @@ public class CategoriesController : ControllerBase
     }
 
     [HttpGet("{id:int}/child")]
-    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
+    [Authorize(Roles = "0, 1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetChildCategoriesAsync([FromRoute] int id)
     {
         return Ok(await _categoriesService.GetChildLevelCategoriesAsync(id));
     }
     
     [HttpGet("base")]
-    [Authorize(Roles = "1, 2, 3, 4, 5, 6, 7, 8, 9")]
+    [Authorize(Roles = "0, 1, 2, 3, 4, 5, 6, 7, 8, 9")]
     public async Task<IActionResult> GetBaseCategoriesAsync()
     {
         return Ok(await _categoriesService.GetBaseCategoriesAsync());
