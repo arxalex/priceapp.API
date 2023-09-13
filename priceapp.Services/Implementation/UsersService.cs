@@ -186,7 +186,7 @@ public class UsersService : IUsersService
         if (password.Length < 1)
         {
             _logger.LogInformation($"UserService: User with id {id} try to delete account with invalid arguments");
-            throw new ArgumentException("Password invalid");
+            throw new ArgumentException("Password is incorrect");
         }
 
         var user = await GetUserByIdAsync(id);
