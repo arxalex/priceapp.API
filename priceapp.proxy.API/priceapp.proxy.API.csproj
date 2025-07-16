@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +15,12 @@
       <ProjectReference Include="..\priceapp.proxy.Services\priceapp.proxy.Services.csproj" />
       <ProjectReference Include="..\priceapp.proxy.ShopServices\priceapp.proxy.ShopServices.csproj" />
       <ProjectReference Include="..\priceapp.proxy\priceapp.proxy.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
