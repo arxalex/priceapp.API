@@ -3,4 +3,6 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
-*/application.json
+/priceapp.Background/appsettings.json
+/priceapp.API/appsettings.json
+/priceapp.proxy.API/appsettings.json
